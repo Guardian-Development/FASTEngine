@@ -1,2 +1,2 @@
 # FASTEngine
-a FAST engine implementation in go
+A FAST engine implementation in go
