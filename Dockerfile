@@ -2,7 +2,8 @@
 FROM golang:1.13.5-alpine AS build-env
 
 # copy library source
+WORKDIR /go/src/github.com/Guardian-Development/FASTEngine
 COPY . .
 
-# run the tests
-RUN go test -v
+# run the tests with coverage
+RUN go test ./... -cover -v
