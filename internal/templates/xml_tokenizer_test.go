@@ -9,7 +9,7 @@ import (
 
 func TestCanTokenizeHeartbeatTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../test/test_fast_templates.xml")
+	file, _ := os.Open("../../test/test_heartbeat_template.xml")
 	decoder := xml.NewDecoder(file)
 
 	expectedTokens := XMLTag{
