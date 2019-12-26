@@ -1,4 +1,4 @@
-package templates
+package tokenxml
 
 import (
 	"encoding/xml"
@@ -6,21 +6,21 @@ import (
 	"io"
 )
 
-// XMLTag provides a typed version of an XML document
-type XMLTag struct {
+// Tag provides a typed version of an XML document
+type Tag struct {
 	Type       string
 	Attributes map[string]string
-	NestedTags []XMLTag
+	NestedTags []Tag
 }
 
-// LoadTagsFrom takes an XML decoder and reads the XML document into an XMLTag type
-func LoadTagsFrom(decoder *xml.Decoder) (*XMLTag, error) {
-	rootTag := new(XMLTag)
-	err := populateTag(decoder, rootTag)
+// LoadTagsFrom takes an XML decoder and reads the XML document into an Tag type
+func LoadTagsFrom(decoder *xml.Decoder) (Tag, error) {
+	rootTag := Tag{}
+	err := populateTag(decoder, &rootTag)
 	return rootTag, err
 }
 
-func populateTag(decoder *xml.Decoder, parentTag *XMLTag) error {
+func populateTag(decoder *xml.Decoder, parentTag *Tag) error {
 	for {
 		token, err := decoder.Token()
 
@@ -48,19 +48,20 @@ func populateTag(decoder *xml.Decoder, parentTag *XMLTag) error {
 	}
 }
 
-func processNewElement(decoder *xml.Decoder, parentTag *XMLTag, element xml.StartElement) error {
+func processNewElement(decoder *xml.Decoder, parentTag *Tag, element xml.StartElement) error {
 	// if we have already processed this element, this StartElement is a sub element of the parentTag
 	if parentTag.Type != "" {
-		childTag := new(XMLTag)
-		childTag.Type = element.Name.Local
-		childTag.Attributes = parseAttributes(element.Attr)
-		err := populateTag(decoder, childTag)
+		childTag := Tag{
+			Type:       element.Name.Local,
+			Attributes: parseAttributes(element.Attr),
+		}
+		err := populateTag(decoder, &childTag)
 
 		if err != nil {
 			return err
 		}
 
-		parentTag.NestedTags = append(parentTag.NestedTags, *childTag)
+		parentTag.NestedTags = append(parentTag.NestedTags, childTag)
 	} else {
 		parentTag.Type = element.Name.Local
 		parentTag.Attributes = parseAttributes(element.Attr)
