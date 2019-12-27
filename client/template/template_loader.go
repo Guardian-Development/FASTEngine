@@ -62,19 +62,56 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (Unit, error) {
 
 func createFieldDetails(tagInTemplate *tokenxml.Tag) (Field, error) {
 	fieldDetails := Field{}
+
+	ID, err := getFieldID(tagInTemplate)
+	if err != nil {
+		return fieldDetails, err
+	}
+	fieldDetails.ID = ID
+
+	operation, err := getOperation(tagInTemplate)
+	if err != nil {
+		return fieldDetails, err
+	}
+
+	fieldDetails.Operation = operation
+
+	return fieldDetails, nil
+}
+
+func getFieldID(tagInTemplate *tokenxml.Tag) (uint64, error) {
 	fieldID := tagInTemplate.Attributes["id"]
 
 	if fieldID == "" {
-		return fieldDetails, fmt.Errorf("Every template field must have an id specified")
+		return 0, fmt.Errorf("Every template field must have an id specified")
 	}
 
 	ID, err := strconv.ParseUint(fieldID, 10, 32)
 
 	if err != nil {
-		return fieldDetails, fmt.Errorf("Unable to parse ID for field: %s", fieldID)
+		return 0, fmt.Errorf("Unable to parse ID for field: %s", fieldID)
 	}
 
-	fieldDetails.ID = ID
+	return ID, nil
+}
 
-	return fieldDetails, nil
+func getOperation(tagInTemplate *tokenxml.Tag) (Operation, error) {
+	if len(tagInTemplate.NestedTags) != 1 {
+		return OperationNone{}, nil
+	}
+
+	operationTag := tagInTemplate.NestedTags[0]
+
+	switch operationTag.Type {
+	case constantOperation:
+		operation := OperationConstant{}
+		constant := operationTag.Attributes["value"]
+		if constant == "" {
+			return nil, fmt.Errorf("No value specified for constant operation")
+		}
+		operation.constantValue = constant
+		return operation, nil
+	default:
+		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)
+	}
 }

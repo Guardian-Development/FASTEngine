@@ -16,21 +16,29 @@ func TestCanLoadHeartbeatTemplateFile(t *testing.T) {
 					FieldString{
 						fieldDetails: Field{
 							ID: 1128,
+							Operation: OperationConstant{
+								constantValue: "9",
+							},
 						},
 					},
 					FieldString{
 						fieldDetails: Field{
 							ID: 35,
+							Operation: OperationConstant{
+								constantValue: "0",
+							},
 						},
 					},
 					FieldUInt32{
 						fieldDetails: Field{
-							ID: 34,
+							ID:        34,
+							Operation: OperationNone{},
 						},
 					},
 					FieldUInt64{
 						fieldDetails: Field{
-							ID: 52,
+							ID:        52,
+							Operation: OperationNone{},
 						},
 					},
 				},

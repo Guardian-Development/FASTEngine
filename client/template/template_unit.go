@@ -11,7 +11,8 @@ type Unit interface {
 
 // Field contains information about a TemplateUnit within a FAST Template
 type Field struct {
-	ID uint64
+	ID        uint64
+	Operation Operation
 }
 
 // FieldString represents a FAST template <string/> type
