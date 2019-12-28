@@ -4,41 +4,44 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/Guardian-Development/fastengine/internal/fast/field"
+	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 )
 
 func TestCanLoadHeartbeatTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../test/test_heartbeat_template.xml")
+	file, _ := os.Open("../../../test/test_heartbeat_template.xml")
 	expectedStore := Store{
 		Templates: []Template{
 			Template{
 				TemplateUnits: []Unit{
-					FieldString{
-						fieldDetails: Field{
+					field.String{
+						FieldDetails: field.Field{
 							ID: 1128,
-							Operation: OperationConstant{
-								constantValue: "9",
+							Operation: operation.Constant{
+								ConstantValue: "9",
 							},
 						},
 					},
-					FieldString{
-						fieldDetails: Field{
+					field.String{
+						FieldDetails: field.Field{
 							ID: 35,
-							Operation: OperationConstant{
-								constantValue: "0",
+							Operation: operation.Constant{
+								ConstantValue: "0",
 							},
 						},
 					},
-					FieldUInt32{
-						fieldDetails: Field{
+					field.UInt32{
+						FieldDetails: field.Field{
 							ID:        34,
-							Operation: OperationNone{},
+							Operation: operation.None{},
 						},
 					},
-					FieldUInt64{
-						fieldDetails: Field{
+					field.UInt64{
+						FieldDetails: field.Field{
 							ID:        52,
-							Operation: OperationNone{},
+							Operation: operation.None{},
 						},
 					},
 				},
@@ -47,7 +50,7 @@ func TestCanLoadHeartbeatTemplateFile(t *testing.T) {
 	}
 
 	// Act
-	store, err := Create(file)
+	store, err := New(file)
 
 	// Assert
 	if err != nil {

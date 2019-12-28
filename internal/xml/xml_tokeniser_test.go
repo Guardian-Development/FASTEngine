@@ -1,4 +1,4 @@
-package tokenxml
+package xml
 
 import (
 	"encoding/xml"

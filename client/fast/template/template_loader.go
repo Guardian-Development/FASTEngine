@@ -4,10 +4,38 @@ import (
 	"fmt"
 	"strconv"
 
-	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/internal/fast/field"
+	"github.com/Guardian-Development/fastengine/internal/fast/operation"
+	"github.com/Guardian-Development/fastengine/internal/xml"
 )
 
-func createTemplate(templateRoot *tokenxml.Tag) (Template, error) {
+const templatesTag = "templates"
+const templateTag = "template"
+
+const stringTag = "string"
+const uInt32Tag = "uInt32"
+const uInt64Tag = "uInt64"
+
+const constantOperation = "constant"
+
+func loadStoreFromXML(xmlTags xml.Tag) (Store, error) {
+	templateStore := Store{
+		Templates: make([]Template, len(xmlTags.NestedTags)),
+	}
+
+	for templateNumber, templateXMLElement := range xmlTags.NestedTags {
+		template, err := createTemplate(&templateXMLElement)
+		if err != nil {
+			return Store{}, err
+		}
+
+		templateStore.Templates[templateNumber] = template
+	}
+
+	return templateStore, nil
+}
+
+func createTemplate(templateRoot *xml.Tag) (Template, error) {
 	if templateRoot.Type != templateTag {
 		return Template{}, fmt.Errorf("expected to find template tag, but found %s", templateRoot.Type)
 	}
@@ -29,28 +57,28 @@ func createTemplate(templateRoot *tokenxml.Tag) (Template, error) {
 	return template, nil
 }
 
-func createTemplateUnit(tagInTemplate *tokenxml.Tag) (Unit, error) {
+func createTemplateUnit(tagInTemplate *xml.Tag) (Unit, error) {
 	switch tagInTemplate.Type {
 	case stringTag:
-		field := FieldString{}
+		field := field.String{}
 		fieldDetails, err := createFieldDetails(tagInTemplate)
-		field.fieldDetails = fieldDetails
+		field.FieldDetails = fieldDetails
 		if err != nil {
 			return nil, err
 		}
 		return field, nil
 	case uInt32Tag:
-		field := FieldUInt32{}
+		field := field.UInt32{}
 		fieldDetails, err := createFieldDetails(tagInTemplate)
-		field.fieldDetails = fieldDetails
+		field.FieldDetails = fieldDetails
 		if err != nil {
 			return nil, err
 		}
 		return field, nil
 	case uInt64Tag:
-		field := FieldUInt64{}
+		field := field.UInt64{}
 		fieldDetails, err := createFieldDetails(tagInTemplate)
-		field.fieldDetails = fieldDetails
+		field.FieldDetails = fieldDetails
 		if err != nil {
 			return nil, err
 		}
@@ -60,8 +88,8 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (Unit, error) {
 	}
 }
 
-func createFieldDetails(tagInTemplate *tokenxml.Tag) (Field, error) {
-	fieldDetails := Field{}
+func createFieldDetails(tagInTemplate *xml.Tag) (field.Field, error) {
+	fieldDetails := field.Field{}
 
 	ID, err := getFieldID(tagInTemplate)
 	if err != nil {
@@ -79,7 +107,7 @@ func createFieldDetails(tagInTemplate *tokenxml.Tag) (Field, error) {
 	return fieldDetails, nil
 }
 
-func getFieldID(tagInTemplate *tokenxml.Tag) (uint64, error) {
+func getFieldID(tagInTemplate *xml.Tag) (uint64, error) {
 	fieldID := tagInTemplate.Attributes["id"]
 
 	if fieldID == "" {
@@ -95,21 +123,21 @@ func getFieldID(tagInTemplate *tokenxml.Tag) (uint64, error) {
 	return ID, nil
 }
 
-func getOperation(tagInTemplate *tokenxml.Tag) (Operation, error) {
+func getOperation(tagInTemplate *xml.Tag) (operation.Operation, error) {
 	if len(tagInTemplate.NestedTags) != 1 {
-		return OperationNone{}, nil
+		return operation.None{}, nil
 	}
 
 	operationTag := tagInTemplate.NestedTags[0]
 
 	switch operationTag.Type {
 	case constantOperation:
-		operation := OperationConstant{}
+		operation := operation.Constant{}
 		constant := operationTag.Attributes["value"]
 		if constant == "" {
 			return nil, fmt.Errorf("No value specified for constant operation")
 		}
-		operation.constantValue = constant
+		operation.ConstantValue = constant
 		return operation, nil
 	default:
 		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)
