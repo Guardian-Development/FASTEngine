@@ -1,20 +1,21 @@
 package presencemap
 
-import "bytes"
+import (
+	"bytes"
+
+	"github.com/Guardian-Development/fastengine/internal/fast"
+)
 
 type PresenceMap struct {
+	pMap uint32
 }
 
 func New(message *bytes.Buffer) (PresenceMap, error) {
-	b, err := message.ReadByte()
+	pMap, err := fast.ReadUInt32(message)
 
 	if err != nil {
 		return PresenceMap{}, err
 	}
 
-	result := b & 128
-	if result == 128 {
-	}
-
-	return PresenceMap{}, nil
+	return PresenceMap{pMap: pMap}, nil
 }

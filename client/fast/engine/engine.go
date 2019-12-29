@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Guardian-Development/fastengine/client/fast/template"
+	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
@@ -26,10 +27,22 @@ func (engine fastEngine) Deserialise(message *bytes.Buffer) (FixMessage, error) 
 	if err != nil {
 		return FixMessage{}, fmt.Errorf("Unable to create pMap for message, reason: %v", err)
 	}
-	return FixMessage{}, nil
+
+	// TODO: check pmap first, do we have a templateId, if we don't lets blow up with unsupported message type
+	templateID, err := fast.ReadUInt32(message)
+	if err != nil {
+		return FixMessage{}, err
+	}
+
+	if template, exists := engine.templateStore.Templates[templateID]; exists {
+		template.Deserialise(message)
+		return FixMessage{}, nil
+	}
+
+	return FixMessage{}, fmt.Errorf("No template found in store to deserialise message with ID: %d", templateID)
 }
 
-// New instance of a FAST engine, that can seralise/deserialise FAST messages using the templates provided
+// New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided
 func New(templateStore template.Store) FastEngine {
 	return fastEngine{
 		templateStore: templateStore,

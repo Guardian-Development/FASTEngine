@@ -20,16 +20,24 @@ const constantOperation = "constant"
 
 func loadStoreFromXML(xmlTags xml.Tag) (Store, error) {
 	templateStore := Store{
-		Templates: make([]Template, len(xmlTags.NestedTags)),
+		Templates: make(map[uint32]Template),
 	}
 
-	for templateNumber, templateXMLElement := range xmlTags.NestedTags {
+	for _, templateXMLElement := range xmlTags.NestedTags {
 		template, err := createTemplate(&templateXMLElement)
 		if err != nil {
 			return Store{}, err
 		}
+		templateID, err := strconv.ParseUint(templateXMLElement.Attributes["id"], 10, 32)
 
-		templateStore.Templates[templateNumber] = template
+		if err != nil {
+			return Store{}, fmt.Errorf("Could not parse template ID, make sure it is present and uint: %v", err)
+		}
+		if _, exists := templateStore.Templates[uint32(templateID)]; exists {
+			return Store{}, fmt.Errorf("Template with ID %d, has already been loaded", templateID)
+		}
+
+		templateStore.Templates[uint32(templateID)] = template
 	}
 
 	return templateStore, nil

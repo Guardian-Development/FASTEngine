@@ -31,7 +31,7 @@ func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 
 	// Assert
 	if err == nil || err.Error() != "No template found in store to deserialise message with ID: 150" {
-		//t.Errorf("Expected error message informing user template ID is not found in store for message, but got: %v", err)
+		t.Errorf("Expected error message informing user template ID is not found in store for message, but got: %v", err)
 	}
 }
 

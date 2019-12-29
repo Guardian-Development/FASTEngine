@@ -13,8 +13,8 @@ func TestCanLoadHeartbeatTemplateFile(t *testing.T) {
 	// Arrange
 	file, _ := os.Open("../../../test/test_heartbeat_template.xml")
 	expectedStore := Store{
-		Templates: []Template{
-			Template{
+		Templates: map[uint32]Template{
+			144: Template{
 				TemplateUnits: []Unit{
 					field.String{
 						FieldDetails: field.Field{
@@ -59,6 +59,6 @@ func TestCanLoadHeartbeatTemplateFile(t *testing.T) {
 
 	areEqual := reflect.DeepEqual(expectedStore, store)
 	if !areEqual {
-		t.Errorf("The returned store and expected store were not equal:\nexpected:%s\nactual:%s", expectedStore, store)
+		t.Errorf("The returned store and expected store were not equal:\nexpected:%v\nactual:%v", expectedStore, store)
 	}
 }
