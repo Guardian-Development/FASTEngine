@@ -23,23 +23,26 @@ type fastEngine struct {
 // Deserialise takes a FAST encoded FIX message in bytes, decodes and turns it into a FIX message
 // Expected message format: (PMap (1+ bytes), templateId (1 + bytes), Message encoded from template with templateId)
 func (engine fastEngine) Deserialise(message *bytes.Buffer) (FixMessage, error) {
-	_, err := presencemap.New(message)
+	pMap, err := presencemap.New(message)
 	if err != nil {
 		return FixMessage{}, fmt.Errorf("Unable to create pMap for message, reason: %v", err)
 	}
 
-	// TODO: check pmap first, do we have a templateId, if we don't lets blow up with unsupported message type
-	templateID, err := fast.ReadUInt32(message)
-	if err != nil {
-		return FixMessage{}, err
+	if pMap.GetIsSetAndIncrement() {
+		templateID, err := fast.ReadUInt32(message)
+		if err != nil {
+			return FixMessage{}, err
+		}
+
+		if template, exists := engine.templateStore.Templates[templateID]; exists {
+			template.Deserialise(message)
+			return FixMessage{}, nil
+		}
+
+		return FixMessage{}, fmt.Errorf("No template found in store to deserialise message with ID: %d", templateID)
 	}
 
-	if template, exists := engine.templateStore.Templates[templateID]; exists {
-		template.Deserialise(message)
-		return FixMessage{}, nil
-	}
-
-	return FixMessage{}, fmt.Errorf("No template found in store to deserialise message with ID: %d", templateID)
+	return FixMessage{}, fmt.Errorf("Message not supported: message must have template ID encoded")
 }
 
 // New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided

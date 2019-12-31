@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+// ReadUInt32 reads the next FAST encoded value off the inputSource, treating it as a uint32 value. If the next value would overflow a uint32 an err is returned.
+// i.e. 00010010 10001000 would become 100100001000
 func ReadUInt32(inputSource *bytes.Buffer) (uint32, error) {
 	var value uint32 = 0
 
@@ -25,4 +27,27 @@ func ReadUInt32(inputSource *bytes.Buffer) (uint32, error) {
 	}
 
 	return 0, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
+}
+
+// ReadValue reads the next FAST encoded value off the inputSource, shifting each value by <<1 to remove the stop bit FAST encoding
+// i.e. 00010010 10001000 would become [00100100, 00010000]
+func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
+	value := make([]byte, 0)
+
+	for {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return nil, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			value = append(value, b<<1)
+			return value, nil
+		}
+
+		value = append(value, b<<1)
+	}
+
+	return value, nil
 }
