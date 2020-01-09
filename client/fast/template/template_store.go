@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Guardian-Development/fastengine/client/fast/fix"
+	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )
 
@@ -19,13 +21,21 @@ type Template struct {
 	TemplateUnits []Unit
 }
 
-func (template Template) Deserialise(inputSource *bytes.Buffer) {
-	//TODO: create FIX message, then go through each unit and deserialise into FIX message
-}
-
 // Unit represents an element within a FAST Template, with the ability to Serialise/Deserialise a part of a FAST message
 type Unit interface {
-	Deserialise(inputSource *bytes.Buffer)
+	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error
+}
+
+func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (*fix.Message, error) {
+	fixMessage := fix.New()
+	for _, unit := range template.TemplateUnits {
+		err := unit.Deserialise(inputSource, pMap, &fixMessage)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &fixMessage, nil
 }
 
 // New instance of the Store from the given FAST Templates XML file
