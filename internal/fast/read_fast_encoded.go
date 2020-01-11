@@ -29,7 +29,8 @@ func ReadUInt32(inputSource *bytes.Buffer) (uint32, error) {
 	return 0, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
 }
 
-// TODO: comment and test
+// ReadUInt64 reads the next FAST encoded value off the inputSource, treating it as a uint64 value. If the next value would overflow a uint64 an err is returned.
+// i.e. 00010010 10001000 would become 100100001000
 func ReadUInt64(inputSource *bytes.Buffer) (uint64, error) {
 	var value uint64 = 0
 
@@ -49,7 +50,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (uint64, error) {
 		value = value<<7 | uint64(b)
 	}
 
-	return 0, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
+	return 0, fmt.Errorf("More than 8 bytes have been read without reading a stop bit, this will overflow a uint64")
 }
 
 // ReadValue reads the next FAST encoded value off the inputSource, shifting each value by <<1 to remove the stop bit FAST encoding
@@ -71,10 +72,9 @@ func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 
 		value = append(value, b<<1)
 	}
-
-	return value, nil
 }
 
+//TODO: implement reading a string
 func ReadString(inputSource *bytes.Buffer) (string, error) {
 	return "", nil
 }

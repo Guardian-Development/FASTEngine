@@ -23,8 +23,11 @@ type String struct {
 func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
 	if field.FieldDetails.Operation.ShouldReadValue(pMap) {
 		value, err := fast.ReadString(inputSource)
-		// TODO: apply operation on value
-		fixContext.SetTag(field.FieldDetails.ID, value)
+		if err != nil {
+			return err
+		}
+		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
@@ -41,8 +44,11 @@ type UInt32 struct {
 func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
 	if field.FieldDetails.Operation.ShouldReadValue(pMap) {
 		value, err := fast.ReadUInt32(inputSource)
-		// TODO: apply operation on value
-		fixContext.SetTag(field.FieldDetails.ID, value)
+		if err != nil {
+			return err
+		}
+		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
@@ -59,8 +65,11 @@ type UInt64 struct {
 func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
 	if field.FieldDetails.Operation.ShouldReadValue(pMap) {
 		value, err := fast.ReadUInt64(inputSource)
-		// TODO: apply operation on value
-		fixContext.SetTag(field.FieldDetails.ID, value)
+		if err != nil {
+			return err
+		}
+		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
