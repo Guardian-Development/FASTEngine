@@ -25,7 +25,7 @@ func New(message *bytes.Buffer) (MessageHeader, error) {
 			return MessageHeader{}, err
 		}
 
-		return MessageHeader{PMap: &pMap, TemplateID: templateID}, nil
+		return MessageHeader{PMap: &pMap, TemplateID: templateID.Value}, nil
 	}
 
 	return MessageHeader{}, fmt.Errorf("Message not supported: message must have template ID encoded")

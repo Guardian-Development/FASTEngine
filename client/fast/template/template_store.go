@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Guardian-Development/fastengine/client/fast/fix"
+	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )

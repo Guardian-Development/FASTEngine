@@ -1,13 +1,17 @@
 package operation
 
 import (
+	"fmt"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
+	"github.com/Guardian-Development/fastengine/internal/fast/value"
+	"github.com/Guardian-Development/fastengine/internal/fix"
 )
 
 type Operation interface {
 	ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool
-	GetNotEncodedValue() (interface{}, error)
-	Apply(value interface{}) (interface{}, error)
+	GetNotEncodedValue() (fix.Value, error)
+	Apply(readValue value.Value) (fix.Value, error)
 }
 
 type None struct {
@@ -17,12 +21,12 @@ func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap, required bo
 	return true
 }
 
-func (operation None) GetNotEncodedValue() (interface{}, error) {
-	return "", nil
+func (operation None) GetNotEncodedValue() (fix.Value, error) {
+	return nil, nil
 }
 
-func (operation None) Apply(value interface{}) (interface{}, error) {
-	return value, nil
+func (operation None) Apply(readValue value.Value) (fix.Value, error) {
+	return convertToFixNoTransformation(readValue)
 }
 
 type Constant struct {
@@ -38,10 +42,25 @@ func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap, require
 	return false
 }
 
-func (operation Constant) GetNotEncodedValue() (interface{}, error) {
-	return operation.ConstantValue, nil
+func (operation Constant) GetNotEncodedValue() (fix.Value, error) {
+	return fix.NewRawValue(operation.ConstantValue), nil
 }
 
-func (operation Constant) Apply(value interface{}) (interface{}, error) {
-	return value, nil
+func (operation Constant) Apply(readValue value.Value) (fix.Value, error) {
+	return convertToFixNoTransformation(readValue)
+}
+
+func convertToFixNoTransformation(readValue value.Value) (fix.Value, error) {
+	switch t := readValue.(type) {
+	case value.NullValue:
+		return fix.NewRawValue(nil), nil
+	case value.StringValue:
+		return fix.NewRawValue(t.Value), nil
+	case value.UInt32Value:
+		return fix.NewRawValue(t.Value), nil
+	case value.UInt64Value:
+		return fix.NewRawValue(t.Value), nil
+	}
+
+	return nil, fmt.Errorf("Unsupported fast value for operation, value: %s", readValue)
 }

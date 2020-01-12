@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/Guardian-Development/fastengine/client/fast/fix"
+	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/client/fast/template"
 	"github.com/Guardian-Development/fastengine/internal/fast/header"
 )

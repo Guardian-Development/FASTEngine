@@ -8,7 +8,6 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template"
 )
 
-// TODO: handle optional value
 // TODO: handle repeating groups
 // TODO: create context
 
@@ -93,6 +92,42 @@ func TestCanDeserialiseMessageWithOptionalValueNotPresent(t *testing.T) {
 	tag34, _ := fixMessage.GetTag(34)
 	if tag34 != nil {
 		t.Errorf("Expected: nil, but got: %s", tag34)
+	}
+	tag52, _ := fixMessage.GetTag(52)
+	if tag52 != uint64(10) {
+		t.Errorf("Expected: 10, but got: %s", tag52)
+	}
+}
+
+func TestCanDeserialiseMessageWithOptionalValuePresent(t *testing.T) {
+	// Arrange
+	/*
+		Message format:
+		11000000           pmap
+		00000001 10010000  template 144
+		10000001           34 = 0
+		10001010           52 = 10
+	*/
+	message := bytes.NewBuffer([]byte{192, 1, 144, 129, 138})
+	file, _ := os.Open("../../../test/test_optional_value_template.xml")
+	templateStore, _ := template.New(file)
+	fastEngine := New(templateStore)
+
+	// Act
+	fixMessage, _ := fastEngine.Deserialise(message)
+
+	// Assert
+	tag1128, _ := fixMessage.GetTag(1128)
+	if tag1128 != "9" {
+		t.Errorf("Expected: 9, but got: %s", tag1128)
+	}
+	tag35, _ := fixMessage.GetTag(35)
+	if tag35 != "0" {
+		t.Errorf("Expected: 0, but got: %s", tag35)
+	}
+	tag34, _ := fixMessage.GetTag(34)
+	if tag34 != uint32(0) {
+		t.Errorf("Expected: 0, but got: %s", tag34)
 	}
 	tag52, _ := fixMessage.GetTag(52)
 	if tag52 != uint64(10) {

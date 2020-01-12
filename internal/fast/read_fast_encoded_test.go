@@ -18,7 +18,7 @@ func TestCanReadSingleByteUint32(t *testing.T) {
 		t.Errorf("Got an error reading uint32 when none was expected: %s", err)
 	}
 
-	if result != expectedUint {
+	if result.Value != expectedUint {
 		t.Errorf("Did not read the expected uint32, expected: %d, result: %d", expectedUint, result)
 	}
 }
@@ -36,7 +36,7 @@ func TestCanReadMultipleByteUint32(t *testing.T) {
 		t.Errorf("Got an error reading uint32 when none was expected: %s", err)
 	}
 
-	if result != expectedUint {
+	if result.Value != expectedUint {
 		t.Errorf("Did not read the expected uint32, expected: %d, result: %d", expectedUint, result)
 	}
 }
@@ -67,7 +67,7 @@ func TestCanReadSingleByteUint64(t *testing.T) {
 		t.Errorf("Got an error reading uint64 when none was expected: %s", err)
 	}
 
-	if result != expectedUint {
+	if result.Value != expectedUint {
 		t.Errorf("Did not read the expected uint64, expected: %d, result: %d", expectedUint, result)
 	}
 }
@@ -85,7 +85,7 @@ func TestCanReadMultipleByteUint64(t *testing.T) {
 		t.Errorf("Got an error reading uint32 when none was expected: %s", err)
 	}
 
-	if result != expectedUint {
+	if result.Value != expectedUint {
 		t.Errorf("Did not read the expected uint32, expected: %d, result: %d", expectedUint, result)
 	}
 }
