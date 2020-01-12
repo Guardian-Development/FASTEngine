@@ -109,8 +109,13 @@ func createFieldDetails(tagInTemplate *xml.Tag) (field.Field, error) {
 	if err != nil {
 		return fieldDetails, err
 	}
-
 	fieldDetails.Operation = operation
+
+	required, err := getRequiredField(tagInTemplate)
+	if err != nil {
+		return fieldDetails, err
+	}
+	fieldDetails.Required = required
 
 	return fieldDetails, nil
 }
@@ -150,4 +155,22 @@ func getOperation(tagInTemplate *xml.Tag) (operation.Operation, error) {
 	default:
 		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)
 	}
+}
+
+func getRequiredField(tagInTemplate *xml.Tag) (bool, error) {
+	fieldPresence := tagInTemplate.Attributes["presence"]
+
+	if fieldPresence == "" {
+		return true, nil
+	}
+
+	if fieldPresence == "optional" {
+		return false, nil
+	}
+
+	if fieldPresence == "mandatory" {
+		return true, nil
+	}
+
+	return false, fmt.Errorf("Unsupported presence attribute, must be optional or mandatory but found: %s", fieldPresence)
 }

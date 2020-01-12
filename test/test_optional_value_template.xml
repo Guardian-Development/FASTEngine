@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+    <template name="OptionalTemplate" id="144" dictionary="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <string name="ApplVerID" id="1128">
+            <constant value="9"/>
+        </string>
+        <string name="MsgType" id="35">
+            <constant value="0"/>
+        </string>
+        <uInt32 name="MsgSeqNum" id="34" presence="optional"/>
+        <uInt64 name="SendingTime" id="52"/>
+    </template>
+</templates>

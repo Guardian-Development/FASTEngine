@@ -5,7 +5,7 @@ import (
 )
 
 type Operation interface {
-	ShouldReadValue(pMap *presencemap.PresenceMap) bool
+	ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool
 	GetNotEncodedValue() (interface{}, error)
 	Apply(value interface{}) (interface{}, error)
 }
@@ -13,7 +13,7 @@ type Operation interface {
 type None struct {
 }
 
-func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
+func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool {
 	return true
 }
 
@@ -29,7 +29,12 @@ type Constant struct {
 	ConstantValue interface{}
 }
 
-func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
+// ShouldReadValue will return false is the value is not marked as optional. If it is marked as optional, it will return the result of reading the
+// next value in the pMap
+func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool {
+	if !required {
+		return pMap.GetIsSetAndIncrement()
+	}
 	return false
 }
 
