@@ -8,6 +8,9 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template"
 )
 
+// TODO: implement all other primitive types (decimal, int32, int64 etc etc look at spec)
+// TODO: add one of each type to the test_optional_value_template, then update tests
+// TODO: look at how the different operations work
 // TODO: handle repeating groups
 // TODO: create context
 

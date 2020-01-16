@@ -3,6 +3,7 @@ package fast
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
@@ -32,7 +33,6 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 	return value.UInt32Value{}, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
 }
 
-// TODO: test
 // ReadOptionalUInt32 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned. Due to needing to use 0 to.
 // Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1.
 // i.e. 10000000 would become nil, 10000001 would become 0
@@ -76,7 +76,6 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 	return value.UInt64Value{}, fmt.Errorf("More than 8 bytes have been read without reading a stop bit, this will overflow a uint64")
 }
 
-// TODO: test
 // ReadOptionalUInt64 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned. Due to needing to use 0 to.
 // Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1.
 // i.e. 10000000 would become nil, 10000001 would become 0
@@ -95,17 +94,68 @@ func ReadOptionalUInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	return readValue, nil
 }
 
-//TODO: implement reading a string
+// ReadString reads an ASCII encoded string off the buffer. This can be done as ASCII is a subset of UTF-8 which is what GO uses to represent strings.
 func ReadString(inputSource *bytes.Buffer) (value.StringValue, error) {
-	return value.StringValue{}, nil
+	stringBuilder := strings.Builder{}
+	return readString(inputSource, &stringBuilder)
 }
 
-//TODO: implement reading a string
+// ReadOptionalString reads an ASCII encoded string off the buffer. If the first value is 10000000, this is seen as null. If the first values are
+// 00000000 10000000 this is seen as an empty string.
 func ReadOptionalString(inputSource *bytes.Buffer) (value.Value, error) {
-	return value.StringValue{}, nil
+	possibleNullIndiciator, err := inputSource.ReadByte()
+	if err != nil {
+		return value.StringValue{}, err
+	}
+
+	// 128 = 10000000, this is seen as null in optional string
+	if possibleNullIndiciator == 128 {
+		return value.NullValue{}, nil
+	}
+
+	possibleEmptyStringIndicator, err := inputSource.ReadByte()
+	if err != nil {
+		return value.StringValue{}, err
+	}
+
+	// 0 = 00000000, 128 = 10000000, this is seen as empty string
+	if possibleNullIndiciator == 0 && possibleEmptyStringIndicator == 128 {
+		return value.StringValue{Value: ""}, nil
+	}
+
+	stringBuilder := strings.Builder{}
+	appendNotNullChar(possibleNullIndiciator, &stringBuilder)
+	appendNotNullChar(possibleEmptyStringIndicator, &stringBuilder)
+
+	return readString(inputSource, &stringBuilder)
 }
 
-// TODO: test
+func readString(inputSource *bytes.Buffer, stringBuilder *strings.Builder) (value.StringValue, error) {
+	for {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.StringValue{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := byte(b & 127)
+			appendNotNullChar(removedStopBit, stringBuilder)
+
+			return value.StringValue{Value: stringBuilder.String()}, nil
+		}
+
+		// no stop bit present so 0 in most significant bit, so just add as 7 bit char to string
+		stringBuilder.WriteByte(b)
+	}
+}
+
+func appendNotNullChar(char byte, stringBuilder *strings.Builder) {
+	if char != 0 {
+		stringBuilder.WriteByte(char)
+	}
+}
+
 // ReadValue reads the next FAST encoded value off the inputSource, shifting each value by <<1 to remove the stop bit FAST encoding
 // i.e. 00010010 10001000 would become [00100100, 00010000]
 func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
