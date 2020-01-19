@@ -69,6 +69,32 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 	return err
 }
 
+// UInt32 represents a FAST template <int32/> type
+type Int32 struct {
+	FieldDetails Field
+}
+
+func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
+	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+		var value value.Value
+		var err error
+
+		if field.FieldDetails.Required {
+			value, err = fast.ReadInt32(inputSource)
+		} else {
+			value, err = fast.ReadOptionalInt32(inputSource)
+		}
+
+		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
+		return err
+	}
+
+	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	fixContext.SetTag(field.FieldDetails.ID, value)
+	return err
+}
+
 // UInt64 represents a FAST template <uInt64/> type
 type UInt64 struct {
 	FieldDetails Field

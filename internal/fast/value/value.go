@@ -11,6 +11,10 @@ type UInt32Value struct {
 	Value uint32
 }
 
+type Int32Value struct {
+	Value int32
+}
+
 type UInt64Value struct {
 	Value uint64
 }
