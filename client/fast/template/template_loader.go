@@ -14,7 +14,9 @@ const templateTag = "template"
 
 const stringTag = "string"
 const uInt32Tag = "uInt32"
+const int32Tag = "int32"
 const uInt64Tag = "uInt64"
+const int64Tag = "int64"
 
 const constantOperation = "constant"
 
@@ -83,8 +85,24 @@ func createTemplateUnit(tagInTemplate *xml.Tag) (Unit, error) {
 			return nil, err
 		}
 		return field, nil
+	case int32Tag:
+		field := field.Int32{}
+		fieldDetails, err := createFieldDetails(tagInTemplate)
+		field.FieldDetails = fieldDetails
+		if err != nil {
+			return nil, err
+		}
+		return field, nil
 	case uInt64Tag:
 		field := field.UInt64{}
+		fieldDetails, err := createFieldDetails(tagInTemplate)
+		field.FieldDetails = fieldDetails
+		if err != nil {
+			return nil, err
+		}
+		return field, nil
+	case int64Tag:
+		field := field.Int64{}
 		fieldDetails, err := createFieldDetails(tagInTemplate)
 		field.FieldDetails = fieldDetails
 		if err != nil {

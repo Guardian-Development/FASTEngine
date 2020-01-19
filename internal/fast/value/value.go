@@ -19,5 +19,9 @@ type UInt64Value struct {
 	Value uint64
 }
 
+type Int64Value struct {
+	Value int64
+}
+
 type NullValue struct {
 }

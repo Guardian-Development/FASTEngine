@@ -58,7 +58,11 @@ func convertToFixNoTransformation(readValue value.Value) (fix.Value, error) {
 		return fix.NewRawValue(t.Value), nil
 	case value.UInt32Value:
 		return fix.NewRawValue(t.Value), nil
+	case value.Int32Value:
+		return fix.NewRawValue(t.Value), nil
 	case value.UInt64Value:
+		return fix.NewRawValue(t.Value), nil
+	case value.Int64Value:
 		return fix.NewRawValue(t.Value), nil
 	}
 

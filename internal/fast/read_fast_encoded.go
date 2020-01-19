@@ -51,7 +51,7 @@ func ReadOptionalUInt32(inputSource *bytes.Buffer) (value.Value, error) {
 	return readValue, nil
 }
 
-// ReadInt32 reads the next FAST encoded value off the inputSource, treating it as an int32 value (2's compliment encoded). If the next value would overflow a int32 an err is returned.
+// ReadInt32 reads the next FAST encoded value off the inputSource, treating it as an int32 value (2's compliment encoded). If the next value would overflow an int32 an err is returned.
 // i.e. 11111111 01001110 would become 11111111001110 -> 11001110 -> -50
 func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 	var readValue int32 = 0
@@ -151,6 +151,67 @@ func ReadOptionalUInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	}
 
 	readValue.Value = readValue.Value - 1
+
+	return readValue, nil
+}
+
+// ReadInt64 reads the next FAST encoded value off the inputSource, treating it as an int64 value (2's compliment encoded). If the next value would overflow an int64 an err is returned.
+// i.e. 11111111 01001110 would become 11111111001110 -> 11001110 -> -50
+func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
+	var readValue int64 = 0
+
+	b, err := inputSource.ReadByte()
+	if err != nil {
+		return value.Int64Value{}, err
+	}
+
+	// 64 = 01000000, indicating this is negative so we should start with all 1's int64 (-1)
+	if isNegative := b & 64; isNegative == 64 {
+		readValue = -1
+	}
+
+	// reset byte buffer by the one byte we had to read to determine negative/positive number
+	err = inputSource.UnreadByte()
+	if err != nil {
+		return value.Int64Value{}, err
+	}
+
+	for i := 0; i < 8; i++ {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.Int64Value{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := int64(b & 127)
+			readValue = readValue<<7 | removedStopBit
+			return value.Int64Value{Value: readValue}, nil
+		}
+
+		// no stop bit present so 0 in most significant bit, add this byte to the int we are reading
+		readValue = readValue<<7 | int64(b)
+	}
+
+	return value.Int64Value{}, fmt.Errorf("More than 8 bytes have been read without reading a stop bit, this will overflow an int64")
+}
+
+// ReadOptionalInt64 reads an int64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
+// Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1 for positive numbers only.
+// i.e. 10000000 would become nil, 10000001 would become 0
+func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
+	readValue, err := ReadInt64(inputSource)
+	if err != nil {
+		return value.Int64Value{}, err
+	}
+
+	if readValue.Value == int64(0) {
+		return value.NullValue{}, nil
+	}
+
+	if readValue.Value > 0 {
+		readValue.Value = readValue.Value - 1
+	}
 
 	return readValue, nil
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+    <template name="AllSupportedTypesAndTags" id="144" dictionary="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <string name="String" id="1"> 
+            <constant value="Hello"/>
+        </string>
+        <uInt32 name="unsigned int32" id="2">
+            <constant value="10"/>
+        </uInt32>
+        <int32 name="signed int32" id="3">
+            <constant value="-10"/>
+        </int32>
+        <uInt64 name="unsigned int64" id="4">
+            <constant value="10"/>
+        </uInt64>
+        <int64 name="signed int64" id="5">
+            <constant value="-10"/>
+        </int64>
+    </template>
+</templates>

@@ -321,6 +321,147 @@ func TestReadOptionalUInt64ReturnsValueMinusOneForNonNilValues(t *testing.T) {
 	}
 }
 
+func TestCanReadPositiveSingleByteInt64(t *testing.T) {
+	// Arrange 138 = (10001010)
+	expectedIntAsBytes := bytes.NewBuffer([]byte{138})
+	var expectedUint int64 = 10
+
+	// Act
+	result, err := ReadInt64(expectedIntAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading int64 when none was expected: %s", err)
+	}
+
+	if result.Value != expectedUint {
+		t.Errorf("Did not read the expected int64, expected: %#v, result: %#v", expectedUint, result)
+	}
+}
+
+func TestCanReadNegativeSingleByteInt64(t *testing.T) {
+	// Arrange 202 = (11001010)
+	expectedIntAsBytes := bytes.NewBuffer([]byte{202})
+	var expectedUint int64 = -54
+
+	// Act
+	result, err := ReadInt64(expectedIntAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading int64 when none was expected: %s", err)
+	}
+
+	if result.Value != expectedUint {
+		t.Errorf("Did not read the expected int64, expected: %#v, result: %#v", expectedUint, result)
+	}
+}
+
+func TestCanReadPositiveMultipleByteInt64(t *testing.T) {
+	// Arrange 101455882 = (00110000 00110000 00110000 10001010)
+	expectedUintAsBytes := bytes.NewBuffer([]byte{48, 48, 48, 138})
+	var expectedUint int64 = 101455882
+
+	// Act
+	result, err := ReadInt64(expectedUintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading int64 when none was expected: %s", err)
+	}
+
+	if result.Value != expectedUint {
+		t.Errorf("Did not read the expected int64, expected: %#v, result: %#v", expectedUint, result)
+	}
+}
+
+func TestCanReadNegativeMultipleByteInt64(t *testing.T) {
+	// Arrange -101455882 = (01111111 01001111 01001111 01001111 11110110)
+	expectedUintAsBytes := bytes.NewBuffer([]byte{127, 79, 79, 79, 246})
+	var expectedUint int64 = -101455882
+
+	// Act
+	result, err := ReadInt64(expectedUintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading int64 when none was expected: %s", err)
+	}
+
+	if result.Value != expectedUint {
+		t.Errorf("Did not read the expected int64, expected: %#v, result: %#v", expectedUint, result)
+	}
+}
+
+func TestDoesNotOverflowInt64IfStopBitNotFoundWithinBounds(t *testing.T) {
+	// Arrange
+	expectedIntAsBytes := bytes.NewBuffer([]byte{79, 79, 79, 79, 79, 79, 79, 79, 246})
+
+	// Act
+	_, err := ReadInt64(expectedIntAsBytes)
+
+	// Assert
+	if err == nil || err.Error() != "More than 8 bytes have been read without reading a stop bit, this will overflow an int64" {
+		t.Errorf("Expected error about uint64 overflow but got: %v", err)
+	}
+}
+
+func TestReadOptionalInt64ReturnsNilIfZeroEncoded(t *testing.T) {
+	// Arrange nil = 10000000
+	expectedUintAsBytes := bytes.NewBuffer([]byte{128})
+	expectedNil := value.NullValue{}
+
+	// Act
+	result, err := ReadOptionalInt64(expectedUintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional int64 when none was expected: %s", err)
+	}
+
+	if result != expectedNil {
+		t.Errorf("Did not read the expected null value, expected: nil, result: %#v", result)
+	}
+}
+
+func TestReadOptionalPositiveInt64ReturnsValueMinusOneForNonNilValues(t *testing.T) {
+	// Arrange -101455882 = (01111111 01001111 01001111 01001111 11110110)
+	expectedUintAsBytes := bytes.NewBuffer([]byte{127, 79, 79, 79, 246})
+	expectedResult := value.Int64Value{Value: -101455882}
+
+	// Act
+	result, err := ReadOptionalInt64(expectedUintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional int64 when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedResult, result)
+	if !areEqual {
+		t.Errorf("Did not read the expected int64 value, expected: %#v, result: %#v", expectedResult, result)
+	}
+}
+
+func TestReadOptionalNegativeInt64ReturnsValueMinusOneForNonNilValues(t *testing.T) {
+	// Arrange 101455882 = (00110000 00110000 00110000 10001010)
+	expectedUintAsBytes := bytes.NewBuffer([]byte{48, 48, 48, 138})
+	expectedResult := value.Int64Value{Value: 101455881}
+
+	// Act
+	result, err := ReadOptionalInt64(expectedUintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional int64 when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedResult, result)
+	if !areEqual {
+		t.Errorf("Did not read the expected int64 value, expected: %#v, result: %#v", expectedResult, result)
+	}
+}
+
 func TestCanReadSingleByteString(t *testing.T) {
 	// Arrange 'A' = (11000001)
 	expectedStringAsBytes := bytes.NewBuffer([]byte{193})
