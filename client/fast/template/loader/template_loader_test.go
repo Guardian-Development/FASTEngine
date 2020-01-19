@@ -1,55 +1,56 @@
-package template
+package loader
 
 import (
 	"os"
 	"reflect"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/internal/fast/field"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 )
 
 func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../../test/template-loader-tests/test_load_all_supported_types.xml")
-	expectedStore := Store{
-		Templates: map[uint32]Template{
-			144: Template{
-				TemplateUnits: []Unit{
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
 					field.String{
 						FieldDetails: field.Field{
-							ID:        1,
-							Required:  true,
-							Operation: operation.None{},
+							ID:       1,
+							Required: true,
 						},
+						Operation: operation.None{},
 					},
 					field.UInt32{
 						FieldDetails: field.Field{
-							ID:        2,
-							Required:  true,
-							Operation: operation.None{},
+							ID:       2,
+							Required: true,
 						},
+						Operation: operation.None{},
 					},
 					field.Int32{
 						FieldDetails: field.Field{
-							ID:        3,
-							Required:  true,
-							Operation: operation.None{},
+							ID:       3,
+							Required: true,
 						},
+						Operation: operation.None{},
 					},
 					field.UInt64{
 						FieldDetails: field.Field{
-							ID:        4,
-							Required:  true,
-							Operation: operation.None{},
+							ID:       4,
+							Required: true,
 						},
+						Operation: operation.None{},
 					},
 					field.Int64{
 						FieldDetails: field.Field{
-							ID:        5,
-							Required:  true,
-							Operation: operation.None{},
+							ID:       5,
+							Required: true,
 						},
+						Operation: operation.None{},
 					},
 				},
 			},
@@ -57,7 +58,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 	}
 
 	// Act
-	store, err := New(file)
+	store, err := Load(file)
 
 	// Assert
 	if err != nil {
@@ -72,45 +73,45 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 
 func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../../test/template-loader-tests/test_load_all_supported_optional_types.xml")
-	expectedStore := Store{
-		Templates: map[uint32]Template{
-			144: Template{
-				TemplateUnits: []Unit{
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_optional_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
 					field.String{
 						FieldDetails: field.Field{
-							ID:        1,
-							Required:  false,
-							Operation: operation.None{},
+							ID:       1,
+							Required: false,
 						},
+						Operation: operation.None{},
 					},
 					field.UInt32{
 						FieldDetails: field.Field{
-							ID:        2,
-							Required:  false,
-							Operation: operation.None{},
+							ID:       2,
+							Required: false,
 						},
+						Operation: operation.None{},
 					},
 					field.Int32{
 						FieldDetails: field.Field{
-							ID:        3,
-							Required:  false,
-							Operation: operation.None{},
+							ID:       3,
+							Required: false,
 						},
+						Operation: operation.None{},
 					},
 					field.UInt64{
 						FieldDetails: field.Field{
-							ID:        4,
-							Required:  false,
-							Operation: operation.None{},
+							ID:       4,
+							Required: false,
 						},
+						Operation: operation.None{},
 					},
 					field.Int64{
 						FieldDetails: field.Field{
-							ID:        5,
-							Required:  false,
-							Operation: operation.None{},
+							ID:       5,
+							Required: false,
 						},
+						Operation: operation.None{},
 					},
 				},
 			},
@@ -118,7 +119,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 	}
 
 	// Act
-	store, err := New(file)
+	store, err := Load(file)
 
 	// Assert
 	if err != nil {
@@ -132,48 +133,46 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 }
 
 func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
-	t.Skip("TODO BUG: constant not loading type information, need to refactor loader")
-
 	// Arrange
-	file, _ := os.Open("../../../test/template-loader-tests/test_load_all_supported_operations.xml")
-	expectedStore := Store{
-		Templates: map[uint32]Template{
-			144: Template{
-				TemplateUnits: []Unit{
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_operations.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
 					field.String{
 						FieldDetails: field.Field{
-							ID:        1,
-							Required:  true,
-							Operation: operation.Constant{ConstantValue: "Hello"},
+							ID:       1,
+							Required: true,
 						},
+						Operation: operation.Constant{ConstantValue: "Hello"},
 					},
 					field.UInt32{
 						FieldDetails: field.Field{
-							ID:        2,
-							Required:  true,
-							Operation: operation.Constant{ConstantValue: uint32(10)},
+							ID:       2,
+							Required: true,
 						},
+						Operation: operation.Constant{ConstantValue: uint32(10)},
 					},
 					field.Int32{
 						FieldDetails: field.Field{
-							ID:        3,
-							Required:  true,
-							Operation: operation.Constant{ConstantValue: int32(-10)},
+							ID:       3,
+							Required: true,
 						},
+						Operation: operation.Constant{ConstantValue: int32(-10)},
 					},
 					field.UInt64{
 						FieldDetails: field.Field{
-							ID:        4,
-							Required:  true,
-							Operation: operation.Constant{ConstantValue: uint64(10)},
+							ID:       4,
+							Required: true,
 						},
+						Operation: operation.Constant{ConstantValue: uint64(10)},
 					},
 					field.Int64{
 						FieldDetails: field.Field{
-							ID:        5,
-							Required:  true,
-							Operation: operation.Constant{ConstantValue: int64(-10)},
+							ID:       5,
+							Required: true,
 						},
+						Operation: operation.Constant{ConstantValue: int64(-10)},
 					},
 				},
 			},
@@ -181,7 +180,7 @@ func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
 	}
 
 	// Act
-	store, err := New(file)
+	store, err := Load(file)
 
 	// Assert
 	if err != nil {

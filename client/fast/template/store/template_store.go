@@ -1,14 +1,10 @@
-package template
+package store
 
 import (
 	"bytes"
-	"encoding/xml"
-	"fmt"
-	"os"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
-	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )
 
 // Store represents a loaded set of Templates that can be used to Serialise/Deserialise FAST messages
@@ -36,20 +32,4 @@ func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 	}
 
 	return &fixMessage, nil
-}
-
-// New instance of the Store from the given FAST Templates XML file
-func New(templateFile *os.File) (Store, error) {
-	decoder := xml.NewDecoder(templateFile)
-	xmlTags, err := tokenxml.LoadTagsFrom(decoder)
-
-	if err != nil {
-		return Store{}, err
-	}
-
-	if xmlTags.Type != templatesTag {
-		return Store{}, fmt.Errorf("expected the root level of tag of the templateFile to be of type <templates> but was: %s", xmlTags.Type)
-	}
-
-	return loadStoreFromXML(xmlTags)
 }

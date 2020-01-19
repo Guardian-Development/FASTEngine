@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
 // TODO: implement decimal, byte vector, unicode string
@@ -18,7 +18,7 @@ func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange
 	message := bytes.NewBuffer([]byte{192, 1, 150, 130, 210, 129, 210, 130, 131})
 	file, _ := os.Open("../../../test/test_heartbeat_template.xml")
-	templateStore, _ := template.New(file)
+	templateStore, _ := loader.Load(file)
 	fastEngine := New(templateStore)
 
 	// Act
@@ -41,7 +41,7 @@ func TestCanDeserialiseHeartbeatMessageBasedOnTemplateInTemplateStore(t *testing
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 138, 139})
 	file, _ := os.Open("../../../test/test_heartbeat_template.xml")
-	templateStore, _ := template.New(file)
+	templateStore, _ := loader.Load(file)
 	fastEngine := New(templateStore)
 
 	// Act
@@ -77,7 +77,7 @@ func TestCanDeserialiseMessageWithOptionalValueNotPresent(t *testing.T) {
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 128, 138})
 	file, _ := os.Open("../../../test/test_optional_value_template.xml")
-	templateStore, _ := template.New(file)
+	templateStore, _ := loader.Load(file)
 	fastEngine := New(templateStore)
 
 	// Act
@@ -113,7 +113,7 @@ func TestCanDeserialiseMessageWithOptionalValuePresent(t *testing.T) {
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 129, 138})
 	file, _ := os.Open("../../../test/test_optional_value_template.xml")
-	templateStore, _ := template.New(file)
+	templateStore, _ := loader.Load(file)
 	fastEngine := New(templateStore)
 
 	// Act

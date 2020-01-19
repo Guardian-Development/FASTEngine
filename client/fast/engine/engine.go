@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/client/fast/template"
+	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/internal/fast/header"
 )
 
@@ -14,7 +14,7 @@ type FastEngine interface {
 }
 
 type fastEngine struct {
-	templateStore template.Store
+	templateStore store.Store
 }
 
 // Deserialise takes a FAST encoded FIX message in bytes, decodes and turns it into a FIX message
@@ -33,7 +33,7 @@ func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error
 }
 
 // New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided
-func New(templateStore template.Store) FastEngine {
+func New(templateStore store.Store) FastEngine {
 	return fastEngine{
 		templateStore: templateStore,
 	}

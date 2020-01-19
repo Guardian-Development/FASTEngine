@@ -12,18 +12,18 @@ import (
 
 // Field contains information about a TemplateUnit within a FAST Template
 type Field struct {
-	ID        uint64
-	Operation operation.Operation
-	Required  bool
+	ID       uint64
+	Required bool
 }
 
 // String represents a FAST template <string/> type
 type String struct {
 	FieldDetails Field
+	Operation    operation.Operation
 }
 
 func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
-	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
 
@@ -33,12 +33,12 @@ func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 			value, err = fast.ReadOptionalString(inputSource)
 		}
 
-		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
 		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
-	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	value, err := field.Operation.GetNotEncodedValue()
 	fixContext.SetTag(field.FieldDetails.ID, value)
 	return err
 }
@@ -46,10 +46,11 @@ func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 // UInt32 represents a FAST template <uInt32/> type
 type UInt32 struct {
 	FieldDetails Field
+	Operation    operation.Operation
 }
 
 func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
-	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
 
@@ -59,12 +60,12 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 			value, err = fast.ReadOptionalUInt32(inputSource)
 		}
 
-		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
 		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
-	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	value, err := field.Operation.GetNotEncodedValue()
 	fixContext.SetTag(field.FieldDetails.ID, value)
 	return err
 }
@@ -72,10 +73,11 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 // Int32 represents a FAST template <int32/> type
 type Int32 struct {
 	FieldDetails Field
+	Operation    operation.Operation
 }
 
 func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
-	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
 
@@ -85,12 +87,12 @@ func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 			value, err = fast.ReadOptionalInt32(inputSource)
 		}
 
-		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
 		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
-	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	value, err := field.Operation.GetNotEncodedValue()
 	fixContext.SetTag(field.FieldDetails.ID, value)
 	return err
 }
@@ -98,10 +100,11 @@ func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 // UInt64 represents a FAST template <uInt64/> type
 type UInt64 struct {
 	FieldDetails Field
+	Operation    operation.Operation
 }
 
 func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
-	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
 
@@ -111,12 +114,12 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 			value, err = fast.ReadOptionalUInt64(inputSource)
 		}
 
-		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
 		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
-	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	value, err := field.Operation.GetNotEncodedValue()
 	fixContext.SetTag(field.FieldDetails.ID, value)
 	return err
 }
@@ -124,10 +127,11 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 // Int64 represents a FAST template <int64/> type
 type Int64 struct {
 	FieldDetails Field
+	Operation    operation.Operation
 }
 
 func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error {
-	if field.FieldDetails.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
 
@@ -137,12 +141,12 @@ func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 			value, err = fast.ReadOptionalInt64(inputSource)
 		}
 
-		transformedValue, err := field.FieldDetails.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
 		fixContext.SetTag(field.FieldDetails.ID, transformedValue)
 		return err
 	}
 
-	value, err := field.FieldDetails.Operation.GetNotEncodedValue()
+	value, err := field.Operation.GetNotEncodedValue()
 	fixContext.SetTag(field.FieldDetails.ID, value)
 	return err
 }
