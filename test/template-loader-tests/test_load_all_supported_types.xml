@@ -6,5 +6,10 @@
         <int32 name="signed int32" id="3"/>
         <uInt64 name="unsigned int64" id="4"/>
         <int64 name="signed int64" id="5"/>
+        <decimal name="decimal" id="6"/>
+        <decimal name="decimal with exp/man" id="7">
+            <exponent />
+            <mantissa />
+        </decimal>
     </template>
 </templates>

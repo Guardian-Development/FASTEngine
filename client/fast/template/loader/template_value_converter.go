@@ -1,11 +1,23 @@
 package loader
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type valueConverter func(string) (interface{}, error)
 
 func toString(value string) (interface{}, error) {
 	return value, nil
+}
+
+// TODO:
+func toMantissa(value string) (interface{}, error) {
+	return 0, nil
+}
+
+// TODO:
+func toExponent(value string) (interface{}, error) {
+	return 0, nil
 }
 
 func toInt32(value string) (interface{}, error) {

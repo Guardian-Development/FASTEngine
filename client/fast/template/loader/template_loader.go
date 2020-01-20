@@ -20,6 +20,9 @@ const uInt32Tag = "uInt32"
 const int32Tag = "int32"
 const uInt64Tag = "uInt64"
 const int64Tag = "int64"
+const decimalTag = "decimal"
+const exponentTag = "exponent"
+const mantissaTag = "mantissa"
 
 const constantOperation = "constant"
 
@@ -123,6 +126,43 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			return nil, err
 		}
 		return field.Int64{FieldDetails: fieldDetails, Operation: operation}, nil
+	case decimalTag:
+		if len(tagInTemplate.NestedTags) < 2 {
+			exponentOperation, err := getOperation(tagInTemplate, toExponent)
+			if err != nil {
+				return nil, err
+			}
+			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+			mantissaOperation, err := getOperation(tagInTemplate, toMantissa)
+			if err != nil {
+				return nil, err
+			}
+			mantissaFieldFieldDetails := fieldDetails
+			mantissaFieldFieldDetails.Required = true
+			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+
+			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
+		}
+		if len(tagInTemplate.NestedTags) == 2 {
+			exponentTag := tagInTemplate.NestedTags[0]
+			exponentOperation, err := getOperation(&exponentTag, toInt32)
+			if err != nil {
+				return nil, err
+			}
+			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+
+			mantissaTag := tagInTemplate.NestedTags[1]
+			mantissaOperation, err := getOperation(&mantissaTag, toInt64)
+			if err != nil {
+				return nil, err
+			}
+			mantissaFieldFieldDetails := fieldDetails
+			mantissaFieldFieldDetails.Required = true
+			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+
+			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
+		}
+		return nil, fmt.Errorf("decimal must be declared with either no operation (empty), or with <exponent/> and <mantissa/>")
 	default:
 		return nil, fmt.Errorf("Unsupported tag type: %s", tagInTemplate.Type)
 	}
