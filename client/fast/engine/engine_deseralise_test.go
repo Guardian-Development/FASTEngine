@@ -13,6 +13,7 @@ import (
 // TODO: look at how the different operations work
 // TODO: handle repeating groups
 // TODO: create context
+// TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange

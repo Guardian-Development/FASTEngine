@@ -22,7 +22,7 @@ func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap, required bo
 }
 
 func (operation None) GetNotEncodedValue() (fix.Value, error) {
-	return nil, nil
+	return fix.NullValue{}, nil
 }
 
 func (operation None) Apply(readValue value.Value) (fix.Value, error) {
