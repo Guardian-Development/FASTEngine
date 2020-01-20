@@ -19,16 +19,19 @@ type Template struct {
 
 // Unit represents an element within a FAST Template, with the ability to Serialise/Deserialise a part of a FAST message
 type Unit interface {
-	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, fixContext *fix.Message) error
+	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error)
+	GetTagId() uint64
 }
 
 func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (*fix.Message, error) {
 	fixMessage := fix.New()
 	for _, unit := range template.TemplateUnits {
-		err := unit.Deserialise(inputSource, pMap, &fixMessage)
+		value, err := unit.Deserialise(inputSource, pMap)
 		if err != nil {
 			return nil, err
 		}
+		tagID := unit.GetTagId()
+		fixMessage.SetTag(tagID, value)
 	}
 
 	return &fixMessage, nil

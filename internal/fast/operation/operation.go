@@ -3,9 +3,9 @@ package operation
 import (
 	"fmt"
 
+	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
-	"github.com/Guardian-Development/fastengine/internal/fix"
 )
 
 type Operation interface {
