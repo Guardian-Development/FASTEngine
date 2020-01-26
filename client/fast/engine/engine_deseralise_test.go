@@ -14,6 +14,8 @@ import (
 // TODO: handle repeating groups
 // TODO: create context
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
+// TODO: evaluate errors properly and make them useful
+// TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange

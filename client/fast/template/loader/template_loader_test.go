@@ -213,9 +213,6 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 }
 
 func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
-	// Arrange
-	t.Skipf("not implemented template extracting man/exp for constant decimal")
-
 	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_operations.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
@@ -266,14 +263,14 @@ func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
 								ID:       6,
 								Required: true,
 							},
-							Operation: operation.Constant{ConstantValue: int32(5)},
+							Operation: operation.Constant{ConstantValue: int32(-1)},
 						},
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       6,
 								Required: true,
 							},
-							Operation: operation.Constant{ConstantValue: int64(0)},
+							Operation: operation.Constant{ConstantValue: int64(57)},
 						},
 					},
 					field.Decimal{

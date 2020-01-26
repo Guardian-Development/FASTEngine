@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
+	"github.com/Guardian-Development/fastengine/internal/converter"
 	"github.com/Guardian-Development/fastengine/internal/fast/field"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
@@ -14,7 +15,6 @@ import (
 
 const templatesTag = "templates"
 const templateTag = "template"
-
 const stringTag = "string"
 const uInt32Tag = "uInt32"
 const int32Tag = "int32"
@@ -25,6 +25,8 @@ const exponentTag = "exponent"
 const mantissaTag = "mantissa"
 
 const constantOperation = "constant"
+
+type valueConverter func(string) (interface{}, error)
 
 // Load instance of the Store from the given FAST Templates XML file
 func Load(templateFile *os.File) (store.Store, error) {
@@ -97,43 +99,43 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 
 	switch tagInTemplate.Type {
 	case stringTag:
-		operation, err := getOperation(tagInTemplate, toString)
+		operation, err := getOperation(tagInTemplate, converter.ToString)
 		if err != nil {
 			return nil, err
 		}
 		return field.String{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt32Tag:
-		operation, err := getOperation(tagInTemplate, toUInt32)
+		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
 		if err != nil {
 			return nil, err
 		}
 		return field.UInt32{FieldDetails: fieldDetails, Operation: operation}, nil
 	case int32Tag:
-		operation, err := getOperation(tagInTemplate, toInt32)
+		operation, err := getOperation(tagInTemplate, converter.ToInt32)
 		if err != nil {
 			return nil, err
 		}
 		return field.Int32{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt64Tag:
-		operation, err := getOperation(tagInTemplate, toUInt64)
+		operation, err := getOperation(tagInTemplate, converter.ToUInt64)
 		if err != nil {
 			return nil, err
 		}
 		return field.UInt64{FieldDetails: fieldDetails, Operation: operation}, nil
 	case int64Tag:
-		operation, err := getOperation(tagInTemplate, toInt64)
+		operation, err := getOperation(tagInTemplate, converter.ToInt64)
 		if err != nil {
 			return nil, err
 		}
 		return field.Int64{FieldDetails: fieldDetails, Operation: operation}, nil
 	case decimalTag:
 		if len(tagInTemplate.NestedTags) < 2 {
-			exponentOperation, err := getOperation(tagInTemplate, toExponent)
+			exponentOperation, err := getOperation(tagInTemplate, converter.ToExponent)
 			if err != nil {
 				return nil, err
 			}
 			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
-			mantissaOperation, err := getOperation(tagInTemplate, toMantissa)
+			mantissaOperation, err := getOperation(tagInTemplate, converter.ToMantissa)
 			if err != nil {
 				return nil, err
 			}
@@ -145,14 +147,14 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 		}
 		if len(tagInTemplate.NestedTags) == 2 {
 			exponentTag := tagInTemplate.NestedTags[0]
-			exponentOperation, err := getOperation(&exponentTag, toInt32)
+			exponentOperation, err := getOperation(&exponentTag, converter.ToInt32)
 			if err != nil {
 				return nil, err
 			}
 			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
 
 			mantissaTag := tagInTemplate.NestedTags[1]
-			mantissaOperation, err := getOperation(&mantissaTag, toInt64)
+			mantissaOperation, err := getOperation(&mantissaTag, converter.ToInt64)
 			if err != nil {
 				return nil, err
 			}
