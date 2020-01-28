@@ -23,5 +23,9 @@ type Int64Value struct {
 	Value int64
 }
 
+type ByteVector struct {
+	Value []byte
+}
+
 type NullValue struct {
 }

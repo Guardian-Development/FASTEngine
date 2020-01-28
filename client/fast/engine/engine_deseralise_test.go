@@ -8,14 +8,16 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: implement decimal, byte vector, unicode string
-// TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level
+// TODO: byte vector, unicode string
+// TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
+// 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: look at how the different operations work
 // TODO: handle repeating groups
 // TODO: create context
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
 // TODO: evaluate errors properly and make them useful
 // TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
+// TODO: readme and documentation
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange

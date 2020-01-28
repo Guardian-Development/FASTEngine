@@ -572,6 +572,62 @@ func TestReadOptionalStringReturnsEncodedString(t *testing.T) {
 	}
 }
 
+func TestReadByteVectorReturnsCorrectNumberOfBytes(t *testing.T) {
+	// Arrange 10000010 00000001 00000010
+	expectedBytes := bytes.NewBuffer([]byte{130, 1, 2})
+	expectedResult := value.ByteVector{Value: []byte{1, 2}}
+
+	// Act
+	result, err := ReadByteVector(expectedBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading value when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedResult, result)
+	if !areEqual {
+		t.Errorf("Did not read the expected byte vector, expected: %v, result: %v", expectedResult, result)
+	}
+}
+
+func TestReadOptionalByteVectorReturnsCorrectNumberOfBytes(t *testing.T) {
+	// Arrange 10000010 00000001
+	expectedBytes := bytes.NewBuffer([]byte{130, 1})
+	expectedResult := value.ByteVector{Value: []byte{1}}
+
+	// Act
+	result, err := ReadOptionalByteVector(expectedBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading value when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedResult, result)
+	if !areEqual {
+		t.Errorf("Did not read the expected byte vector, expected: %v, result: %v", expectedResult, result)
+	}
+}
+
+func TestReadOptionalByteVectorReturnsNilIfEncoded(t *testing.T) {
+	// Arrange 10000000
+	expectedBytes := bytes.NewBuffer([]byte{128})
+	expectedNil := value.NullValue{}
+
+	// Act
+	result, err := ReadOptionalByteVector(expectedBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading value when none was expected: %s", err)
+	}
+
+	if result != expectedNil {
+		t.Errorf("Did not read the expected null value, expected: nil, result: %#v", result)
+	}
+}
+
 func TestReadValueReturnsRawBytesWithStopBitRemoved(t *testing.T) {
 	// Arrrange 00010010 10001000 -> [00100100, 00010000]
 	expectedBytes := bytes.NewBuffer([]byte{18, 136})

@@ -278,6 +278,54 @@ func appendNotNullChar(char byte, stringBuilder *strings.Builder) {
 	}
 }
 
+// ReadByteVector reads a uint32 length off the buffer which represents the length of the vector to then read. The vector read is not stop bit encoded.
+// i.e. 10000010 00000001 00000010 would become (length 2) -> [1, 2]
+func ReadByteVector(inputSource *bytes.Buffer) (value.ByteVector, error) {
+	length, err := ReadUInt32(inputSource)
+	if err != nil {
+		return value.ByteVector{}, err
+	}
+
+	byteVector := make([]byte, length.Value)
+	number, err := inputSource.Read(byteVector)
+	if err != nil {
+		return value.ByteVector{}, err
+	}
+	if number != int(length.Value) {
+		return value.ByteVector{}, fmt.Errorf("Did not read full length of byte vector, expected to read: %d, but actually read %d", length.Value, number)
+	}
+
+	return value.ByteVector{Value: byteVector}, nil
+}
+
+// ReadOptionalByteVector treats the uint32 length preamble as an optional uint32, reading 0 as a null marker. The byte vector itself is read as long as the
+// length is not null.
+// i.e. 10000010 00000001 would become (length 1) -> [1]
+// i.e. 10000000 would become 0, and be marked as null
+func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
+	length, err := ReadOptionalUInt32(inputSource)
+	if err != nil {
+		return nil, err
+	}
+
+	switch t := length.(type) {
+	case value.NullValue:
+		return t, nil
+	case value.UInt32Value:
+		byteVector := make([]byte, t.Value)
+		number, err := inputSource.Read(byteVector)
+		if err != nil {
+			return value.ByteVector{}, err
+		}
+		if number != int(t.Value) {
+			return value.ByteVector{}, fmt.Errorf("Did not read full length of byte vector, expected to read: %d, but actually read %d", t.Value, number)
+		}
+		return value.ByteVector{Value: byteVector}, nil
+	default:
+		return value.ByteVector{}, fmt.Errorf("Unsupported type returned from reading optional uint32 as length of byte vector")
+	}
+}
+
 // ReadValue reads the next FAST encoded value off the inputSource, shifting each value by <<1 to remove the stop bit FAST encoding
 // i.e. 00010010 10001000 would become [00100100, 00010000]
 func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
