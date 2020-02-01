@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
     <template name="AllSupportedTypesAndTags" id="144" dictionary="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
-        <string name="String" id="1"/>
+        <string name="StringDefaultAscii" id="1"/>
         <uInt32 name="unsigned int32" id="2"/>
         <int32 name="signed int32" id="3"/>
         <uInt64 name="unsigned int64" id="4"/>
@@ -11,5 +11,7 @@
             <exponent />
             <mantissa />
         </decimal>
+        <string name="StringUnicode" charset="unicode" id="8" />
+        <byteVector name="byteVector" id="9" />
     </template>
 </templates>

@@ -1,6 +1,7 @@
 package converter
 
 import (
+	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -104,4 +105,14 @@ func ToUInt64(value string) (interface{}, error) {
 		return nil, err
 	}
 	return uint64(val), nil
+}
+
+// ToByteVector converts the strring to an array of bytes. The string must be an even amount of hexadecimal characters.
+// This is converted to a byte vector by stripping all whitespace and treating each pair of characters as a single byte hex number.
+func ToByteVector(value string) (interface{}, error) {
+	valueNoWhiteSpace := strings.ReplaceAll(value, " ", "")
+	if len(valueNoWhiteSpace)%2 != 0 {
+		return nil, fmt.Errorf("You must specify a byte vector as an even amount of hex digits")
+	}
+	return hex.DecodeString(valueNoWhiteSpace)
 }

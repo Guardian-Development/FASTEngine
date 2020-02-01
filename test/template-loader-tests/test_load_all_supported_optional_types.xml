@@ -11,5 +11,7 @@
             <exponent />
             <mantissa />
         </decimal>
+        <string name="StringUnicode" charset="unicode" id="8" presence="optional" />
+        <byteVector name="byteVector" id="9" presence="optional" />
     </template>
 </templates>

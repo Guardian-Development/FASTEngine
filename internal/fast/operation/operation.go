@@ -64,6 +64,8 @@ func convertToFixNoTransformation(readValue value.Value) (fix.Value, error) {
 		return fix.NewRawValue(t.Value), nil
 	case value.Int64Value:
 		return fix.NewRawValue(t.Value), nil
+	case value.ByteVector:
+		return fix.NewRawValue(t.Value), nil
 	}
 
 	return nil, fmt.Errorf("Unsupported fast value for operation, value: %s", readValue)

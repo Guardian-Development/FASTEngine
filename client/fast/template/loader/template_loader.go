@@ -20,9 +20,11 @@ const uInt32Tag = "uInt32"
 const int32Tag = "int32"
 const uInt64Tag = "uInt64"
 const int64Tag = "int64"
+const byteVector = "byteVector"
 const decimalTag = "decimal"
 const exponentTag = "exponent"
 const mantissaTag = "mantissa"
+const unicodeStringLabel = "unicode"
 
 const constantOperation = "constant"
 
@@ -103,6 +105,9 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 		if err != nil {
 			return nil, err
 		}
+		if tagInTemplate.Attributes["charset"] == unicodeStringLabel {
+			return field.UnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
+		}
 		return field.String{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt32Tag:
 		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
@@ -165,6 +170,12 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
 		return nil, fmt.Errorf("decimal must be declared with either no operation (empty), or with <exponent/> and <mantissa/>")
+	case byteVector:
+		operation, err := getOperation(tagInTemplate, converter.ToByteVector)
+		if err != nil {
+			return nil, err
+		}
+		return field.ByteVector{FieldDetails: fieldDetails, Operation: operation}, nil
 	default:
 		return nil, fmt.Errorf("Unsupported tag type: %s", tagInTemplate.Type)
 	}

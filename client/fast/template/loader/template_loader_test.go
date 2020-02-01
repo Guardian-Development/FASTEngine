@@ -92,6 +92,20 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 							Operation: operation.None{},
 						},
 					},
+					field.UnicodeString{
+						FieldDetails: field.Field{
+							ID:       8,
+							Required: true,
+						},
+						Operation: operation.None{},
+					},
+					field.ByteVector{
+						FieldDetails: field.Field{
+							ID:       9,
+							Required: true,
+						},
+						Operation: operation.None{},
+					},
 				},
 			},
 		},
@@ -193,6 +207,20 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 							Operation: operation.None{},
 						},
 					},
+					field.UnicodeString{
+						FieldDetails: field.Field{
+							ID:       8,
+							Required: false,
+						},
+						Operation: operation.None{},
+					},
+					field.ByteVector{
+						FieldDetails: field.Field{
+							ID:       9,
+							Required: false,
+						},
+						Operation: operation.None{},
+					},
 				},
 			},
 		},
@@ -212,8 +240,8 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 	}
 }
 
-func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_operations.xml")
+func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_constant_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -292,6 +320,20 @@ func TestCanLoadAllSupportedOperationsFromTemplateFile(t *testing.T) {
 							},
 							Operation: operation.Constant{ConstantValue: int64(2)},
 						},
+					},
+					field.UnicodeString{
+						FieldDetails: field.Field{
+							ID:       8,
+							Required: true,
+						},
+						Operation: operation.Constant{ConstantValue: "Hello: ϔ"},
+					},
+					field.ByteVector{
+						FieldDetails: field.Field{
+							ID:       9,
+							Required: true,
+						},
+						Operation: operation.Constant{ConstantValue: []byte{0x54, 0x45, 0x53, 0x54, 0x3F}},
 					},
 				},
 			},

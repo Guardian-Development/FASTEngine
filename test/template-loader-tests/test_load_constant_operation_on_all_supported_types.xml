@@ -27,5 +27,11 @@
                 <constant value="2"/>
             </mantissa>
         </decimal>
+        <string name="StringUnicode" charset="unicode" id="8">
+            <constant value="Hello: ϔ" />
+        </string>
+        <byteVector name="byteVector" id="9" > 
+            <constant value="54 45 53 54 3F" />
+        </byteVector>
     </template>
 </templates>

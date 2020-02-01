@@ -18,7 +18,7 @@ type Field struct {
 	Required bool
 }
 
-// String represents a FAST template <string/> type
+// String represents a FAST template <string charset="ascii"/> type
 type String struct {
 	FieldDetails Field
 	Operation    operation.Operation
@@ -46,6 +46,42 @@ func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 }
 
 func (field String) GetTagId() uint64 {
+	return field.FieldDetails.ID
+}
+
+// UnicodeString represents a FAST template <string charset="unicode"/> type
+type UnicodeString struct {
+	FieldDetails Field
+	Operation    operation.Operation
+}
+
+func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+		var stringValue value.Value
+		var err error
+
+		if field.FieldDetails.Required {
+			stringValue, err = fast.ReadByteVector(inputSource)
+		} else {
+			stringValue, err = fast.ReadOptionalByteVector(inputSource)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		switch t := stringValue.(type) {
+		case value.ByteVector:
+			stringValue = value.StringValue{Value: string(t.Value)}
+		}
+
+		return field.Operation.Apply(stringValue)
+	}
+
+	return field.Operation.GetNotEncodedValue()
+}
+
+func (field UnicodeString) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
@@ -173,6 +209,7 @@ func (field Int64) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
+// Decimal represents a FAST template <decimal/> type
 type Decimal struct {
 	FieldDetails  Field
 	ExponentField Int32
@@ -200,5 +237,36 @@ func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pr
 }
 
 func (field Decimal) GetTagId() uint64 {
+	return field.FieldDetails.ID
+}
+
+// ByteVector represents a FAST template <byteVector/> type
+type ByteVector struct {
+	FieldDetails Field
+	Operation    operation.Operation
+}
+
+func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+		var value value.Value
+		var err error
+
+		if field.FieldDetails.Required {
+			value, err = fast.ReadByteVector(inputSource)
+		} else {
+			value, err = fast.ReadOptionalByteVector(inputSource)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		return field.Operation.Apply(value)
+	}
+
+	return field.Operation.GetNotEncodedValue()
+}
+
+func (field ByteVector) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
