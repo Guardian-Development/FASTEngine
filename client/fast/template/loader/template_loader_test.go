@@ -17,7 +17,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 		Templates: map[uint32]store.Template{
 			144: store.Template{
 				TemplateUnits: []store.Unit{
-					field.String{
+					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
 							Required: true,
@@ -132,7 +132,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 		Templates: map[uint32]store.Template{
 			144: store.Template{
 				TemplateUnits: []store.Unit{
-					field.String{
+					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
 							Required: false,
@@ -246,7 +246,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 		Templates: map[uint32]store.Template{
 			144: store.Template{
 				TemplateUnits: []store.Unit{
-					field.String{
+					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
 							Required: true,

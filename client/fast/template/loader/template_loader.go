@@ -108,7 +108,7 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 		if tagInTemplate.Attributes["charset"] == unicodeStringLabel {
 			return field.UnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
 		}
-		return field.String{FieldDetails: fieldDetails, Operation: operation}, nil
+		return field.AsciiString{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt32Tag:
 		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
 		if err != nil {

@@ -18,13 +18,13 @@ type Field struct {
 	Required bool
 }
 
-// String represents a FAST template <string charset="ascii"/> type
-type String struct {
+// AsciiString represents a FAST template <string charset="ascii"/> type and <string /> type
+type AsciiString struct {
 	FieldDetails Field
 	Operation    operation.Operation
 }
 
-func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
 		var value value.Value
 		var err error
@@ -45,7 +45,7 @@ func (field String) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 	return field.Operation.GetNotEncodedValue()
 }
 
-func (field String) GetTagId() uint64 {
+func (field AsciiString) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
