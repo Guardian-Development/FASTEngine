@@ -20,7 +20,9 @@ const uInt32Tag = "uInt32"
 const int32Tag = "int32"
 const uInt64Tag = "uInt64"
 const int64Tag = "int64"
-const byteVector = "byteVector"
+const byteVectorTag = "byteVector"
+const sequenceTag = "sequence"
+const lengthTag = "length"
 const decimalTag = "decimal"
 const exponentTag = "exponent"
 const mantissaTag = "mantissa"
@@ -109,7 +111,7 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			return field.UnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
 		}
 		return field.AsciiString{FieldDetails: fieldDetails, Operation: operation}, nil
-	case uInt32Tag:
+	case uInt32Tag, lengthTag:
 		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
 		if err != nil {
 			return nil, err
@@ -170,12 +172,39 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
 		return nil, fmt.Errorf("decimal must be declared with either no operation (empty), or with <exponent/> and <mantissa/>")
-	case byteVector:
+	case byteVectorTag:
 		operation, err := getOperation(tagInTemplate, converter.ToByteVector)
 		if err != nil {
 			return nil, err
 		}
 		return field.ByteVector{FieldDetails: fieldDetails, Operation: operation}, nil
+	case sequenceTag:
+		sequence := field.Sequence{FieldDetails: fieldDetails, SequenceFields: make([]store.Unit, 0)}
+
+		if tagInTemplate.NestedTags[0].Type == lengthTag {
+			length, err := createTemplateUnit(&tagInTemplate.NestedTags[0])
+			if err != nil {
+				return nil, err
+			}
+			sequence.LengthField = length.(field.UInt32)
+			sequence.LengthField.FieldDetails.Required = sequence.FieldDetails.Required
+		} else {
+			length := field.UInt32{FieldDetails: field.Field{ID: 0, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
+			sequence.LengthField = length
+		}
+
+		for _, tagInTemplate := range tagInTemplate.NestedTags {
+			if tagInTemplate.Type == lengthTag {
+				continue
+			}
+			templateUnit, err := createTemplateUnit(&tagInTemplate)
+			if err != nil {
+				return nil, err
+			}
+
+			sequence.SequenceFields = append(sequence.SequenceFields, templateUnit)
+		}
+		return sequence, nil
 	default:
 		return nil, fmt.Errorf("Unsupported tag type: %s", tagInTemplate.Type)
 	}

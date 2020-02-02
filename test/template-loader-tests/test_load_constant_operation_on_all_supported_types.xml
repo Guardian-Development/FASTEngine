@@ -33,5 +33,11 @@
         <byteVector name="byteVector" id="9" > 
             <constant value="54 45 53 54 3F" />
         </byteVector>
+        <sequence name="sequence" id="10">
+            <length name="Length" id="11">
+                <constant value="2" />
+            </length>
+            <string name="sequence field 1" id="12"/>
+        </sequence>
     </template>
 </templates>

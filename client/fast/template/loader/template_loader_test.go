@@ -106,6 +106,64 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 						},
 						Operation: operation.None{},
 					},
+					field.Sequence{
+						FieldDetails: field.Field{
+							ID:       10,
+							Required: true,
+						},
+						LengthField: field.UInt32{
+							FieldDetails: field.Field{
+								ID:       11,
+								Required: true,
+							},
+							Operation: operation.None{},
+						},
+						SequenceFields: []store.Unit{
+							field.AsciiString{
+								FieldDetails: field.Field{
+									ID:       12,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+							field.UInt32{
+								FieldDetails: field.Field{
+									ID:       13,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+						},
+					},
+					field.Sequence{
+						FieldDetails: field.Field{
+							ID:       14,
+							Required: true,
+						},
+						LengthField: field.UInt32{
+							FieldDetails: field.Field{
+								ID:       0,
+								Required: true,
+							},
+							Operation: operation.None{},
+						},
+						SequenceFields: []store.Unit{
+							field.AsciiString{
+								FieldDetails: field.Field{
+									ID:       15,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+							field.UInt32{
+								FieldDetails: field.Field{
+									ID:       16,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -221,6 +279,35 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 						},
 						Operation: operation.None{},
 					},
+					field.Sequence{
+						FieldDetails: field.Field{
+							ID:       10,
+							Required: false,
+						},
+						LengthField: field.UInt32{
+							FieldDetails: field.Field{
+								ID:       11,
+								Required: false,
+							},
+							Operation: operation.None{},
+						},
+						SequenceFields: []store.Unit{
+							field.AsciiString{
+								FieldDetails: field.Field{
+									ID:       12,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+							field.UInt32{
+								FieldDetails: field.Field{
+									ID:       13,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -334,6 +421,28 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: []byte{0x54, 0x45, 0x53, 0x54, 0x3F}},
+					},
+					field.Sequence{
+						FieldDetails: field.Field{
+							ID:       10,
+							Required: true,
+						},
+						LengthField: field.UInt32{
+							FieldDetails: field.Field{
+								ID:       11,
+								Required: true,
+							},
+							Operation: operation.Constant{ConstantValue: uint32(2)},
+						},
+						SequenceFields: []store.Unit{
+							field.AsciiString{
+								FieldDetails: field.Field{
+									ID:       12,
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+						},
 					},
 				},
 			},

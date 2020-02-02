@@ -13,5 +13,10 @@
         </decimal>
         <string name="StringUnicode" charset="unicode" id="8" presence="optional" />
         <byteVector name="byteVector" id="9" presence="optional" />
+        <sequence name="sequence" id="10" presence="optional">
+            <length name="Length" id="11"/>
+            <string name="sequence field 1" id="12"/>
+            <uInt32 name="sequence field 2" id="13"/>
+        </sequence>
     </template>
 </templates>

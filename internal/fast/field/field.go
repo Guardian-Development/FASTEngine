@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
@@ -16,6 +17,62 @@ import (
 type Field struct {
 	ID       uint64
 	Required bool
+}
+
+// Sequence represents a FAST template <sequence /> type
+type Sequence struct {
+	FieldDetails   Field
+	LengthField    UInt32
+	SequenceFields []store.Unit
+}
+
+func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+	numberOfElements, err := field.LengthField.Deserialise(inputSource, pMap)
+	if err != nil {
+		return nil, err
+	}
+
+	switch t := numberOfElements.(type) {
+	case fix.NullValue:
+		return t, nil
+	}
+
+	elementCount := numberOfElements.Get().(uint32)
+	sequenceValue := fix.NewSequenceValue(elementCount)
+
+	for elementNumber := uint32(0); elementNumber < elementCount; elementNumber++ {
+		sequencePmap := presencemap.PresenceMap{}
+		if field.RequiresPmap() {
+			sequencePmap, err = presencemap.New(inputSource)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		for _, element := range field.SequenceFields {
+			value, err := element.Deserialise(inputSource, &sequencePmap)
+			if err != nil {
+				return nil, err
+			}
+			sequenceValue.SetValue(elementNumber, element.GetTagId(), value)
+		}
+	}
+
+	return sequenceValue, nil
+}
+
+func (field Sequence) GetTagId() uint64 {
+	return field.FieldDetails.ID
+}
+
+func (field Sequence) RequiresPmap() bool {
+	for _, element := range field.SequenceFields {
+		if element.RequiresPmap() {
+			return true
+		}
+	}
+
+	return field.LengthField.RequiresPmap()
 }
 
 // AsciiString represents a FAST template <string charset="ascii"/> type and <string /> type
@@ -47,6 +104,10 @@ func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 
 func (field AsciiString) GetTagId() uint64 {
 	return field.FieldDetails.ID
+}
+
+func (field AsciiString) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
 }
 
 // UnicodeString represents a FAST template <string charset="unicode"/> type
@@ -85,6 +146,10 @@ func (field UnicodeString) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
+func (field UnicodeString) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
+}
+
 // UInt32 represents a FAST template <uInt32/> type
 type UInt32 struct {
 	FieldDetails Field
@@ -114,6 +179,10 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 
 func (field UInt32) GetTagId() uint64 {
 	return field.FieldDetails.ID
+}
+
+func (field UInt32) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
 }
 
 // Int32 represents a FAST template <int32/> type
@@ -147,6 +216,10 @@ func (field Int32) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
+func (field Int32) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
+}
+
 // UInt64 represents a FAST template <uInt64/> type
 type UInt64 struct {
 	FieldDetails Field
@@ -176,6 +249,10 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 
 func (field UInt64) GetTagId() uint64 {
 	return field.FieldDetails.ID
+}
+
+func (field UInt64) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
 }
 
 // Int64 represents a FAST template <int64/> type
@@ -209,6 +286,10 @@ func (field Int64) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
+func (field Int64) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
+}
+
 // Decimal represents a FAST template <decimal/> type
 type Decimal struct {
 	FieldDetails  Field
@@ -240,6 +321,10 @@ func (field Decimal) GetTagId() uint64 {
 	return field.FieldDetails.ID
 }
 
+func (field Decimal) RequiresPmap() bool {
+	return field.ExponentField.RequiresPmap() || field.MantissaField.RequiresPmap()
+}
+
 // ByteVector represents a FAST template <byteVector/> type
 type ByteVector struct {
 	FieldDetails Field
@@ -269,4 +354,8 @@ func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 
 func (field ByteVector) GetTagId() uint64 {
 	return field.FieldDetails.ID
+}
+
+func (field ByteVector) RequiresPmap() bool {
+	return field.Operation.RequiresPmap(field.FieldDetails.Required)
 }

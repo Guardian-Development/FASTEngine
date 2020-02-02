@@ -12,6 +12,7 @@ type Operation interface {
 	ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool
 	GetNotEncodedValue() (fix.Value, error)
 	Apply(readValue value.Value) (fix.Value, error)
+	RequiresPmap(required bool) bool
 }
 
 type None struct {
@@ -29,6 +30,10 @@ func (operation None) Apply(readValue value.Value) (fix.Value, error) {
 	return convertToFixNoTransformation(readValue)
 }
 
+func (operation None) RequiresPmap(required bool) bool {
+	return false
+}
+
 type Constant struct {
 	ConstantValue interface{}
 }
@@ -36,10 +41,15 @@ type Constant struct {
 // ShouldReadValue will return false is the value is not marked as optional. If it is marked as optional, it will return the result of reading the
 // next value in the pMap
 func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool {
-	if !required {
+	if operation.RequiresPmap(required) {
 		return pMap.GetIsSetAndIncrement()
 	}
 	return false
+}
+
+// RequiresPmap will return true is the value is marked as optional.
+func (operation Constant) RequiresPmap(required bool) bool {
+	return !required
 }
 
 func (operation Constant) GetNotEncodedValue() (fix.Value, error) {
@@ -51,6 +61,7 @@ func (operation Constant) Apply(readValue value.Value) (fix.Value, error) {
 }
 
 func convertToFixNoTransformation(readValue value.Value) (fix.Value, error) {
+	// TODO: use visitor pattern instead
 	switch t := readValue.(type) {
 	case value.NullValue:
 		return fix.NewRawValue(nil), nil

@@ -21,6 +21,7 @@ type Template struct {
 type Unit interface {
 	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error)
 	GetTagId() uint64
+	RequiresPmap() bool
 }
 
 func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (*fix.Message, error) {
