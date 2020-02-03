@@ -82,7 +82,7 @@ type AsciiString struct {
 }
 
 func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -99,7 +99,7 @@ func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field AsciiString) GetTagId() uint64 {
@@ -117,7 +117,7 @@ type UnicodeString struct {
 }
 
 func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var stringValue value.Value
 		var err error
 
@@ -139,7 +139,7 @@ func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presence
 		return field.Operation.Apply(stringValue)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field UnicodeString) GetTagId() uint64 {
@@ -157,7 +157,7 @@ type UInt32 struct {
 }
 
 func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -174,7 +174,7 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field UInt32) GetTagId() uint64 {
@@ -192,7 +192,7 @@ type Int32 struct {
 }
 
 func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -209,7 +209,7 @@ func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field Int32) GetTagId() uint64 {
@@ -227,7 +227,7 @@ type UInt64 struct {
 }
 
 func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -244,7 +244,7 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field UInt64) GetTagId() uint64 {
@@ -262,7 +262,7 @@ type Int64 struct {
 }
 
 func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -279,7 +279,7 @@ func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field Int64) GetTagId() uint64 {
@@ -332,7 +332,7 @@ type ByteVector struct {
 }
 
 func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue(pMap, field.FieldDetails.Required) {
+	if field.Operation.ShouldReadValue() {
 		var value value.Value
 		var err error
 
@@ -349,7 +349,7 @@ func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue()
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
 }
 
 func (field ByteVector) GetTagId() uint64 {

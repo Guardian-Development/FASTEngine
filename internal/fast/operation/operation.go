@@ -9,8 +9,8 @@ import (
 )
 
 type Operation interface {
-	ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool
-	GetNotEncodedValue() (fix.Value, error)
+	ShouldReadValue() bool
+	GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error)
 	Apply(readValue value.Value) (fix.Value, error)
 	RequiresPmap(required bool) bool
 }
@@ -18,11 +18,11 @@ type Operation interface {
 type None struct {
 }
 
-func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool {
+func (operation None) ShouldReadValue() bool {
 	return true
 }
 
-func (operation None) GetNotEncodedValue() (fix.Value, error) {
+func (operation None) GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error) {
 	return fix.NullValue{}, nil
 }
 
@@ -38,12 +38,8 @@ type Constant struct {
 	ConstantValue interface{}
 }
 
-// ShouldReadValue will return false is the value is not marked as optional. If it is marked as optional, it will return the result of reading the
-// next value in the pMap
-func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap, required bool) bool {
-	if operation.RequiresPmap(required) {
-		return pMap.GetIsSetAndIncrement()
-	}
+// ShouldReadValue always returns false for constant operations
+func (operation Constant) ShouldReadValue() bool {
 	return false
 }
 
@@ -52,8 +48,16 @@ func (operation Constant) RequiresPmap(required bool) bool {
 	return !required
 }
 
-func (operation Constant) GetNotEncodedValue() (fix.Value, error) {
-	return fix.NewRawValue(operation.ConstantValue), nil
+// GetNotEncodedValue returns default value if required field. If optional and pmap bit set to 1, returns default value, else returns null
+func (operation Constant) GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error) {
+	if required {
+		return fix.NewRawValue(operation.ConstantValue), nil
+	}
+	if pMap.GetIsSetAndIncrement() {
+		return fix.NewRawValue(operation.ConstantValue), nil
+	}
+
+	return fix.NullValue{}, nil
 }
 
 func (operation Constant) Apply(readValue value.Value) (fix.Value, error) {

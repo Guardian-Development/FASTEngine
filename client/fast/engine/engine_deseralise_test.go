@@ -9,7 +9,7 @@ import (
 )
 
 // TODO: logging!!
-// TODO: serlialisation unit tests for each type, then just do a series of complex message tests
+// TODO: serlialisation unit tests for each type (Decimal uint etc), then just do a series of complex message tests
 // TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
 // 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: look at how the different operations work
