@@ -8,13 +8,13 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
-//<string />
-func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
-	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
-	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
+//<string charset="unicode"/>
+func TestCanDeseraliseRequiredUnicodeString(t *testing.T) {
+	// Arrange TEST1 = 10000101 01010100 01000101 01010011 01010100 00110001
+	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	expectedMessage := "TEST1"
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
@@ -34,13 +34,13 @@ func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
 	}
 }
 
-//<string presence="optional"/>
-func TestCanDeseraliseOptionalAsciiStringPresent(t *testing.T) {
-	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
-	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
+//<string charset="unicode" presence="optional"/>
+func TestCanDeseraliseOptionalUnicodeStringPresent(t *testing.T) {
+	// Arrange TEST1 = 10000110 01010100 01000101 01010011 01010100 00110001
+	messageAsBytes := bytes.NewBuffer([]byte{134, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	expectedMessage := "TEST1"
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -61,11 +61,11 @@ func TestCanDeseraliseOptionalAsciiStringPresent(t *testing.T) {
 }
 
 //<string presence="optional"/>
-func TestCanDeseraliseOptionalAsciiStringNull(t *testing.T) {
+func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -88,12 +88,12 @@ func TestCanDeseraliseOptionalAsciiStringNull(t *testing.T) {
 //<string>
 //	<constant value="TEST2" />
 //</string>
-func TestCanDeseraliseRequiredAsciiStringConstantOperatorNotEncoded(t *testing.T) {
+func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing.T) {
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	expectedMessage := "TEST2"
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
@@ -118,11 +118,11 @@ func TestCanDeseraliseRequiredAsciiStringConstantOperatorNotEncoded(t *testing.T
 //<string presence="optional">
 //	<constant value="TEST2" />
 //</string>
-func TestCanDeseraliseOptionalAsciiStringConstantOperatorNotEncodedReturnsNilValue(t *testing.T) {
+func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilValue(t *testing.T) {
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -147,12 +147,12 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorNotEncodedReturnsNilVal
 //<string presence="optional">
 //	<constant value="TEST2" />
 //</string>
-func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantValue(t *testing.T) {
+func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstantValue(t *testing.T) {
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	expectedMessage := "TEST2"
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -177,9 +177,9 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 //<string>
 //	<constant value="TEST2" />
 //</string>
-func TestRequiresPmapReturnsFalseForRequiredAsciiStringConstantOperator(t *testing.T) {
+func TestRequiresPmapReturnsFalseForRequiredUnicodeStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
@@ -201,9 +201,9 @@ func TestRequiresPmapReturnsFalseForRequiredAsciiStringConstantOperator(t *testi
 //<string presence="optional">
 //	<constant value="TEST2" />
 //</string>
-func TestRequiresPmapReturnsTrueForOptionalAsciiStringConstantOperator(t *testing.T) {
+func TestRequiresPmapReturnsTrueForOptionalUnicodeStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := AsciiString{
+	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
