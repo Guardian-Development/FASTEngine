@@ -8,13 +8,13 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
-//<uInt32 />
-func TestCanDeseraliseRequiredUInt32(t *testing.T) {
-	// Arrange 3 = 10000011
-	messageAsBytes := bytes.NewBuffer([]byte{131})
+//<int64 />
+func TestCanDeseraliseRequiredPositiveInt64(t *testing.T) {
+	// Arrange 2 = 10000010
+	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	expectedMessage := uint32(3)
-	unitUnderTest := UInt32{
+	expectedMessage := int64(2)
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
@@ -34,13 +34,39 @@ func TestCanDeseraliseRequiredUInt32(t *testing.T) {
 	}
 }
 
-//<uInt32 presence="optional"/>
-func TestCanDeseraliseOptionalUInt32Present(t *testing.T) {
+//<int64 />
+func TestCanDeseraliseRequiredNegativeInt64(t *testing.T) {
+	// Arrange -2 = 11111110
+	messageAsBytes := bytes.NewBuffer([]byte{254})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := int64(-2)
+	unitUnderTest := Int64{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<int64 presence="optional"/>
+func TestCanDeseraliseOptionalPositiveInt64Present(t *testing.T) {
 	// Arrange 3 = 10000100
 	messageAsBytes := bytes.NewBuffer([]byte{132})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	expectedMessage := uint32(3)
-	unitUnderTest := UInt32{
+	expectedMessage := int64(3)
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -60,12 +86,38 @@ func TestCanDeseraliseOptionalUInt32Present(t *testing.T) {
 	}
 }
 
-//<uInt32 presence="optional"/>
-func TestCanDeseraliseOptionalUInt32Null(t *testing.T) {
+//<int64 presence="optional"/>
+func TestCanDeseraliseOptionalNegativeInt64Present(t *testing.T) {
+	// Arrange 3 = 11111101
+	messageAsBytes := bytes.NewBuffer([]byte{253})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := int64(-3)
+	unitUnderTest := Int64{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<int64 presence="optional"/>
+func TestCanDeseraliseOptionalInt64Null(t *testing.T) {
 	// Arrange 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	unitUnderTest := UInt32{
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
@@ -85,21 +137,21 @@ func TestCanDeseraliseOptionalUInt32Null(t *testing.T) {
 	}
 }
 
-//<uInt32>
+//<int64>
 //	<constant value="132" />
-//</uInt32>
-func TestCanDeseraliseRequiredUInt32ConstantOperatorNotEncoded(t *testing.T) {
+//</int64>
+func TestCanDeseraliseRequiredInt64ConstantOperatorNotEncoded(t *testing.T) {
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	expectedMessage := uint32(132)
-	unitUnderTest := UInt32{
+	expectedMessage := int64(132)
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
 		},
 		Operation: operation.Constant{
-			ConstantValue: uint32(132),
+			ConstantValue: int64(132),
 		},
 	}
 
@@ -115,20 +167,20 @@ func TestCanDeseraliseRequiredUInt32ConstantOperatorNotEncoded(t *testing.T) {
 	}
 }
 
-//<uInt32 presence="optional">
+//<int64 presence="optional">
 //	<constant value="132" />
-//</uInt32>
-func TestCanDeseraliseOptionalUInt32ConstantOperatorNotEncodedReturnsNilValue(t *testing.T) {
+//</int64>
+func TestCanDeseraliseOptionalInt64ConstantOperatorNotEncodedReturnsNilValue(t *testing.T) {
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	unitUnderTest := UInt32{
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
 		},
 		Operation: operation.Constant{
-			ConstantValue: uint32(132),
+			ConstantValue: int64(132),
 		},
 	}
 
@@ -144,21 +196,21 @@ func TestCanDeseraliseOptionalUInt32ConstantOperatorNotEncodedReturnsNilValue(t 
 	}
 }
 
-//<uInt32 presence="optional">
+//<int64 presence="optional">
 //	<constant value="132" />
-//</uInt32>
-func TestCanDeseraliseOptionalUInt32ConstantOperatorEncodedReturnsConstantValue(t *testing.T) {
+//</int64>
+func TestCanDeseraliseOptionalInt64ConstantOperatorEncodedReturnsConstantValue(t *testing.T) {
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	expectedMessage := uint32(132)
-	unitUnderTest := UInt32{
+	expectedMessage := int64(132)
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
 		},
 		Operation: operation.Constant{
-			ConstantValue: uint32(132),
+			ConstantValue: int64(132),
 		},
 	}
 
@@ -174,18 +226,18 @@ func TestCanDeseraliseOptionalUInt32ConstantOperatorEncodedReturnsConstantValue(
 	}
 }
 
-//<uInt32>
+//<int64>
 //	<constant value="132" />
-//</uInt32>
-func TestRequiresPmapReturnsFalseForRequiredUInt32ConstantOperator(t *testing.T) {
+//</int64>
+func TestRequiresPmapReturnsFalseForRequiredInt64ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := UInt32{
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: true,
 		},
 		Operation: operation.Constant{
-			ConstantValue: uint32(132),
+			ConstantValue: int64(132),
 		},
 	}
 
@@ -198,18 +250,18 @@ func TestRequiresPmapReturnsFalseForRequiredUInt32ConstantOperator(t *testing.T)
 	}
 }
 
-//<uInt32 presence="optional">
+//<int64 presence="optional">
 //	<constant value="132" />
-//</uInt32>
-func TestRequiresPmapReturnsTrueForOptionalUInt32ConstantOperator(t *testing.T) {
+//</int64>
+func TestRequiresPmapReturnsTrueForOptionalInt64ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := UInt32{
+	unitUnderTest := Int64{
 		FieldDetails: Field{
 			ID:       1,
 			Required: false,
 		},
 		Operation: operation.Constant{
-			ConstantValue: uint32(132),
+			ConstantValue: int64(132),
 		},
 	}
 

@@ -66,6 +66,7 @@ func (field Sequence) GetTagId() uint64 {
 }
 
 func (field Sequence) RequiresPmap() bool {
+	//TODO: think this is wrong for nested sequences, check spec when we come to test this
 	for _, element := range field.SequenceFields {
 		if element.RequiresPmap() {
 			return true
