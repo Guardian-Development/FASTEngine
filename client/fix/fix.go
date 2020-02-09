@@ -5,15 +5,15 @@ import (
 )
 
 type Message struct {
-	tags map[uint64]Value
+	Tags map[uint64]Value
 }
 
 func (message *Message) SetTag(tag uint64, value Value) {
-	message.tags[tag] = value
+	message.Tags[tag] = value
 }
 
 func (message Message) GetTag(tag uint64) (interface{}, error) {
-	if value, ok := message.tags[tag]; ok {
+	if value, ok := message.Tags[tag]; ok {
 		switch t := value.(type) {
 		case NullValue:
 			return nil, nil
@@ -30,7 +30,7 @@ func (message Message) GetTag(tag uint64) (interface{}, error) {
 
 func New() Message {
 	message := Message{
-		tags: make(map[uint64]Value),
+		Tags: make(map[uint64]Value),
 	}
 
 	return message
@@ -64,21 +64,21 @@ func (nullValue NullValue) Get() interface{} {
 }
 
 type SequenceValue struct {
-	values []Message
+	Values []Message
 }
 
 func (sequenceValue SequenceValue) Get() interface{} {
-	return sequenceValue.values
+	return sequenceValue.Values
 }
 
 func (sequenceValue *SequenceValue) SetValue(index uint32, tag uint64, value Value) {
-	sequenceValue.values[index].SetTag(tag, value)
+	sequenceValue.Values[index].SetTag(tag, value)
 }
 
 func NewSequenceValue(sequenceSize uint32) SequenceValue {
-	value := SequenceValue{values: make([]Message, sequenceSize)}
-	for i := 0; i < len(value.values); i++ {
-		value.values[i] = New()
+	value := SequenceValue{Values: make([]Message, sequenceSize)}
+	for i := 0; i < len(value.Values); i++ {
+		value.Values[i] = New()
 	}
 
 	return value

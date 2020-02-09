@@ -42,7 +42,7 @@ func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.P
 
 	for elementNumber := uint32(0); elementNumber < elementCount; elementNumber++ {
 		sequencePmap := presencemap.PresenceMap{}
-		if field.RequiresPmap() {
+		if field.subFieldsRequirePmap() {
 			sequencePmap, err = presencemap.New(inputSource)
 			if err != nil {
 				return nil, err
@@ -61,18 +61,21 @@ func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.P
 	return sequenceValue, nil
 }
 
-func (field Sequence) GetTagId() uint64 {
-	return field.FieldDetails.ID
-}
-
-func (field Sequence) RequiresPmap() bool {
-	//TODO: think this is wrong for nested sequences, check spec when we come to test this
+func (field Sequence) subFieldsRequirePmap() bool {
 	for _, element := range field.SequenceFields {
 		if element.RequiresPmap() {
 			return true
 		}
 	}
 
+	return false
+}
+
+func (field Sequence) GetTagId() uint64 {
+	return field.FieldDetails.ID
+}
+
+func (field Sequence) RequiresPmap() bool {
 	return field.LengthField.RequiresPmap()
 }
 

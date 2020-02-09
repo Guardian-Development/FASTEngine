@@ -9,11 +9,10 @@ import (
 )
 
 // TODO: logging!!
-// TODO: serlialisation unit tests for each type (Decimal uint etc), then just do a series of complex message tests
-// TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
-// 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: look at how the different operations work
 // TODO: create context
+// TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
+// 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
 // TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices)
 // TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
