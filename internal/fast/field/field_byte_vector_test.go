@@ -233,6 +233,46 @@ func TestCanDeseraliseOptionalByteVectorConstantOperatorEncodedReturnsConstantVa
 	}
 }
 
+//<byteVector />
+func TestRequiresPmapReturnsFalseForRequiredByteVectorNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := ByteVector{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<byteVector presence="optional"/>
+func TestRequiresPmapReturnsFalseForOptionalByteVectorNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := ByteVector{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
 //<byteVector>
 //	<constant value="A1 B2 CF" />
 //</byteVector>

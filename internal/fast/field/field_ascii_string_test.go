@@ -174,6 +174,46 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 	}
 }
 
+//<string />
+func TestRequiresPmapReturnsFalseForRequiredAsciiStringNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := AsciiString{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<string presence="optional"/>
+func TestRequiresPmapReturnsFalseForOptionalAsciiStringNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := AsciiString{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
 //<string>
 //	<constant value="TEST2" />
 //</string>

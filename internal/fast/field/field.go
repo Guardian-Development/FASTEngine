@@ -309,7 +309,7 @@ func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pr
 	case fix.RawValue:
 		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent")
 		}
 		decimalValue := math.Pow(10, float64(exponentValue.Get().(int32))) * float64(mantissaValue.Get().(int64))
 		return fix.NewRawValue(decimalValue), nil

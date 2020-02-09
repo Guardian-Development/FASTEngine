@@ -60,7 +60,7 @@ func TestCanDeseraliseOptionalUnicodeStringPresent(t *testing.T) {
 	}
 }
 
-//<string presence="optional"/>
+//<string charset="unicode" presence="optional"/>
 func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
@@ -85,7 +85,7 @@ func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	}
 }
 
-//<string>
+//<string charset="unicode">
 //	<constant value="TEST2" />
 //</string>
 func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing.T) {
@@ -115,7 +115,7 @@ func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing
 	}
 }
 
-//<string presence="optional">
+//<string charset="unicode" presence="optional">
 //	<constant value="TEST2" />
 //</string>
 func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilValue(t *testing.T) {
@@ -144,7 +144,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilV
 	}
 }
 
-//<string presence="optional">
+//<string charset="unicode" presence="optional">
 //	<constant value="TEST2" />
 //</string>
 func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstantValue(t *testing.T) {
@@ -171,6 +171,46 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 	// Assert
 	if result.Get() != expectedMessage {
 		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<string charset="unicode"/>
+func TestRequiresPmapReturnsFalseForRequiredUnicodeStringNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UnicodeString{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<string charset="unicode" presence="optional"/>
+func TestRequiresPmapReturnsFalseForOptionalUnicodeStringNoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UnicodeString{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
 	}
 }
 

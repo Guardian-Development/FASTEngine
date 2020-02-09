@@ -174,6 +174,46 @@ func TestCanDeseraliseOptionalUInt64ConstantOperatorEncodedReturnsConstantValue(
 	}
 }
 
+//<uInt64 />
+func TestRequiresPmapReturnsFalseForRequiredUInt64NoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UInt64{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<uInt64 presence="optional"/>
+func TestRequiresPmapReturnsFalseForOptionalUInt64NoOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UInt64{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.None{},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != false {
+		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
 //<uInt64>
 //	<constant value="132" />
 //</uInt64>
