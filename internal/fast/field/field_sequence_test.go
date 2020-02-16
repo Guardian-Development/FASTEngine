@@ -1146,7 +1146,7 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 
 //<sequence presence="optional">
 //	<length>
-//		<constant value="1" />
+//		<constant value="3" />
 //	</length>
 // 	<int64 id="2"/>
 // 	<string id="3"/>
@@ -1165,6 +1165,106 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithConstantLengthOperator(t 
 			},
 			Operation: operation.Constant{
 				ConstantValue: uint(3),
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<sequence>
+//	<length>
+//		<default value="3" />
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestRequiresPmapReturnsTrueForRequiredSequenceWithDefaultLengthOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: uint(3),
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<sequence presence="optional">
+//	<length>
+//		<default value="3" />
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestRequiresPmapReturnsTrueForOptionalSequenceWithDefaultLengthOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: uint(3),
 			},
 		},
 		SequenceFields: []store.Unit{

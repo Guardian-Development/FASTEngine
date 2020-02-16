@@ -86,7 +86,7 @@ type AsciiString struct {
 }
 
 func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 
@@ -121,7 +121,7 @@ type UnicodeString struct {
 }
 
 func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var stringValue value.Value
 		var err error
 
@@ -161,7 +161,7 @@ type UInt32 struct {
 }
 
 func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 
@@ -196,7 +196,7 @@ type Int32 struct {
 }
 
 func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 
@@ -231,7 +231,7 @@ type UInt64 struct {
 }
 
 func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 
@@ -266,7 +266,7 @@ type Int64 struct {
 }
 
 func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 
@@ -336,7 +336,7 @@ type ByteVector struct {
 }
 
 func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	if field.Operation.ShouldReadValue() {
+	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
 

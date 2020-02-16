@@ -29,6 +29,7 @@ const mantissaTag = "mantissa"
 const unicodeStringLabel = "unicode"
 
 const constantOperation = "constant"
+const defaultOperation = "default"
 
 type valueConverter func(string) (interface{}, error)
 
@@ -229,6 +230,19 @@ func getOperation(tagInTemplate *tokenxml.Tag, converter valueConverter) (operat
 			return nil, err
 		}
 		operation.ConstantValue = constantAsCorrectValue
+		return operation, nil
+	case defaultOperation:
+		operation := operation.Default{}
+		defaultValue := operationTag.Attributes["value"]
+		if defaultValue == "" {
+			operation.DefaultValue = nil
+			return operation, nil
+		}
+		defaultAsCorrectValue, err := converter(defaultValue)
+		if err != nil {
+			return nil, err
+		}
+		operation.DefaultValue = defaultAsCorrectValue
 		return operation, nil
 	default:
 		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)

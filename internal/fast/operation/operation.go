@@ -9,7 +9,7 @@ import (
 )
 
 type Operation interface {
-	ShouldReadValue() bool
+	ShouldReadValue(pMap *presencemap.PresenceMap) bool
 	GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error)
 	Apply(readValue value.Value) (fix.Value, error)
 	RequiresPmap(required bool) bool
@@ -18,18 +18,22 @@ type Operation interface {
 type None struct {
 }
 
-func (operation None) ShouldReadValue() bool {
+// ShouldReadValue if no operator is present must always read the value from the stream
+func (operation None) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
 	return true
 }
 
+// GetNotEncodedValue if the value is not encoded, and there is no operator, the value is always nil
 func (operation None) GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error) {
 	return fix.NullValue{}, nil
 }
 
+// Apply does no transformation on the value as no operator is present
 func (operation None) Apply(readValue value.Value) (fix.Value, error) {
 	return convertToFixNoTransformation(readValue)
 }
 
+// RequiresPmap always returns false as no operator is present
 func (operation None) RequiresPmap(required bool) bool {
 	return false
 }
@@ -39,7 +43,7 @@ type Constant struct {
 }
 
 // ShouldReadValue always returns false for constant operations
-func (operation Constant) ShouldReadValue() bool {
+func (operation Constant) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
 	return false
 }
 
@@ -60,8 +64,33 @@ func (operation Constant) GetNotEncodedValue(pMap *presencemap.PresenceMap, requ
 	return fix.NullValue{}, nil
 }
 
+// Apply does to modify the value, as the Constant operator only applies to retrieving a value from the stream, not mutating it
 func (operation Constant) Apply(readValue value.Value) (fix.Value, error) {
 	return convertToFixNoTransformation(readValue)
+}
+
+type Default struct {
+	DefaultValue interface{}
+}
+
+// ShouldReadValue returns the result of reading the pMap. Default operation always evaluates the next pMap bit.
+func (operation Default) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
+	return pMap.GetIsSetAndIncrement()
+}
+
+// GetNotEncodedValue returns the configured DefaultValue. If this is null, it returns fix.NullValue{}.
+func (operation Default) GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool) (fix.Value, error) {
+	return fix.NewRawValue(operation.DefaultValue), nil
+}
+
+// Apply does to modify the value, as the Default operator only applies to retrieving a value from the stream, not mutating it
+func (operation Default) Apply(readValue value.Value) (fix.Value, error) {
+	return convertToFixNoTransformation(readValue)
+}
+
+// RequiresPmap always returns true, as the Default operator always evaluates the next pMap bit.
+func (operation Default) RequiresPmap(required bool) bool {
+	return true
 }
 
 func convertToFixNoTransformation(readValue value.Value) (fix.Value, error) {

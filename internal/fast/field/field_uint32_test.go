@@ -261,3 +261,200 @@ func TestRequiresPmapReturnsTrueForOptionalUInt32ConstantOperator(t *testing.T) 
 		t.Errorf("Expected RequiresPmap to return true, but got false")
 	}
 }
+
+//<uInt32>
+//	<default value="5" />
+//</uInt32>
+func TestCanDeseraliseUInt32DefaultOperatorEncodedReturnsValueFromStream(t *testing.T) {
+	// Arrange pmap = 11000000 2 = 10000010
+	messageAsBytes := bytes.NewBuffer([]byte{130})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	expectedMessage := uint32(2)
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(5),
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<uInt32>
+//	<default value="5" />
+//</uInt32>
+func TestCanDeseraliseUInt32DefaultOperatorNotEncodedReturnsDefaultValue(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := uint32(5)
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(5),
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<uInt32 presence="optional">
+//	<default value="5" />
+//</uInt32>
+func TestCanDeseraliseOptionalUInt32DefaultOperatorEncodedReturnsValueFromStream(t *testing.T) {
+	// Arrange pmap = 11000000 2 = 10000011
+	messageAsBytes := bytes.NewBuffer([]byte{131})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	expectedMessage := uint32(2)
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(5),
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<uInt32 presence="optional">
+//	<default value="5" />
+//</uInt32>
+func TestCanDeseraliseOptionalUInt32DefaultOperatorNotEncodedReturnsDefaultValue(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := uint32(5)
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(5),
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<uInt32 presence="optional">
+//	<default />
+//</uInt32>
+func TestCanDeseraliseOptionalUInt32DefaultOperatorNotEncodedReturnsDefaultNilValue(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.Default{
+			DefaultValue: nil,
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != nil {
+		t.Errorf("Did not read the expected null value, expected: nil, result: %#v", result.Get())
+	}
+}
+
+//<uInt32>
+//	<default value="132" />
+//</uInt32>
+func TestRequiresPmapReturnsTrueForRequiredUInt32DefaultOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(132),
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<uInt32 presence="optional">
+//	<default value="132" />
+//</uInt32>
+func TestRequiresPmapReturnsTrueForOptionalUInt32DefaultOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := UInt32{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		Operation: operation.Default{
+			DefaultValue: uint32(132),
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}

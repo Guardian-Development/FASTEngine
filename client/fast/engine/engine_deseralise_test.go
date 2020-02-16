@@ -8,9 +8,9 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
+// TODO: implement copy, increment, delta, tail
+// TODO: create dictionary
 // TODO: logging!!
-// TODO: look at how the different operations work
-// TODO: create context
 // TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
 // 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private

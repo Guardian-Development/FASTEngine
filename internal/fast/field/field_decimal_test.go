@@ -215,6 +215,98 @@ func TestCanDeseraliseRequiredDecimalExponentConstantOperatorNotEncoded(t *testi
 }
 
 //<decimal>
+//	<exponent>
+//		<default value="2" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorEncodedReadsFromStream(t *testing.T) {
+	// Arrange pmap = 11000000 exp = 10000010 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal>
+//	<exponent>
+//		<default value="2" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorNotEncoded(t *testing.T) {
+	// Arrange pmap = 10000000 exp = 10000010 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal>
 //	<exponent />
 //	<mantissa>
 // 		<constant value="2" />
@@ -243,6 +335,98 @@ func TestCanDeseraliseRequiredDecimalMantissaConstantOperatorNotEncoded(t *testi
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(2)},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal>
+//	<exponent />
+//	<mantissa>
+// 		<default value="2" />
+//	</mantissa>
+//</decimal>
+func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorEncodedReadsFromStream(t *testing.T) {
+	// Arrange pmap = 11000000 exp = 10000010 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(2),
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal>
+//	<exponent />
+//	<mantissa>
+// 		<default value="10" />
+//	</mantissa>
+//</decimal>
+func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorNotEncoded(t *testing.T) {
+	// Arrange pmap = 10000000 exp = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(10),
+			},
 		},
 	}
 
@@ -304,6 +488,106 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaConstantOperatorNotEncod
 	}
 }
 
+//<decimal>
+//	<exponent>
+// 		<default value="2" />
+//	</exponent>
+//	<mantissa>
+// 		<default value="2" />
+//	</mantissa>
+//</decimal>
+func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorEncodedReadsFromStream(t *testing.T) {
+	// Arrange pmap = 11100000 exp = 10000010 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{224}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(2),
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal>
+//	<exponent>
+// 		<default value="2" />
+//	</exponent>
+//	<mantissa>
+// 		<default value="2" />
+//	</mantissa>
+//</decimal>
+func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorNotEncoded(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := float64(200)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(2),
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
 //<decimal presence="optional">
 //	<exponent>
 //		<constant value="2" />
@@ -344,6 +628,143 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorNotEncodedReturnsNi
 	// Assert
 	if result.Get() != nil {
 		t.Errorf("Did not read the expected null value, expected: nil, result: %#v", result.Get())
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent>
+//		<default />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReturnsNilValueAndDoesNotReadMantissa(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: nil,
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != nil {
+		t.Errorf("Did not read the expected null value, expected: nil, result: %#v", result.Get())
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent>
+//		<default value="2" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorEncodedReadsExponentAndMantissa(t *testing.T) {
+	// Arrange pmap = 11000000 exp = 10000011 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{131, 129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent>
+//		<default value="2" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReadsDefaultExponentAndMantissaFromStream(t *testing.T) {
+	// Arrange pmap = 10000000 man = 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{129})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	expectedMessage := float64(100)
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(2),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 
@@ -429,6 +850,46 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalNoOperator(t *testing.T) {
 
 //<decimal>
 //	<exponent>
+//		<default value="12" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestRequiresPmapReturnsTrueForRequiredDecimalExponentDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(12),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<decimal>
+//	<exponent>
 //		<constant value="12" />
 //	</exponent>
 //	<mantissa />
@@ -468,6 +929,46 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalExponentConstant(t *testing.T
 //<decimal>
 //	<exponent/>
 //	<mantissa>
+//		<default value="12" />
+//	</mantissa>
+//</decimal>
+func TestRequiresPmapReturnsTrueForRequiredDecimalMantissaDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(12),
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<decimal>
+//	<exponent/>
+//	<mantissa>
 //		<constant value="12" />
 //	</mantissa>
 //</decimal>
@@ -500,6 +1001,50 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalMantissaConstant(t *testing.T
 	// Assert
 	if result != false {
 		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<decimal>
+//	<exponent>
+//		<default value="12" />
+//	</exponent>
+//	<mantissa>
+//		<default value="12" />
+//	</mantissa>
+//</decimal>
+func TestRequiresPmapReturnsTrueForRequirdDecimalExponentAndMantissaDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: true,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(12),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(12),
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
 	}
 }
 
@@ -581,6 +1126,46 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalNoOperator(t *testing.T) {
 
 //<decimal presence="optional">
 //	<exponent>
+//		<default value="7" />
+//	</exponent>
+//	<mantissa />
+//</decimal>
+func TestRequiresPmapReturnsTrueForOptionalDecimalExponentDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(7),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent>
 //		<constant value="7" />
 //	</exponent>
 //	<mantissa />
@@ -605,6 +1190,46 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentConstant(t *testing.T)
 				Required: true,
 			},
 			Operation: operation.None{},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent/>
+//	<mantissa>
+//		<default value="2" />
+//	</mantissa>
+//</decimal>
+func TestRequiresPmapReturnsTrueForOptionalDecimalMantissaDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.None{},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(2),
+			},
 		},
 	}
 
@@ -652,6 +1277,50 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalMantissaConstant(t *testing.T
 	// Assert
 	if result != false {
 		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<decimal presence="optional">
+//	<exponent>
+//		<default value="2" />
+//	</exponent>
+//	<mantissa>
+//		<default value="2" />
+//	</mantissa>
+//</decimal>
+func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaDefault(t *testing.T) {
+	// Arrange
+	unitUnderTest := Decimal{
+		FieldDetails: Field{
+			ID:       1,
+			Required: false,
+		},
+		ExponentField: Int32{
+			FieldDetails: Field{
+				ID:       1,
+				Required: false,
+			},
+			Operation: operation.Default{
+				DefaultValue: int32(7),
+			},
+		},
+		MantissaField: Int64{
+			FieldDetails: Field{
+				ID:       1,
+				Required: true,
+			},
+			Operation: operation.Default{
+				DefaultValue: int64(7),
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
 	}
 }
 
