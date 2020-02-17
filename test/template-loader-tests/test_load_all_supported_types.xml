@@ -8,13 +8,13 @@
         <int64 name="signed int64" id="5"/>
         <decimal name="decimal" id="6"/>
         <decimal name="decimal with exp/man" id="7">
-            <exponent />
-            <mantissa />
+            <exponent name="custom decimal exp"/>
+            <mantissa name="custom decimal man"/>
         </decimal>
         <string name="StringUnicode" charset="unicode" id="8" />
         <byteVector name="byteVector" id="9" />
         <sequence name="sequence" id="10">
-            <length name="Length" id="11"/>
+            <length name="length" id="11"/>
             <string name="sequence field 1" id="12"/>
             <uInt32 name="sequence field 2" id="13"/>
         </sequence>

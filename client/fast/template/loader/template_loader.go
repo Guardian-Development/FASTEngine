@@ -143,6 +143,7 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 				return nil, err
 			}
 			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+			exponentField.FieldDetails.Name = fmt.Sprintf("%sExponent", fieldDetails.Name)
 			mantissaOperation, err := getOperation(tagInTemplate, converter.ToMantissa)
 			if err != nil {
 				return nil, err
@@ -150,6 +151,7 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			mantissaFieldFieldDetails := fieldDetails
 			mantissaFieldFieldDetails.Required = true
 			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+			mantissaField.FieldDetails.Name = fmt.Sprintf("%sMantissa", fieldDetails.Name)
 
 			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
@@ -160,6 +162,11 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 				return nil, err
 			}
 			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+			exponentName := exponentTag.Attributes["name"]
+			if exponentName == "" {
+				exponentName = fmt.Sprintf("%sExponent", fieldDetails.Name)
+			}
+			exponentField.FieldDetails.Name = exponentName
 
 			mantissaTag := tagInTemplate.NestedTags[1]
 			mantissaOperation, err := getOperation(&mantissaTag, converter.ToInt64)
@@ -169,6 +176,11 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			mantissaFieldFieldDetails := fieldDetails
 			mantissaFieldFieldDetails.Required = true
 			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+			mantissaName := mantissaTag.Attributes["name"]
+			if mantissaName == "" {
+				mantissaName = fmt.Sprintf("%sMantissa", fieldDetails.Name)
+			}
+			mantissaField.FieldDetails.Name = mantissaName
 
 			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
@@ -187,10 +199,13 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			if err != nil {
 				return nil, err
 			}
+			if length.(field.UInt32).FieldDetails.Name == "" {
+				length.(*field.UInt32).FieldDetails.Name = sequence.FieldDetails.Name
+			}
 			sequence.LengthField = length.(field.UInt32)
 			sequence.LengthField.FieldDetails.Required = sequence.FieldDetails.Required
 		} else {
-			length := field.UInt32{FieldDetails: field.Field{ID: 0, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
+			length := field.UInt32{FieldDetails: field.Field{ID: 0, Name: sequence.FieldDetails.Name, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
 			sequence.LengthField = length
 		}
 

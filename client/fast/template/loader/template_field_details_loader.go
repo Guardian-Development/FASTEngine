@@ -2,6 +2,7 @@ package loader
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 
 	"github.com/Guardian-Development/fastengine/internal/fast/field"
@@ -23,7 +24,24 @@ func createFieldDetails(tagInTemplate *tokenxml.Tag) (field.Field, error) {
 	}
 	fieldDetails.Required = required
 
+	name := tagInTemplate.Attributes["name"]
+	if name == "" {
+		name = getRandomName(tagInTemplate.Type)
+	}
+	fieldDetails.Name = name
+
 	return fieldDetails, nil
+}
+
+var letters = []rune("abcdefghijklmnopqrstuvwxyz")
+
+func getRandomName(fieldName string) string {
+	b := make([]rune, 8)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	randomPart := string(b)
+	return fmt.Sprintf("%s-%s", fieldName, randomPart)
 }
 
 func getFieldID(tagInTemplate *tokenxml.Tag) (uint64, error) {

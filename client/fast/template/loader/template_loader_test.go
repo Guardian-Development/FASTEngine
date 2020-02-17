@@ -20,6 +20,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
+							Name:     "StringDefaultAscii",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -27,6 +28,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.UInt32{
 						FieldDetails: field.Field{
 							ID:       2,
+							Name:     "unsigned int32",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -34,6 +36,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Int32{
 						FieldDetails: field.Field{
 							ID:       3,
+							Name:     "signed int32",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -41,6 +44,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.UInt64{
 						FieldDetails: field.Field{
 							ID:       4,
+							Name:     "unsigned int64",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -48,6 +52,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Int64{
 						FieldDetails: field.Field{
 							ID:       5,
+							Name:     "signed int64",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -55,11 +60,13 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       6,
+							Name:     "decimal",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalExponent",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -67,6 +74,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalMantissa",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -75,11 +83,13 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       7,
+							Name:     "decimal with exp/man",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "custom decimal exp",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -87,6 +97,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "custom decimal man",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -95,6 +106,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.UnicodeString{
 						FieldDetails: field.Field{
 							ID:       8,
+							Name:     "StringUnicode",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -102,6 +114,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.ByteVector{
 						FieldDetails: field.Field{
 							ID:       9,
+							Name:     "byteVector",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -109,11 +122,13 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Sequence{
 						FieldDetails: field.Field{
 							ID:       10,
+							Name:     "sequence",
 							Required: true,
 						},
 						LengthField: field.UInt32{
 							FieldDetails: field.Field{
 								ID:       11,
+								Name:     "length",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -122,6 +137,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 							field.AsciiString{
 								FieldDetails: field.Field{
 									ID:       12,
+									Name:     "sequence field 1",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -129,6 +145,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 							field.UInt32{
 								FieldDetails: field.Field{
 									ID:       13,
+									Name:     "sequence field 2",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -138,11 +155,13 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 					field.Sequence{
 						FieldDetails: field.Field{
 							ID:       14,
+							Name:     "sequence implicit length",
 							Required: true,
 						},
 						LengthField: field.UInt32{
 							FieldDetails: field.Field{
 								ID:       0,
+								Name:     "sequence implicit length",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -151,6 +170,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 							field.AsciiString{
 								FieldDetails: field.Field{
 									ID:       15,
+									Name:     "sequence field 1",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -158,6 +178,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 							field.UInt32{
 								FieldDetails: field.Field{
 									ID:       16,
+									Name:     "sequence field 2",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -193,6 +214,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
+							Name:     "String",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -200,6 +222,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.UInt32{
 						FieldDetails: field.Field{
 							ID:       2,
+							Name:     "unsigned int32",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -207,6 +230,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.Int32{
 						FieldDetails: field.Field{
 							ID:       3,
+							Name:     "signed int32",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -214,6 +238,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.UInt64{
 						FieldDetails: field.Field{
 							ID:       4,
+							Name:     "unsigned int64",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -221,6 +246,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.Int64{
 						FieldDetails: field.Field{
 							ID:       5,
+							Name:     "signed int64",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -228,11 +254,13 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       6,
+							Name:     "decimal",
 							Required: false,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalExponent",
 								Required: false,
 							},
 							Operation: operation.None{},
@@ -240,6 +268,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalMantissa",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -248,11 +277,13 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       7,
+							Name:     "decimal with exp/man",
 							Required: false,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manExponent",
 								Required: false,
 							},
 							Operation: operation.None{},
@@ -260,6 +291,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manMantissa",
 								Required: true,
 							},
 							Operation: operation.None{},
@@ -268,6 +300,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.UnicodeString{
 						FieldDetails: field.Field{
 							ID:       8,
+							Name:     "StringUnicode",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -275,6 +308,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.ByteVector{
 						FieldDetails: field.Field{
 							ID:       9,
+							Name:     "byteVector",
 							Required: false,
 						},
 						Operation: operation.None{},
@@ -282,11 +316,13 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 					field.Sequence{
 						FieldDetails: field.Field{
 							ID:       10,
+							Name:     "sequence",
 							Required: false,
 						},
 						LengthField: field.UInt32{
 							FieldDetails: field.Field{
 								ID:       11,
+								Name:     "length",
 								Required: false,
 							},
 							Operation: operation.None{},
@@ -295,6 +331,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 							field.AsciiString{
 								FieldDetails: field.Field{
 									ID:       12,
+									Name:     "sequence field 1",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -302,6 +339,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 							field.UInt32{
 								FieldDetails: field.Field{
 									ID:       13,
+									Name:     "sequence field 2",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -336,6 +374,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
+							Name:     "String",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: "Hello"},
@@ -343,6 +382,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.UInt32{
 						FieldDetails: field.Field{
 							ID:       2,
+							Name:     "unsigned int32",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: uint32(10)},
@@ -350,6 +390,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.Int32{
 						FieldDetails: field.Field{
 							ID:       3,
+							Name:     "signed int32",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: int32(-10)},
@@ -357,6 +398,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.UInt64{
 						FieldDetails: field.Field{
 							ID:       4,
+							Name:     "unsigned int64",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: uint64(10)},
@@ -364,6 +406,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.Int64{
 						FieldDetails: field.Field{
 							ID:       5,
+							Name:     "signed int64",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: int64(-10)},
@@ -371,11 +414,13 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       6,
+							Name:     "decimal",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalExponent",
 								Required: true,
 							},
 							Operation: operation.Constant{ConstantValue: int32(-1)},
@@ -383,6 +428,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalMantissa",
 								Required: true,
 							},
 							Operation: operation.Constant{ConstantValue: int64(57)},
@@ -391,11 +437,13 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       7,
+							Name:     "decimal with exp/man",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manExponent",
 								Required: true,
 							},
 							Operation: operation.Constant{ConstantValue: int32(-2)},
@@ -403,6 +451,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manMantissa",
 								Required: true,
 							},
 							Operation: operation.Constant{ConstantValue: int64(2)},
@@ -411,6 +460,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.UnicodeString{
 						FieldDetails: field.Field{
 							ID:       8,
+							Name:     "StringUnicode",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: "Hello: ϔ"},
@@ -418,6 +468,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.ByteVector{
 						FieldDetails: field.Field{
 							ID:       9,
+							Name:     "byteVector",
 							Required: true,
 						},
 						Operation: operation.Constant{ConstantValue: []byte{0x54, 0x45, 0x53, 0x54, 0x3F}},
@@ -425,11 +476,13 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 					field.Sequence{
 						FieldDetails: field.Field{
 							ID:       10,
+							Name:     "sequence",
 							Required: true,
 						},
 						LengthField: field.UInt32{
 							FieldDetails: field.Field{
 								ID:       11,
+								Name:     "length",
 								Required: true,
 							},
 							Operation: operation.Constant{ConstantValue: uint32(2)},
@@ -438,6 +491,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 							field.AsciiString{
 								FieldDetails: field.Field{
 									ID:       12,
+									Name:     "sequence field 1",
 									Required: true,
 								},
 								Operation: operation.None{},
@@ -472,6 +526,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.AsciiString{
 						FieldDetails: field.Field{
 							ID:       1,
+							Name:     "String",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: "Hello"},
@@ -479,6 +534,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.UInt32{
 						FieldDetails: field.Field{
 							ID:       2,
+							Name:     "unsigned int32",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: uint32(10)},
@@ -486,6 +542,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.Int32{
 						FieldDetails: field.Field{
 							ID:       3,
+							Name:     "signed int32",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: int32(-10)},
@@ -493,6 +550,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.UInt64{
 						FieldDetails: field.Field{
 							ID:       4,
+							Name:     "unsigned int64",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: uint64(10)},
@@ -500,6 +558,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.Int64{
 						FieldDetails: field.Field{
 							ID:       5,
+							Name:     "signed int64",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: int64(-10)},
@@ -507,11 +566,13 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       6,
+							Name:     "decimal",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalExponent",
 								Required: true,
 							},
 							Operation: operation.Default{DefaultValue: int32(-1)},
@@ -519,6 +580,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       6,
+								Name:     "decimalMantissa",
 								Required: true,
 							},
 							Operation: operation.Default{DefaultValue: int64(57)},
@@ -527,11 +589,13 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.Decimal{
 						FieldDetails: field.Field{
 							ID:       7,
+							Name:     "decimal with exp/man",
 							Required: true,
 						},
 						ExponentField: field.Int32{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manExponent",
 								Required: true,
 							},
 							Operation: operation.Default{DefaultValue: int32(-2)},
@@ -539,6 +603,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 						MantissaField: field.Int64{
 							FieldDetails: field.Field{
 								ID:       7,
+								Name:     "decimal with exp/manMantissa",
 								Required: true,
 							},
 							Operation: operation.Default{DefaultValue: int64(2)},
@@ -547,6 +612,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.UnicodeString{
 						FieldDetails: field.Field{
 							ID:       8,
+							Name:     "StringUnicode",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: "Hello: ϔ"},
@@ -554,6 +620,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.ByteVector{
 						FieldDetails: field.Field{
 							ID:       9,
+							Name:     "byteVector",
 							Required: true,
 						},
 						Operation: operation.Default{DefaultValue: []byte{0x54, 0x45, 0x53, 0x54, 0x3F}},
@@ -561,11 +628,13 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 					field.Sequence{
 						FieldDetails: field.Field{
 							ID:       10,
+							Name:     "sequence",
 							Required: true,
 						},
 						LengthField: field.UInt32{
 							FieldDetails: field.Field{
 								ID:       11,
+								Name:     "length",
 								Required: true,
 							},
 							Operation: operation.Default{DefaultValue: uint32(2)},
@@ -574,6 +643,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 							field.AsciiString{
 								FieldDetails: field.Field{
 									ID:       12,
+									Name:     "sequence field 1",
 									Required: true,
 								},
 								Operation: operation.None{},
