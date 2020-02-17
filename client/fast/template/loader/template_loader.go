@@ -30,6 +30,7 @@ const unicodeStringLabel = "unicode"
 
 const constantOperation = "constant"
 const defaultOperation = "default"
+const copyOperation = "copy"
 
 type valueConverter func(string) (interface{}, error)
 
@@ -258,6 +259,19 @@ func getOperation(tagInTemplate *tokenxml.Tag, converter valueConverter) (operat
 			return nil, err
 		}
 		operation.DefaultValue = defaultAsCorrectValue
+		return operation, nil
+	case copyOperation:
+		operation := operation.Copy{}
+		initialValue := operationTag.Attributes["value"]
+		if initialValue == "" {
+			operation.InitialValue = nil
+		} else {
+			initialAsCorrectValue, err := converter(initialValue)
+			if err != nil {
+				return nil, err
+			}
+			operation.InitialValue = initialAsCorrectValue
+		}
 		return operation, nil
 	default:
 		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)

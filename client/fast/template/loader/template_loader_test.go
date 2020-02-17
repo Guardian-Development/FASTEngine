@@ -668,3 +668,155 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
 	}
 }
+
+func TestCanLoadCopyOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_copy_operation_on_all_supported_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
+					field.AsciiString{
+						FieldDetails: field.Field{
+							ID:       1,
+							Name:     "String",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: "Hello"},
+					},
+					field.UInt32{
+						FieldDetails: field.Field{
+							ID:       2,
+							Name:     "unsigned int32",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: uint32(10)},
+					},
+					field.Int32{
+						FieldDetails: field.Field{
+							ID:       3,
+							Name:     "signed int32",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: int32(-10)},
+					},
+					field.UInt64{
+						FieldDetails: field.Field{
+							ID:       4,
+							Name:     "unsigned int64",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: uint64(10)},
+					},
+					field.Int64{
+						FieldDetails: field.Field{
+							ID:       5,
+							Name:     "signed int64",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: int64(-10)},
+					},
+					field.Decimal{
+						FieldDetails: field.Field{
+							ID:       6,
+							Name:     "decimal",
+							Required: true,
+						},
+						ExponentField: field.Int32{
+							FieldDetails: field.Field{
+								ID:       6,
+								Name:     "decimalExponent",
+								Required: true,
+							},
+							Operation: operation.Copy{InitialValue: int32(-1)},
+						},
+						MantissaField: field.Int64{
+							FieldDetails: field.Field{
+								ID:       6,
+								Name:     "decimalMantissa",
+								Required: true,
+							},
+							Operation: operation.Copy{InitialValue: int64(57)},
+						},
+					},
+					field.Decimal{
+						FieldDetails: field.Field{
+							ID:       7,
+							Name:     "decimal with exp/man",
+							Required: true,
+						},
+						ExponentField: field.Int32{
+							FieldDetails: field.Field{
+								ID:       7,
+								Name:     "decimal with exp/manExponent",
+								Required: true,
+							},
+							Operation: operation.Copy{InitialValue: int32(-2)},
+						},
+						MantissaField: field.Int64{
+							FieldDetails: field.Field{
+								ID:       7,
+								Name:     "decimal with exp/manMantissa",
+								Required: true,
+							},
+							Operation: operation.Copy{InitialValue: int64(2)},
+						},
+					},
+					field.UnicodeString{
+						FieldDetails: field.Field{
+							ID:       8,
+							Name:     "StringUnicode",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: "Hello: ϔ"},
+					},
+					field.ByteVector{
+						FieldDetails: field.Field{
+							ID:       9,
+							Name:     "byteVector",
+							Required: true,
+						},
+						Operation: operation.Copy{InitialValue: []byte{0x54, 0x45, 0x53, 0x54, 0x3F}},
+					},
+					field.Sequence{
+						FieldDetails: field.Field{
+							ID:       10,
+							Name:     "sequence",
+							Required: true,
+						},
+						LengthField: field.UInt32{
+							FieldDetails: field.Field{
+								ID:       11,
+								Name:     "length",
+								Required: true,
+							},
+							Operation: operation.Copy{InitialValue: uint32(2)},
+						},
+						SequenceFields: []store.Unit{
+							field.AsciiString{
+								FieldDetails: field.Field{
+									ID:       12,
+									Name:     "sequence field 1",
+									Required: true,
+								},
+								Operation: operation.None{},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	// Act
+	store, err := Load(file)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error loading the template when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedStore, store)
+	if !areEqual {
+		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
+	}
+}
