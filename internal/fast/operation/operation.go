@@ -111,7 +111,7 @@ func (operation Copy) GetNotEncodedValue(pMap *presencemap.PresenceMap, required
 	case dictionary.AssignedValue:
 		return t.Value, nil
 	case dictionary.EmptyValue:
-		return nil, nil
+		return fix.NullValue{}, nil
 	case dictionary.UndefinedValue:
 		if operation.InitialValue == nil && required {
 			return nil, fmt.Errorf("no value supplied in message and no initial value with required field")

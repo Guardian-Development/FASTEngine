@@ -103,11 +103,21 @@ func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field AsciiString) GetTagId() uint64 {
@@ -144,11 +154,21 @@ func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presence
 			stringValue = value.StringValue{Value: string(t.Value)}
 		}
 
-		return field.Operation.Apply(stringValue)
+		transformedValue, err := field.Operation.Apply(stringValue)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field UnicodeString) GetTagId() uint64 {
@@ -180,11 +200,21 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field UInt32) GetTagId() uint64 {
@@ -216,11 +246,21 @@ func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field Int32) GetTagId() uint64 {
@@ -252,11 +292,21 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field UInt64) GetTagId() uint64 {
@@ -288,11 +338,21 @@ func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field Int64) GetTagId() uint64 {
@@ -310,8 +370,8 @@ type Decimal struct {
 	MantissaField Int64
 }
 
-func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
-	exponentValue, err := field.ExponentField.Deserialise(inputSource, pMap, dictionary)
+func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dict *dictionary.Dictionary) (fix.Value, error) {
+	exponentValue, err := field.ExponentField.Deserialise(inputSource, pMap, dict)
 	if err != nil {
 		return nil, err
 	}
@@ -319,12 +379,14 @@ func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pr
 	case fix.NullValue:
 		return fix.NullValue{}, nil
 	case fix.RawValue:
-		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dictionary)
+		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dict)
 		if err != nil {
 			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent")
 		}
 		decimalValue := math.Pow(10, float64(exponentValue.Get().(int32))) * float64(mantissaValue.Get().(int64))
-		return fix.NewRawValue(decimalValue), nil
+		fixValue := fix.NewRawValue(decimalValue)
+		dict.SetValue(field.FieldDetails.Name, fixValue)
+		return fixValue, nil
 	}
 
 	return nil, fmt.Errorf("Exponent value of decimal was not expected type: %v", exponentValue)
@@ -359,11 +421,21 @@ func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 			return nil, err
 		}
 
-		return field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value)
+		if err != nil {
+			return nil, err
+		}
+		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+		return transformedValue, nil
 	}
 
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
+	if err != nil {
+		return nil, err
+	}
+	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
+	return transformedValue, nil
 }
 
 func (field ByteVector) GetTagId() uint64 {

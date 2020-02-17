@@ -25,8 +25,13 @@ type Dictionary struct {
 }
 
 // SetValue sets the associated value with the key
-func (dictionary *Dictionary) SetValue(key string, value Value) {
-	dictionary.keys[key] = value
+func (dictionary *Dictionary) SetValue(key string, value fix.Value) {
+	switch t := value.(type) {
+	case fix.NullValue:
+		dictionary.keys[key] = EmptyValue{}
+	case fix.RawValue:
+		dictionary.keys[key] = AssignedValue{Value: t}
+	}
 }
 
 // GetValue gets the associated value with the key. If no value is associated this returns UndefinedValue

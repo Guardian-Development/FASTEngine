@@ -12,6 +12,10 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
+// TODO: test sequence length field for copy operation
+// TODO: test sequence length field for setting value in dictionary
+// TODO: test copy works on nested fields, use test tables to prove previous values read correctly etc, use nil in the middle
+
 //<sequence>
 //	<length />
 // 	<int64 id="2"/>
