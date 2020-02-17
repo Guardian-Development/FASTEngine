@@ -7,6 +7,7 @@ import (
 
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/client/fix"
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
@@ -20,15 +21,18 @@ func TestCanDeseraliseRequiredSequenceOfLengthZero(t *testing.T) {
 	// Arrange length = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.NewSequenceValue(0)
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -37,6 +41,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthZero(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -44,6 +49,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthZero(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -52,7 +58,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthZero(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -75,6 +81,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthTwo(t *testing.T) {
 	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -94,11 +101,13 @@ func TestCanDeseraliseRequiredSequenceOfLengthTwo(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -107,6 +116,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthTwo(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -114,6 +124,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthTwo(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -122,7 +133,7 @@ func TestCanDeseraliseRequiredSequenceOfLengthTwo(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -143,15 +154,18 @@ func TestCanDeseraliseOptionalSequenceOfLengthZero(t *testing.T) {
 	// Arrange length = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.NewSequenceValue(0)
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -160,6 +174,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthZero(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -167,6 +182,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthZero(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -175,7 +191,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthZero(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -196,14 +212,17 @@ func TestCanDeseraliseOptionalSequenceNull(t *testing.T) {
 	// Arrange length = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -212,6 +231,7 @@ func TestCanDeseraliseOptionalSequenceNull(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -219,6 +239,7 @@ func TestCanDeseraliseOptionalSequenceNull(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -227,7 +248,7 @@ func TestCanDeseraliseOptionalSequenceNull(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -249,6 +270,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthTwo(t *testing.T) {
 	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{131, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -268,11 +290,13 @@ func TestCanDeseraliseOptionalSequenceOfLengthTwo(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -281,6 +305,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthTwo(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -288,6 +313,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthTwo(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -296,7 +322,7 @@ func TestCanDeseraliseOptionalSequenceOfLengthTwo(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -325,6 +351,7 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 	//			1. string(TEST3) = 01010100 01000101 01010011 01010100 10110011
 	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 130, 84, 69, 83, 84, 177, 84, 69, 83, 84, 178, 132, 129, 84, 69, 83, 84, 179})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -365,11 +392,13 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -378,6 +407,7 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -385,11 +415,13 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 			Sequence{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "SequenceTwoField",
 					Required: true,
 				},
 				LengthField: UInt32{
 					FieldDetails: Field{
 						ID:       4,
+						Name:     "SequenceTwoField",
 						Required: true,
 					},
 					Operation: operation.None{},
@@ -398,6 +430,7 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 					AsciiString{
 						FieldDetails: Field{
 							ID:       5,
+							Name:     "AsciiStringTwoField",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -408,7 +441,7 @@ func TestCanDeseraliseSequenceWithNestedRequiredSequence(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -435,6 +468,7 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 	// 2: int64 = 10000100	nested - length(nil) = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 130, 84, 69, 83, 84, 177, 132, 128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -462,11 +496,13 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -475,6 +511,7 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -482,11 +519,13 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 			Sequence{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "SequenceTwoField",
 					Required: false,
 				},
 				LengthField: UInt32{
 					FieldDetails: Field{
 						ID:       4,
+						Name:     "SequenceTwoField",
 						Required: false,
 					},
 					Operation: operation.None{},
@@ -495,6 +534,7 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 					AsciiString{
 						FieldDetails: Field{
 							ID:       5,
+							Name:     "AsciiStringTwoField",
 							Required: true,
 						},
 						Operation: operation.None{},
@@ -505,7 +545,7 @@ func TestCanDeseraliseSequenceWithNestedOptionalSequence(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -530,6 +570,7 @@ func TestCanDeseraliseRequiredSequenceWithRequiredPmapPerIteration(t *testing.T)
 	// 2: pmap = 11000000	int64 = 2 (see pmap)	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 128, 84, 69, 83, 84, 177, 192, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -549,11 +590,13 @@ func TestCanDeseraliseRequiredSequenceWithRequiredPmapPerIteration(t *testing.T)
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -562,6 +605,7 @@ func TestCanDeseraliseRequiredSequenceWithRequiredPmapPerIteration(t *testing.T)
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: false,
 				},
 				Operation: operation.Constant{
@@ -571,6 +615,7 @@ func TestCanDeseraliseRequiredSequenceWithRequiredPmapPerIteration(t *testing.T)
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -579,7 +624,7 @@ func TestCanDeseraliseRequiredSequenceWithRequiredPmapPerIteration(t *testing.T)
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -604,6 +649,7 @@ func TestCanDeseraliseRequiredSequenceWithNoPmapPerIteration(t *testing.T) {
 	// 2: int64 = 2 string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 84, 69, 83, 84, 177, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -623,11 +669,13 @@ func TestCanDeseraliseRequiredSequenceWithNoPmapPerIteration(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -636,6 +684,7 @@ func TestCanDeseraliseRequiredSequenceWithNoPmapPerIteration(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.Constant{
@@ -645,6 +694,7 @@ func TestCanDeseraliseRequiredSequenceWithNoPmapPerIteration(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -653,7 +703,7 @@ func TestCanDeseraliseRequiredSequenceWithNoPmapPerIteration(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -678,6 +728,7 @@ func TestCanDeseraliseOptionalSequenceWithRequiredPmapPerIteration(t *testing.T)
 	// 2: pmap = 11000000	int64 = 2 (see pmap)	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{131, 128, 84, 69, 83, 84, 177, 192, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -697,11 +748,13 @@ func TestCanDeseraliseOptionalSequenceWithRequiredPmapPerIteration(t *testing.T)
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -710,6 +763,7 @@ func TestCanDeseraliseOptionalSequenceWithRequiredPmapPerIteration(t *testing.T)
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: false,
 				},
 				Operation: operation.Constant{
@@ -719,6 +773,7 @@ func TestCanDeseraliseOptionalSequenceWithRequiredPmapPerIteration(t *testing.T)
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -727,7 +782,7 @@ func TestCanDeseraliseOptionalSequenceWithRequiredPmapPerIteration(t *testing.T)
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -752,6 +807,7 @@ func TestCanDeseraliseOptionalSequenceWithNoPmapPerIteration(t *testing.T) {
 	// 2: int64 = 2 string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{131, 84, 69, 83, 84, 177, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -771,11 +827,13 @@ func TestCanDeseraliseOptionalSequenceWithNoPmapPerIteration(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -784,6 +842,7 @@ func TestCanDeseraliseOptionalSequenceWithNoPmapPerIteration(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.Constant{
@@ -793,6 +852,7 @@ func TestCanDeseraliseOptionalSequenceWithNoPmapPerIteration(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -801,7 +861,7 @@ func TestCanDeseraliseOptionalSequenceWithNoPmapPerIteration(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -825,6 +885,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	// 1: int64 = 10000001	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -838,11 +899,13 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.Constant{
@@ -853,6 +916,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -860,6 +924,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -868,7 +933,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -892,6 +957,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	// 1: int64 = 10000001	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := fix.SequenceValue{
 		Values: []fix.Message{
 			fix.Message{
@@ -905,11 +971,13 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.Constant{
@@ -920,6 +988,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -927,6 +996,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -935,7 +1005,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -958,14 +1028,17 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.Constant{
@@ -976,6 +1049,7 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -983,6 +1057,7 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -991,7 +1066,7 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -1012,11 +1087,13 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *test
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -1025,6 +1102,7 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *test
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1032,6 +1110,7 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *test
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1058,11 +1137,13 @@ func TestRequiresPmapReturnsFalseForOptionalSequenceWithNoLengthOperator(t *test
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -1071,6 +1152,7 @@ func TestRequiresPmapReturnsFalseForOptionalSequenceWithNoLengthOperator(t *test
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1078,6 +1160,7 @@ func TestRequiresPmapReturnsFalseForOptionalSequenceWithNoLengthOperator(t *test
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1106,11 +1189,13 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.Constant{
@@ -1121,6 +1206,7 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1128,6 +1214,7 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1156,11 +1243,13 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithConstantLengthOperator(t 
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.Constant{
@@ -1171,6 +1260,7 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithConstantLengthOperator(t 
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1178,6 +1268,7 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithConstantLengthOperator(t 
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1206,11 +1297,13 @@ func TestRequiresPmapReturnsTrueForRequiredSequenceWithDefaultLengthOperator(t *
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: true,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -1221,6 +1314,7 @@ func TestRequiresPmapReturnsTrueForRequiredSequenceWithDefaultLengthOperator(t *
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1228,6 +1322,7 @@ func TestRequiresPmapReturnsTrueForRequiredSequenceWithDefaultLengthOperator(t *
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1256,11 +1351,13 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithDefaultLengthOperator(t *
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "SequenceField",
 			Required: false,
 		},
 		LengthField: UInt32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "SequenceField",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -1271,6 +1368,7 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithDefaultLengthOperator(t *
 			Int64{
 				FieldDetails: Field{
 					ID:       2,
+					Name:     "Int64Field",
 					Required: true,
 				},
 				Operation: operation.None{},
@@ -1278,6 +1376,7 @@ func TestRequiresPmapReturnsTrueForOptionalSequenceWithDefaultLengthOperator(t *
 			AsciiString{
 				FieldDetails: Field{
 					ID:       3,
+					Name:     "AsciiStringField",
 					Required: true,
 				},
 				Operation: operation.None{},

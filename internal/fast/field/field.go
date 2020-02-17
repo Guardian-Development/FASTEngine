@@ -8,6 +8,7 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast"
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
@@ -16,6 +17,7 @@ import (
 // Field contains information about a TemplateUnit within a FAST Template
 type Field struct {
 	ID       uint64
+	Name     string
 	Required bool
 }
 
@@ -26,8 +28,8 @@ type Sequence struct {
 	SequenceFields []store.Unit
 }
 
-func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	numberOfElements, err := field.LengthField.Deserialise(inputSource, pMap)
+func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, previousValues *dictionary.Dictionary) (fix.Value, error) {
+	numberOfElements, err := field.LengthField.Deserialise(inputSource, pMap, previousValues)
 	if err != nil {
 		return nil, err
 	}
@@ -49,8 +51,9 @@ func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.P
 			}
 		}
 
+		sequenceDictionary := dictionary.New()
 		for _, element := range field.SequenceFields {
-			value, err := element.Deserialise(inputSource, &sequencePmap)
+			value, err := element.Deserialise(inputSource, &sequencePmap, &sequenceDictionary)
 			if err != nil {
 				return nil, err
 			}
@@ -85,7 +88,7 @@ type AsciiString struct {
 	Operation    operation.Operation
 }
 
-func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -103,7 +106,8 @@ func (field AsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field AsciiString) GetTagId() uint64 {
@@ -120,7 +124,7 @@ type UnicodeString struct {
 	Operation    operation.Operation
 }
 
-func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var stringValue value.Value
 		var err error
@@ -143,7 +147,8 @@ func (field UnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *presence
 		return field.Operation.Apply(stringValue)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field UnicodeString) GetTagId() uint64 {
@@ -160,7 +165,7 @@ type UInt32 struct {
 	Operation    operation.Operation
 }
 
-func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -178,7 +183,8 @@ func (field UInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field UInt32) GetTagId() uint64 {
@@ -195,7 +201,7 @@ type Int32 struct {
 	Operation    operation.Operation
 }
 
-func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -213,7 +219,8 @@ func (field Int32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field Int32) GetTagId() uint64 {
@@ -230,7 +237,7 @@ type UInt64 struct {
 	Operation    operation.Operation
 }
 
-func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -248,7 +255,8 @@ func (field UInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pre
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field UInt64) GetTagId() uint64 {
@@ -265,7 +273,7 @@ type Int64 struct {
 	Operation    operation.Operation
 }
 
-func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -283,7 +291,8 @@ func (field Int64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pres
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field Int64) GetTagId() uint64 {
@@ -301,8 +310,8 @@ type Decimal struct {
 	MantissaField Int64
 }
 
-func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
-	exponentValue, err := field.ExponentField.Deserialise(inputSource, pMap)
+func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
+	exponentValue, err := field.ExponentField.Deserialise(inputSource, pMap, dictionary)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +319,7 @@ func (field Decimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.Pr
 	case fix.NullValue:
 		return fix.NullValue{}, nil
 	case fix.RawValue:
-		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap)
+		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dictionary)
 		if err != nil {
 			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent")
 		}
@@ -335,7 +344,7 @@ type ByteVector struct {
 	Operation    operation.Operation
 }
 
-func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error) {
+func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -353,7 +362,8 @@ func (field ByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 		return field.Operation.Apply(value)
 	}
 
-	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required)
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+	return field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 }
 
 func (field ByteVector) GetTagId() uint64 {

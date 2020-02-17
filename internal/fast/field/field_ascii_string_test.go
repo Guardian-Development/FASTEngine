@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
@@ -13,17 +14,19 @@ func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
 	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -39,17 +42,19 @@ func TestCanDeseraliseOptionalAsciiStringPresent(t *testing.T) {
 	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -65,16 +70,18 @@ func TestCanDeseraliseOptionalAsciiStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -92,10 +99,12 @@ func TestCanDeseraliseRequiredAsciiStringConstantOperatorNotEncoded(t *testing.T
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -104,7 +113,7 @@ func TestCanDeseraliseRequiredAsciiStringConstantOperatorNotEncoded(t *testing.T
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -122,9 +131,11 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorNotEncodedReturnsNilVal
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -133,7 +144,7 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorNotEncodedReturnsNilVal
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -151,10 +162,12 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -163,7 +176,7 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -180,6 +193,7 @@ func TestRequiresPmapReturnsFalseForRequiredAsciiStringNoOperator(t *testing.T) 
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.None{},
@@ -200,6 +214,7 @@ func TestRequiresPmapReturnsFalseForOptionalAsciiStringNoOperator(t *testing.T) 
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
@@ -222,6 +237,7 @@ func TestRequiresPmapReturnsFalseForRequiredAsciiStringConstantOperator(t *testi
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -246,6 +262,7 @@ func TestRequiresPmapReturnsTrueForOptionalAsciiStringConstantOperator(t *testin
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -269,10 +286,12 @@ func TestCanDeseraliseAsciiStringDefaultOperatorEncodedReturnsValueFromStream(t 
 	// Arrange pmap = 11000000 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -281,7 +300,7 @@ func TestCanDeseraliseAsciiStringDefaultOperatorEncodedReturnsValueFromStream(t 
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -299,10 +318,12 @@ func TestCanDeseraliseAsciiStringDefaultOperatorNotEncodedReturnsDefaultValue(t 
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -311,7 +332,7 @@ func TestCanDeseraliseAsciiStringDefaultOperatorNotEncodedReturnsDefaultValue(t 
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -329,10 +350,12 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorEncodedReturnsValueFromS
 	// Arrange pmap = 11000000 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -341,7 +364,7 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorEncodedReturnsValueFromS
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -359,10 +382,12 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorNotEncodedReturnsDefault
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -371,7 +396,7 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorNotEncodedReturnsDefault
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -389,9 +414,11 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorNotEncodedReturnsDefault
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -400,7 +427,7 @@ func TestCanDeseraliseOptionalAsciiStringDefaultOperatorNotEncodedReturnsDefault
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -419,6 +446,7 @@ func TestRequiresPmapReturnsTrueForRequiredAsciiStringDefaultOperator(t *testing
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -443,6 +471,7 @@ func TestRequiresPmapReturnsTrueForOptionalAsciiStringDefaultOperator(t *testing
 	unitUnderTest := AsciiString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "AsciiStringField",
 			Required: false,
 		},
 		Operation: operation.Default{

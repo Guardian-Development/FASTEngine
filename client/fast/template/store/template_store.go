@@ -4,6 +4,7 @@ import (
 	"bytes"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
@@ -19,15 +20,15 @@ type Template struct {
 
 // Unit represents an element within a FAST Template, with the ability to Serialise/Deserialise a part of a FAST message
 type Unit interface {
-	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (fix.Value, error)
+	Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error)
 	GetTagId() uint64
 	RequiresPmap() bool
 }
 
-func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap) (*fix.Message, error) {
+func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (*fix.Message, error) {
 	fixMessage := fix.New()
 	for _, unit := range template.TemplateUnits {
-		value, err := unit.Deserialise(inputSource, pMap)
+		value, err := unit.Deserialise(inputSource, pMap, dictionary)
 		if err != nil {
 			return nil, err
 		}

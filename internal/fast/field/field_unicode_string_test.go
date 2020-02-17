@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
@@ -13,17 +14,19 @@ func TestCanDeseraliseRequiredUnicodeString(t *testing.T) {
 	// Arrange TEST1 = 10000101 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -39,17 +42,19 @@ func TestCanDeseraliseOptionalUnicodeStringPresent(t *testing.T) {
 	// Arrange TEST1 = 10000110 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{134, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -65,16 +70,18 @@ func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -92,10 +99,12 @@ func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -104,7 +113,7 @@ func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -122,9 +131,11 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilV
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -133,7 +144,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilV
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -151,10 +162,12 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -163,7 +176,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -180,6 +193,7 @@ func TestRequiresPmapReturnsFalseForRequiredUnicodeStringNoOperator(t *testing.T
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.None{},
@@ -200,6 +214,7 @@ func TestRequiresPmapReturnsFalseForOptionalUnicodeStringNoOperator(t *testing.T
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.None{},
@@ -222,6 +237,7 @@ func TestRequiresPmapReturnsFalseForRequiredUnicodeStringConstantOperator(t *tes
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -246,6 +262,7 @@ func TestRequiresPmapReturnsTrueForOptionalUnicodeStringConstantOperator(t *test
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -269,10 +286,12 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorEncodedReturnsValueFromStream(
 	// Arrange pmap = 11000000 TEST1 = 10000101 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -281,7 +300,7 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorEncodedReturnsValueFromStream(
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -299,10 +318,12 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorNotEncodedReturnsDefaultValue(
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -311,7 +332,7 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorNotEncodedReturnsDefaultValue(
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -329,10 +350,12 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorEncodedReturnsValueFro
 	// Arrange pmap = 11000000 TEST1 = 10000110 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{134, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -341,7 +364,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorEncodedReturnsValueFro
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -359,10 +382,12 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -371,7 +396,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -389,9 +414,11 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -400,7 +427,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -419,6 +446,7 @@ func TestRequiresPmapReturnsTrueForRequiredUnicodeStringDefaultOperator(t *testi
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -443,6 +471,7 @@ func TestRequiresPmapReturnsTrueForOptionalUnicodeStringDefaultOperator(t *testi
 	unitUnderTest := UnicodeString{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UnicodeStringField",
 			Required: false,
 		},
 		Operation: operation.Default{

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
@@ -16,15 +17,18 @@ func TestCanDeseraliseRequiredDecimal(t *testing.T) {
 	// Arrange exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -32,6 +36,7 @@ func TestCanDeseraliseRequiredDecimal(t *testing.T) {
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -39,7 +44,7 @@ func TestCanDeseraliseRequiredDecimal(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -58,15 +63,18 @@ func TestCanDeseraliseOptionalDecimalExponentPresent(t *testing.T) {
 	// Arrange exp = 10000011 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{131, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -74,6 +82,7 @@ func TestCanDeseraliseOptionalDecimalExponentPresent(t *testing.T) {
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -81,7 +90,7 @@ func TestCanDeseraliseOptionalDecimalExponentPresent(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -100,14 +109,17 @@ func TestCanDeseraliseOptionalDecimalExponentPresentMantissaNotEncodedCausesErro
 	// Arrange exp = 10000011 man = nil
 	messageAsBytes := bytes.NewBuffer([]byte{131})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -115,13 +127,14 @@ func TestCanDeseraliseOptionalDecimalExponentPresentMantissaNotEncodedCausesErro
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
 		},
 	}
 	// Act
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
 	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent" {
@@ -137,14 +150,17 @@ func TestCanDeseraliseOptionalDecimalExponentNullMantissaNotEncoded(t *testing.T
 	// Arrange exp = 10000000 man = NOT ENCODED EVEN THOUGH REQUIRED
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -152,6 +168,7 @@ func TestCanDeseraliseOptionalDecimalExponentNullMantissaNotEncoded(t *testing.T
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -159,7 +176,7 @@ func TestCanDeseraliseOptionalDecimalExponentNullMantissaNotEncoded(t *testing.T
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -180,15 +197,18 @@ func TestCanDeseraliseRequiredDecimalExponentConstantOperatorNotEncoded(t *testi
 	// Arrange man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int32(2)},
@@ -196,6 +216,7 @@ func TestCanDeseraliseRequiredDecimalExponentConstantOperatorNotEncoded(t *testi
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -203,7 +224,7 @@ func TestCanDeseraliseRequiredDecimalExponentConstantOperatorNotEncoded(t *testi
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -224,15 +245,18 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorEncodedReadsFromStre
 	// Arrange pmap = 11000000 exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -242,6 +266,7 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorEncodedReadsFromStre
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -249,7 +274,7 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorEncodedReadsFromStre
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -270,15 +295,18 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorNotEncoded(t *testin
 	// Arrange pmap = 10000000 exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -288,6 +316,7 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorNotEncoded(t *testin
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -295,7 +324,7 @@ func TestCanDeseraliseRequiredDecimalExponentDefaultOperatorNotEncoded(t *testin
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -316,15 +345,18 @@ func TestCanDeseraliseRequiredDecimalMantissaConstantOperatorNotEncoded(t *testi
 	// Arrange exp = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(200)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -332,6 +364,7 @@ func TestCanDeseraliseRequiredDecimalMantissaConstantOperatorNotEncoded(t *testi
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(2)},
@@ -339,7 +372,7 @@ func TestCanDeseraliseRequiredDecimalMantissaConstantOperatorNotEncoded(t *testi
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -360,15 +393,18 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorEncodedReadsFromStre
 	// Arrange pmap = 11000000 exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -376,6 +412,7 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorEncodedReadsFromStre
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -385,7 +422,7 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorEncodedReadsFromStre
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -406,15 +443,18 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorNotEncoded(t *testin
 	// Arrange pmap = 10000000 exp = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -422,6 +462,7 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorNotEncoded(t *testin
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -431,7 +472,7 @@ func TestCanDeseraliseRequiredDecimalMantissaDefaultOperatorNotEncoded(t *testin
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -454,15 +495,18 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaConstantOperatorNotEncod
 	// Arrange
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(200)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int32(2)},
@@ -470,6 +514,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaConstantOperatorNotEncod
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(2)},
@@ -477,7 +522,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaConstantOperatorNotEncod
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -500,15 +545,18 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorEncodedRe
 	// Arrange pmap = 11100000 exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{224}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -518,6 +566,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorEncodedRe
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -527,7 +576,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorEncodedRe
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -550,15 +599,18 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorNotEncode
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(200)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -568,6 +620,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorNotEncode
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -577,7 +630,7 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaDefaultOperatorNotEncode
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -598,14 +651,17 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorNotEncodedReturnsNi
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Constant{ConstantValue: int32(2)},
@@ -613,6 +669,7 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorNotEncodedReturnsNi
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -620,7 +677,7 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorNotEncodedReturnsNi
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -641,14 +698,17 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReturnsNil
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -658,6 +718,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReturnsNil
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -665,7 +726,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReturnsNil
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -686,15 +747,18 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorEncodedReadsExponent
 	// Arrange pmap = 11000000 exp = 10000011 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{131, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -704,6 +768,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorEncodedReadsExponent
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -711,7 +776,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorEncodedReadsExponent
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -732,15 +797,18 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReadsDefau
 	// Arrange pmap = 10000000 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -750,6 +818,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReadsDefau
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -757,7 +826,7 @@ func TestCanDeseraliseOptionalDecimalExponentDefaultOperatorNotEncodedReadsDefau
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -778,15 +847,18 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorEncodedReadsMantiss
 	// Arrange pmap = 11000000 man = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := float64(200)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Constant{ConstantValue: int32(2)},
@@ -794,6 +866,7 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorEncodedReadsMantiss
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -801,7 +874,7 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorEncodedReadsMantiss
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -821,11 +894,13 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalNoOperator(t *testing.T) {
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -833,6 +908,7 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalNoOperator(t *testing.T) {
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -859,11 +935,13 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalExponentDefault(t *testing.T) 
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -873,6 +951,7 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalExponentDefault(t *testing.T) 
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -899,11 +978,13 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalExponentConstant(t *testing.T
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int32(12)},
@@ -911,6 +992,7 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalExponentConstant(t *testing.T
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -937,11 +1019,13 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalMantissaDefault(t *testing.T) 
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -949,6 +1033,7 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalMantissaDefault(t *testing.T) 
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -977,11 +1062,13 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalMantissaConstant(t *testing.T
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -989,6 +1076,7 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalMantissaConstant(t *testing.T
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(12)},
@@ -1017,11 +1105,13 @@ func TestRequiresPmapReturnsTrueForRequirdDecimalExponentAndMantissaDefault(t *t
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -1031,6 +1121,7 @@ func TestRequiresPmapReturnsTrueForRequirdDecimalExponentAndMantissaDefault(t *t
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -1061,11 +1152,13 @@ func TestRequiresPmapReturnsFalseForRequirdDecimalExponentAndMantissaConstant(t 
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: true,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int32(12)},
@@ -1073,6 +1166,7 @@ func TestRequiresPmapReturnsFalseForRequirdDecimalExponentAndMantissaConstant(t 
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(12)},
@@ -1097,11 +1191,13 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalNoOperator(t *testing.T) {
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -1109,6 +1205,7 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalNoOperator(t *testing.T) {
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -1135,11 +1232,13 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentDefault(t *testing.T) 
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -1149,6 +1248,7 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentDefault(t *testing.T) 
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -1175,11 +1275,13 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentConstant(t *testing.T)
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Constant{ConstantValue: int32(7)},
@@ -1187,6 +1289,7 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentConstant(t *testing.T)
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.None{},
@@ -1213,11 +1316,13 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalMantissaDefault(t *testing.T) 
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -1225,6 +1330,7 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalMantissaDefault(t *testing.T) 
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -1253,11 +1359,13 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalMantissaConstant(t *testing.T
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.None{},
@@ -1265,6 +1373,7 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalMantissaConstant(t *testing.T
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(7)},
@@ -1293,11 +1402,13 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaDef
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Default{
@@ -1307,6 +1418,7 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaDef
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Default{
@@ -1337,11 +1449,13 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaCon
 	unitUnderTest := Decimal{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "DecimalField",
 			Required: false,
 		},
 		ExponentField: Int32{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldExponent",
 				Required: false,
 			},
 			Operation: operation.Constant{ConstantValue: int32(7)},
@@ -1349,6 +1463,7 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaCon
 		MantissaField: Int64{
 			FieldDetails: Field{
 				ID:       1,
+				Name:     "DecimalFieldMantissa",
 				Required: true,
 			},
 			Operation: operation.Constant{ConstantValue: int64(7)},

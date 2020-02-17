@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
@@ -13,17 +14,19 @@ func TestCanDeseraliseRequiredUInt64(t *testing.T) {
 	// Arrange 3 = 10000011
 	messageAsBytes := bytes.NewBuffer([]byte{131})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(3)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -39,17 +42,19 @@ func TestCanDeseraliseOptionalUInt64Present(t *testing.T) {
 	// Arrange 3 = 10000100
 	messageAsBytes := bytes.NewBuffer([]byte{132})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(3)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -65,16 +70,18 @@ func TestCanDeseraliseOptionalUInt64Null(t *testing.T) {
 	// Arrange 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.None{},
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -92,10 +99,12 @@ func TestCanDeseraliseRequiredUInt64ConstantOperatorNotEncoded(t *testing.T) {
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(132)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -104,7 +113,7 @@ func TestCanDeseraliseRequiredUInt64ConstantOperatorNotEncoded(t *testing.T) {
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -122,9 +131,11 @@ func TestCanDeseraliseOptionalUInt64ConstantOperatorNotEncodedReturnsNilValue(t 
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -133,7 +144,7 @@ func TestCanDeseraliseOptionalUInt64ConstantOperatorNotEncodedReturnsNilValue(t 
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -151,10 +162,12 @@ func TestCanDeseraliseOptionalUInt64ConstantOperatorEncodedReturnsConstantValue(
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(132)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -163,7 +176,7 @@ func TestCanDeseraliseOptionalUInt64ConstantOperatorEncodedReturnsConstantValue(
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -180,6 +193,7 @@ func TestRequiresPmapReturnsFalseForRequiredUInt64NoOperator(t *testing.T) {
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.None{},
@@ -200,6 +214,7 @@ func TestRequiresPmapReturnsFalseForOptionalUInt64NoOperator(t *testing.T) {
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.None{},
@@ -222,6 +237,7 @@ func TestRequiresPmapReturnsFalseForRequiredUInt64ConstantOperator(t *testing.T)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.Constant{
@@ -246,6 +262,7 @@ func TestRequiresPmapReturnsTrueForOptionalUInt64ConstantOperator(t *testing.T) 
 	unitUnderTest := UInt32{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Constant{
@@ -269,10 +286,12 @@ func TestCanDeseraliseUInt64DefaultOperatorEncodedReturnsValueFromStream(t *test
 	// Arrange pmap = 11000000 2 = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -281,7 +300,7 @@ func TestCanDeseraliseUInt64DefaultOperatorEncodedReturnsValueFromStream(t *test
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -299,10 +318,12 @@ func TestCanDeseraliseUInt64DefaultOperatorNotEncodedReturnsDefaultValue(t *test
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(5)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -311,7 +332,7 @@ func TestCanDeseraliseUInt64DefaultOperatorNotEncodedReturnsDefaultValue(t *test
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -329,10 +350,12 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorEncodedReturnsValueFromStream
 	// Arrange pmap = 11000000 2 = 10000011
 	messageAsBytes := bytes.NewBuffer([]byte{131})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -341,7 +364,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorEncodedReturnsValueFromStream
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -359,10 +382,12 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultValue
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	expectedMessage := uint64(5)
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -371,7 +396,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultValue
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -389,9 +414,11 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultNilVa
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Default{
@@ -400,7 +427,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultNilVa
 	}
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -419,6 +446,7 @@ func TestRequiresPmapReturnsTrueForRequiredUInt64DefaultOperator(t *testing.T) {
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: true,
 		},
 		Operation: operation.Default{
@@ -443,6 +471,7 @@ func TestRequiresPmapReturnsTrueForOptionalUInt64DefaultOperator(t *testing.T) {
 	unitUnderTest := UInt64{
 		FieldDetails: Field{
 			ID:       1,
+			Name:     "UInt64Field",
 			Required: false,
 		},
 		Operation: operation.Default{
