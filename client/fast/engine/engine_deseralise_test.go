@@ -8,13 +8,13 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: change the template loader tests to load names, and make sure names are generated uniquely when no name provided
 // TODO: implement copy
 // TODO: increment, delta, tail
 // TODO: engine should be only public element of this library really, with a nice interface to create it from a template file only.
 // TODO: logging!!
 // TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
 // 			look at codecoverage and how we can use them to generate coverage for the whole project
+// TODO: series of messages should focus on state (copy, increment etc) to show the engine works when parsing a feed
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
 // TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices)
 // TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed

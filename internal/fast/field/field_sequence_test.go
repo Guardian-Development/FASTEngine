@@ -12,8 +12,6 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
-// TODO: test sequence length field for copy operation
-// TODO: test sequence length field for setting value in dictionary
 // TODO: test copy works on nested fields, use test tables to prove previous values read correctly etc, use nil in the middle
 
 //<sequence>
@@ -1082,12 +1080,20 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 }
 
 //<sequence>
-//	<length />
+//	<length>
+//		<copy/>
+//	</length>
 // 	<int64 id="2"/>
 // 	<string id="3"/>
 //</sequence>
-func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *testing.T) {
-	// Arrange
+func TestDictionaryIsUpdatedWithAssignedValueWhenSequenceLengthReadFromStream(t *testing.T) {
+	// Arrange pmap = 1100000 length(2) = 10000010
+	// 1: int64 = 10000011	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
+	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
+	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dict := dictionary.New()
+	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(uint32(2))}
 	unitUnderTest := Sequence{
 		FieldDetails: Field{
 			ID:       1,
@@ -1100,7 +1106,9 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *test
 				Name:     "SequenceField",
 				Required: true,
 			},
-			Operation: operation.None{},
+			Operation: operation.Copy{
+				InitialValue: nil,
+			},
 		},
 		SequenceFields: []store.Unit{
 			Int64{
@@ -1123,11 +1131,372 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithNoLengthOperator(t *test
 	}
 
 	// Act
-	result := unitUnderTest.RequiresPmap()
+	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
-	if result != false {
-		t.Errorf("Expected RequiresPmap to return false, but got true")
+	result := dict.GetValue("SequenceField")
+	if result != expectedValue {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedValue, result)
+	}
+}
+
+//<sequence presence="optional">
+//	<length>
+//		<copy/>
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestDictionaryIsUpdatedWithEmptyValueWhenNilSequenceLengthReadFromStream(t *testing.T) {
+	// Arrange pmap = 1100000 length(2) = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{128})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dict := dictionary.New()
+	expectedValue := dictionary.EmptyValue{}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: false,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: false,
+			},
+			Operation: operation.Copy{
+				InitialValue: nil,
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
+
+	// Assert
+	result := dict.GetValue("SequenceField")
+	if result != expectedValue {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedValue, result)
+	}
+}
+
+//<sequence>
+//	<length>
+//		<copy/>
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
+	// Arrange pmap = 1100000 length(2) = 10000010
+	// 1: int64 = 10000011	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
+	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
+	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
+	dictionary := dictionary.New()
+	expectedMessage := fix.SequenceValue{
+		Values: []fix.Message{
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(3)),
+					3: fix.NewRawValue("TEST1"),
+				},
+			},
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(2)),
+					3: fix.NewRawValue("TEST2"),
+				},
+			},
+		},
+	}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: true,
+			},
+			Operation: operation.Copy{
+				InitialValue: nil,
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	areEqual := reflect.DeepEqual(expectedMessage, result)
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<sequence>
+//	<length>
+//		<copy/>
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsPreviousValue(t *testing.T) {
+	// Arrange pmap = 1000000 length(2) = nil
+	// 1: int64 = 10000011	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
+	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
+	messageAsBytes := bytes.NewBuffer([]byte{131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dict := dictionary.New()
+	expectedMessage := fix.SequenceValue{
+		Values: []fix.Message{
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(3)),
+					3: fix.NewRawValue("TEST1"),
+				},
+			},
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(2)),
+					3: fix.NewRawValue("TEST2"),
+				},
+			},
+		},
+	}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: true,
+			},
+			Operation: operation.Copy{
+				InitialValue: nil,
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	dict.SetValue("SequenceField", fix.NewRawValue(uint32(2)))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	areEqual := reflect.DeepEqual(expectedMessage, result)
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<sequence>
+//	<length>
+//		<copy value="2"/>
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsInitialValue(t *testing.T) {
+	// Arrange pmap = 1000000 length(2) = nil
+	// 1: int64 = 10000011	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
+	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
+	messageAsBytes := bytes.NewBuffer([]byte{131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dict := dictionary.New()
+	expectedMessage := fix.SequenceValue{
+		Values: []fix.Message{
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(3)),
+					3: fix.NewRawValue("TEST1"),
+				},
+			},
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(2)),
+					3: fix.NewRawValue("TEST2"),
+				},
+			},
+		},
+	}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: true,
+			},
+			Operation: operation.Copy{
+				InitialValue: uint32(2),
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	areEqual := reflect.DeepEqual(expectedMessage, result)
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<sequence presence="optional">
+//	<length>
+//		<copy />
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestCanDeseraliseOptionalSequenceCopyOperatorLengthNotEncodedGetsPreviousValueNil(t *testing.T) {
+	// Arrange pmap = 10000000
+	messageAsBytes := bytes.NewBuffer([]byte{})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dict := dictionary.New()
+	expectedMessage := fix.NullValue{}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: false,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: false,
+			},
+			Operation: operation.Copy{
+				InitialValue: nil,
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	dict.SetValue("SequenceField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	areEqual := reflect.DeepEqual(expectedMessage, result)
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 
@@ -1183,6 +1552,60 @@ func TestRequiresPmapReturnsFalseForOptionalSequenceWithNoLengthOperator(t *test
 
 //<sequence>
 //	<length>
+//		<copy value="1" />
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestRequiresPmapReturnsTrueForRequiredSequenceWithCopyLengthOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: true,
+			},
+			Operation: operation.Copy{
+				InitialValue: uint32(1),
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
+	}
+}
+
+//<sequence>
+//	<length>
 //		<constant value="1" />
 //	</length>
 // 	<int64 id="2"/>
@@ -1232,6 +1655,60 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 	// Assert
 	if result != false {
 		t.Errorf("Expected RequiresPmap to return false, but got true")
+	}
+}
+
+//<sequence presence="optional">
+//	<length>
+//		<copy value="1" />
+//	</length>
+// 	<int64 id="2"/>
+// 	<string id="3"/>
+//</sequence>
+func TestRequiresPmapReturnsTrueForOptionalSequenceWithCopyLengthOperator(t *testing.T) {
+	// Arrange
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: false,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: false,
+			},
+			Operation: operation.Copy{
+				InitialValue: uint32(1),
+			},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.None{},
+			},
+		},
+	}
+
+	// Act
+	result := unitUnderTest.RequiresPmap()
+
+	// Assert
+	if result != true {
+		t.Errorf("Expected RequiresPmap to return true, but got false")
 	}
 }
 
