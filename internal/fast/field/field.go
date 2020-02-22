@@ -39,10 +39,11 @@ func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.P
 		return t, nil
 	}
 
-	elementCount := numberOfElements.Get().(uint32)
-	sequenceValue := fix.NewSequenceValue(elementCount)
+	numberOfRepeatingGroups := numberOfElements.Get().(uint32)
+	sequenceValue := fix.NewSequenceValue(numberOfRepeatingGroups)
+	sequenceDictionary := dictionary.New()
 
-	for elementNumber := uint32(0); elementNumber < elementCount; elementNumber++ {
+	for repeatingGroup := uint32(0); repeatingGroup < numberOfRepeatingGroups; repeatingGroup++ {
 		sequencePmap := presencemap.PresenceMap{}
 		if field.subFieldsRequirePmap() {
 			sequencePmap, err = presencemap.New(inputSource)
@@ -51,13 +52,12 @@ func (field Sequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.P
 			}
 		}
 
-		sequenceDictionary := dictionary.New()
 		for _, element := range field.SequenceFields {
 			value, err := element.Deserialise(inputSource, &sequencePmap, &sequenceDictionary)
 			if err != nil {
 				return nil, err
 			}
-			sequenceValue.SetValue(elementNumber, element.GetTagId(), value)
+			sequenceValue.SetValue(repeatingGroup, element.GetTagId(), value)
 		}
 	}
 

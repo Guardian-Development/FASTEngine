@@ -12,8 +12,6 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
-// TODO: test copy works on nested fields, use test tables to prove previous values read correctly etc, use nil in the middle
-
 //<sequence>
 //	<length />
 // 	<int64 id="2"/>
@@ -1489,6 +1487,100 @@ func TestCanDeseraliseOptionalSequenceCopyOperatorLengthNotEncodedGetsPreviousVa
 	// Act
 	dict.SetValue("SequenceField", fix.NullValue{})
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
+
+	// Assert
+	areEqual := reflect.DeepEqual(expectedMessage, result)
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	}
+}
+
+//<sequence>
+//	<length />
+// 	<int64 id="2">
+//		<copy value="1" />
+//	</int64>
+// 	<string id="3">
+//		<copy />
+//	</string>
+//</sequence>
+func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperatorPresent(t *testing.T) {
+	// Arrange length(3) = 10000011
+	// 1: pmap = 10100000 int64(1) = nil (use initial)	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
+	// 2: pmap = 10100000 int64(1) = nil (copy initial)	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
+	// 3: pmap = 11000000 int64(3) = 10000011			string = nil (copy TEST2)
+	messageAsBytes := bytes.NewBuffer([]byte{131,
+		160, 84, 69, 83, 84, 177,
+		160, 84, 69, 83, 84, 178,
+		192, 131,
+	})
+	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
+	dictionary := dictionary.New()
+	expectedMessage := fix.SequenceValue{
+		Values: []fix.Message{
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(1)),
+					3: fix.NewRawValue("TEST1"),
+				},
+			},
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(1)),
+					3: fix.NewRawValue("TEST2"),
+				},
+			},
+			fix.Message{
+				Tags: map[uint64]fix.Value{
+					2: fix.NewRawValue(int64(3)),
+					3: fix.NewRawValue("TEST2"),
+				},
+			},
+		},
+	}
+	unitUnderTest := Sequence{
+		FieldDetails: Field{
+			ID:       1,
+			Name:     "SequenceField",
+			Required: true,
+		},
+		LengthField: UInt32{
+			FieldDetails: Field{
+				ID:       1,
+				Name:     "SequenceField",
+				Required: true,
+			},
+			Operation: operation.None{},
+		},
+		SequenceFields: []store.Unit{
+			Int64{
+				FieldDetails: Field{
+					ID:       2,
+					Name:     "Int64Field",
+					Required: true,
+				},
+				Operation: operation.Copy{
+					InitialValue: int64(1),
+				},
+			},
+			AsciiString{
+				FieldDetails: Field{
+					ID:       3,
+					Name:     "AsciiStringField",
+					Required: true,
+				},
+				Operation: operation.Copy{
+					InitialValue: nil,
+				},
+			},
+		},
+	}
+
+	// Act
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

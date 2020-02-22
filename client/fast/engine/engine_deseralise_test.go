@@ -8,7 +8,6 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: implement copy
 // TODO: increment, delta, tail
 // TODO: engine should be only public element of this library really, with a nice interface to create it from a template file only.
 // TODO: logging!!
