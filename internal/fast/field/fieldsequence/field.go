@@ -32,7 +32,6 @@ func (field FieldSequence) Deserialise(inputSource *bytes.Buffer, pMap *presence
 
 	numberOfRepeatingGroups := numberOfElements.Get().(uint32)
 	sequenceValue := fix.NewSequenceValue(numberOfRepeatingGroups)
-	sequenceDictionary := dictionary.New()
 
 	for repeatingGroup := uint32(0); repeatingGroup < numberOfRepeatingGroups; repeatingGroup++ {
 		sequencePmap := presencemap.PresenceMap{}
@@ -44,7 +43,7 @@ func (field FieldSequence) Deserialise(inputSource *bytes.Buffer, pMap *presence
 		}
 
 		for _, element := range field.SequenceFields {
-			value, err := element.Deserialise(inputSource, &sequencePmap, &sequenceDictionary)
+			value, err := element.Deserialise(inputSource, &sequencePmap, previousValues)
 			if err != nil {
 				return nil, err
 			}

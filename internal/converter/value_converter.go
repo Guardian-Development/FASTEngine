@@ -14,20 +14,20 @@ func ToString(value string) (interface{}, error) {
 
 // ToMantissa converts the value specified to a normalized decimal (mantissa x10 ^ exponent) where the mantissa % 10 != 0.
 // The function then returns the mantissa part of the decimal only.
-func ToMantissa(value string) (interface{}, error) {
+func ToMantissa(value string) (int64, error) {
 	_, mantissa, err := toDecimal(value)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse mantissa for value: %s", value)
+		return -1, fmt.Errorf("unable to parse mantissa for value: %s", value)
 	}
 	return mantissa, nil
 }
 
 // ToExponent converts the value specified to a normalized decimal (mantissa x10 ^ exponent) where the mantissa % 10 != 0.
 // The function then returns the exponent part of the decimal only.
-func ToExponent(value string) (interface{}, error) {
+func ToExponent(value string) (int32, error) {
 	exponent, _, err := toDecimal(value)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse exponent for value: %s", value)
+		return -1, fmt.Errorf("unable to parse exponent for value: %s", value)
 	}
 	return exponent, nil
 }
@@ -72,47 +72,47 @@ func toDecimal(value string) (int32, int64, error) {
 }
 
 // ToInt32 converts the string to an int32 type, returning an error if the conversion fails
-func ToInt32(value string) (interface{}, error) {
+func ToInt32(value string) (int32, error) {
 	val, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return nil, err
+		return -1, err
 	}
 	return int32(val), nil
 }
 
 // ToUInt32 converts the string to an uint32 type, returning an error if the conversion fails
-func ToUInt32(value string) (interface{}, error) {
+func ToUInt32(value string) (uint32, error) {
 	val, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 	return uint32(val), nil
 }
 
 // ToInt64 converts the string to an int64 type, returning an error if the conversion fails
-func ToInt64(value string) (interface{}, error) {
+func ToInt64(value string) (int64, error) {
 	val, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		return nil, err
+		return -1, err
 	}
 	return int64(val), nil
 }
 
 // ToUInt64 converts the string to an uint64 type, returning an error if the conversion fails
-func ToUInt64(value string) (interface{}, error) {
+func ToUInt64(value string) (uint64, error) {
 	val, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 	return uint64(val), nil
 }
 
 // ToByteVector converts the strring to an array of bytes. The string must be an even amount of hexadecimal characters.
 // This is converted to a byte vector by stripping all whitespace and treating each pair of characters as a single byte hex number.
-func ToByteVector(value string) (interface{}, error) {
+func ToByteVector(value string) ([]byte, error) {
 	valueNoWhiteSpace := strings.ReplaceAll(value, " ", "")
 	if len(valueNoWhiteSpace)%2 != 0 {
-		return nil, fmt.Errorf("You must specify a byte vector as an even amount of hex digits")
+		return nil, fmt.Errorf("you must specify a byte vector as an even amount of hex digits")
 	}
 	return hex.DecodeString(valueNoWhiteSpace)
 }

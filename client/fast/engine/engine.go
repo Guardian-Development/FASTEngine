@@ -26,14 +26,14 @@ func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error
 
 	messageHeader, err := header.New(message)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse message, reason: %v", err)
+		return nil, fmt.Errorf("unable to parse message, reason: %v", err)
 	}
 
 	if template, exists := engine.templateStore.Templates[messageHeader.TemplateID]; exists {
 		return template.Deserialise(message, messageHeader.PMap, &engine.globalDictionary)
 	}
 
-	return nil, fmt.Errorf("No template found in store to deserialise message with ID: %d", messageHeader.TemplateID)
+	return nil, fmt.Errorf("no template found in store to deserialise message with ID: %d", messageHeader.TemplateID)
 }
 
 // New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided

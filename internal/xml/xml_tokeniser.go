@@ -43,7 +43,7 @@ func populateTag(decoder *xml.Decoder, parentTag *Tag) error {
 		case xml.Comment:
 		case xml.ProcInst:
 		default:
-			return errors.New("Unable to parse templates XML, there was an unexpected element type in the file")
+			return errors.New("unable to parse templates XML, there was an unexpected element type in the file")
 		}
 	}
 }

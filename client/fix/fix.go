@@ -21,11 +21,11 @@ func (message Message) GetTag(tag uint64) (interface{}, error) {
 		case RawValue:
 			return t.Get(), nil
 		default:
-			return nil, fmt.Errorf("Unsupported type of tag: %s", t)
+			return nil, fmt.Errorf("unsupported type of tag: %s", t)
 		}
 	}
 
-	return nil, fmt.Errorf("No tag in message with value: %d", tag)
+	return nil, fmt.Errorf("no tag in message with value: %d", tag)
 }
 
 func New() Message {

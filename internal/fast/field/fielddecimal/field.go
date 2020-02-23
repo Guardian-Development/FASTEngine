@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint32"
@@ -41,7 +40,7 @@ func (field FieldDecimal) Deserialise(inputSource *bytes.Buffer, pMap *presencem
 		return fixValue, nil
 	}
 
-	return nil, fmt.Errorf("Exponent value of decimal was not expected type: %v", exponentValue)
+	return nil, fmt.Errorf("exponent value of decimal was not expected type: %v", exponentValue)
 }
 
 // GetTagId for this field
@@ -55,7 +54,7 @@ func (field FieldDecimal) RequiresPmap() bool {
 }
 
 // New <decimal/> field with the given properties, exponent and mantissa
-func New(properties properties.Properties, exponent fieldint32.FieldInt32, mantissa fieldint64.FieldInt64) store.Unit {
+func New(properties properties.Properties, exponent fieldint32.FieldInt32, mantissa fieldint64.FieldInt64) FieldDecimal {
 	field := FieldDecimal{
 		FieldDetails:  properties,
 		ExponentField: exponent,

@@ -76,7 +76,7 @@ func NewConstantOperation(properties properties.Properties, constantValue uint64
 	field := FieldUInt64{
 		FieldDetails: properties,
 		Operation: operation.Constant{
-			ConstantValue: constantValue,
+			ConstantValue: fix.NewRawValue(constantValue),
 		},
 	}
 
@@ -88,7 +88,7 @@ func NewDefaultOperation(properties properties.Properties) FieldUInt64 {
 	field := FieldUInt64{
 		FieldDetails: properties,
 		Operation: operation.Default{
-			DefaultValue: nil,
+			DefaultValue: fix.NullValue{},
 		},
 	}
 
@@ -100,7 +100,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 	field := FieldUInt64{
 		FieldDetails: properties,
 		Operation: operation.Default{
-			DefaultValue: defaultValue,
+			DefaultValue: fix.NewRawValue(defaultValue),
 		},
 	}
 
@@ -112,7 +112,7 @@ func NewCopyOperation(properties properties.Properties) FieldUInt64 {
 	field := FieldUInt64{
 		FieldDetails: properties,
 		Operation: operation.Copy{
-			InitialValue: nil,
+			InitialValue: fix.NullValue{},
 		},
 	}
 
@@ -124,7 +124,7 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 	field := FieldUInt64{
 		FieldDetails: properties,
 		Operation: operation.Copy{
-			InitialValue: initialValue,
+			InitialValue: fix.NewRawValue(initialValue),
 		},
 	}
 

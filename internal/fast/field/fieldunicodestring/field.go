@@ -3,7 +3,6 @@ package fieldunicodestring
 import (
 	"bytes"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/client/fix"
 	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
@@ -68,7 +67,7 @@ func (field FieldUnicodeString) RequiresPmap() bool {
 }
 
 // New <string charset="unicode"/> field with the given properties and no operation
-func New(properties properties.Properties) store.Unit {
+func New(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation:    operation.None{},
@@ -82,7 +81,7 @@ func NewConstantOperation(properties properties.Properties, constantValue string
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation: operation.Constant{
-			ConstantValue: constantValue,
+			ConstantValue: fix.NewRawValue(constantValue),
 		},
 	}
 
@@ -94,7 +93,7 @@ func NewDefaultOperation(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation: operation.Default{
-			DefaultValue: nil,
+			DefaultValue: fix.NullValue{},
 		},
 	}
 
@@ -106,7 +105,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation: operation.Default{
-			DefaultValue: defaultValue,
+			DefaultValue: fix.NewRawValue(defaultValue),
 		},
 	}
 
@@ -118,7 +117,7 @@ func NewCopyOperation(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation: operation.Copy{
-			InitialValue: nil,
+			InitialValue: fix.NullValue{},
 		},
 	}
 
@@ -130,7 +129,7 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 	field := FieldUnicodeString{
 		FieldDetails: properties,
 		Operation: operation.Copy{
-			InitialValue: initialValue,
+			InitialValue: fix.NewRawValue(initialValue),
 		},
 	}
 

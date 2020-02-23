@@ -3,45 +3,25 @@ package loader
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldbytevector"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielddecimal"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadasciistring"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadbytevector"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loaddecimal"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadint32"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadint64"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadproperties"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loaduint32"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loaduint64"
+	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadunicodestring"
+	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldsequence"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"os"
 	"strconv"
 
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
-	"github.com/Guardian-Development/fastengine/internal/converter"
-	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )
-
-const templatesTag = "templates"
-const templateTag = "template"
-const stringTag = "string"
-const uInt32Tag = "uInt32"
-const int32Tag = "int32"
-const uInt64Tag = "uInt64"
-const int64Tag = "int64"
-const byteVectorTag = "byteVector"
-const sequenceTag = "sequence"
-const lengthTag = "length"
-const decimalTag = "decimal"
-const exponentTag = "exponent"
-const mantissaTag = "mantissa"
-const unicodeStringLabel = "unicode"
-
-const constantOperation = "constant"
-const defaultOperation = "default"
-const copyOperation = "copy"
-
-type valueConverter func(string) (interface{}, error)
 
 // Load instance of the Store from the given FAST Templates XML file
 func Load(templateFile *os.File) (store.Store, error) {
@@ -52,7 +32,7 @@ func Load(templateFile *os.File) (store.Store, error) {
 		return store.Store{}, err
 	}
 
-	if xmlTags.Type != templatesTag {
+	if xmlTags.Type != structure.TemplatesTag {
 		return store.Store{}, fmt.Errorf("expected the root level of tag of the templateFile to be of type <templates> but was: %s", xmlTags.Type)
 	}
 
@@ -72,10 +52,10 @@ func loadStoreFromXML(xmlTags tokenxml.Tag) (store.Store, error) {
 		templateID, err := strconv.ParseUint(templateXMLElement.Attributes["id"], 10, 32)
 
 		if err != nil {
-			return store.Store{}, fmt.Errorf("Could not parse template ID, make sure it is present and uint: %v", err)
+			return store.Store{}, fmt.Errorf("could not parse template ID, make sure it is present and uint: %v", err)
 		}
 		if _, exists := templateStore.Templates[uint32(templateID)]; exists {
-			return store.Store{}, fmt.Errorf("Template with ID %d, has already been loaded", templateID)
+			return store.Store{}, fmt.Errorf("template with ID %d, has already been loaded", templateID)
 		}
 
 		templateStore.Templates[uint32(templateID)] = template
@@ -85,7 +65,7 @@ func loadStoreFromXML(xmlTags tokenxml.Tag) (store.Store, error) {
 }
 
 func createTemplate(templateRoot *tokenxml.Tag) (store.Template, error) {
-	if templateRoot.Type != templateTag {
+	if templateRoot.Type != structure.TemplateTag {
 		return store.Template{}, fmt.Errorf("expected to find template tag, but found %s", templateRoot.Type)
 	}
 
@@ -107,183 +87,66 @@ func createTemplate(templateRoot *tokenxml.Tag) (store.Template, error) {
 }
 
 func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
-	fieldDetails, err := getFieldProperties(tagInTemplate)
+	fieldDetails, err := loadproperties.Load(tagInTemplate)
 	if err != nil {
 		return nil, err
 	}
 
 	switch tagInTemplate.Type {
-	case stringTag:
-		operation, err := getOperation(tagInTemplate, converter.ToString)
-		if err != nil {
-			return nil, err
+	case structure.StringTag:
+		if tagInTemplate.Attributes["charset"] == structure.UnicodeStringLabel {
+			return loadunicodestring.Load(tagInTemplate, fieldDetails)
 		}
-		if tagInTemplate.Attributes["charset"] == unicodeStringLabel {
-			return fieldunicodestring.FieldUnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
-		}
-
-		return fieldasciistring.FieldAsciiString{FieldDetails: fieldDetails, Operation: operation}, nil
-	case uInt32Tag, lengthTag:
-		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
-		if err != nil {
-			return nil, err
-		}
-		return fielduint32.FieldUInt32{FieldDetails: fieldDetails, Operation: operation}, nil
-	case int32Tag:
-		operation, err := getOperation(tagInTemplate, converter.ToInt32)
-		if err != nil {
-			return nil, err
-		}
-		return fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: operation}, nil
-	case uInt64Tag:
-		operation, err := getOperation(tagInTemplate, converter.ToUInt64)
-		if err != nil {
-			return nil, err
-		}
-		return fielduint64.FieldUInt64{FieldDetails: fieldDetails, Operation: operation}, nil
-	case int64Tag:
-		operation, err := getOperation(tagInTemplate, converter.ToInt64)
-		if err != nil {
-			return nil, err
-		}
-		return fieldint64.FieldInt64{FieldDetails: fieldDetails, Operation: operation}, nil
-	case decimalTag:
-		if len(tagInTemplate.NestedTags) < 2 {
-			exponentOperation, err := getOperation(tagInTemplate, converter.ToExponent)
-			if err != nil {
-				return nil, err
-			}
-			exponentField := fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: exponentOperation}
-			exponentField.FieldDetails.Name = fmt.Sprintf("%sExponent", fieldDetails.Name)
-			mantissaOperation, err := getOperation(tagInTemplate, converter.ToMantissa)
-			if err != nil {
-				return nil, err
-			}
-			mantissaFieldFieldDetails := fieldDetails
-			mantissaFieldFieldDetails.Required = true
-			mantissaField := fieldint64.FieldInt64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
-			mantissaField.FieldDetails.Name = fmt.Sprintf("%sMantissa", fieldDetails.Name)
-
-			return fielddecimal.FieldDecimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
-		}
-		if len(tagInTemplate.NestedTags) == 2 {
-			exponentTag := tagInTemplate.NestedTags[0]
-			exponentOperation, err := getOperation(&exponentTag, converter.ToInt32)
-			if err != nil {
-				return nil, err
-			}
-			exponentField := fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: exponentOperation}
-			exponentName := exponentTag.Attributes["name"]
-			if exponentName == "" {
-				exponentName = fmt.Sprintf("%sExponent", fieldDetails.Name)
-			}
-			exponentField.FieldDetails.Name = exponentName
-
-			mantissaTag := tagInTemplate.NestedTags[1]
-			mantissaOperation, err := getOperation(&mantissaTag, converter.ToInt64)
-			if err != nil {
-				return nil, err
-			}
-			mantissaFieldFieldDetails := fieldDetails
-			mantissaFieldFieldDetails.Required = true
-			mantissaField := fieldint64.FieldInt64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
-			mantissaName := mantissaTag.Attributes["name"]
-			if mantissaName == "" {
-				mantissaName = fmt.Sprintf("%sMantissa", fieldDetails.Name)
-			}
-			mantissaField.FieldDetails.Name = mantissaName
-
-			return fielddecimal.FieldDecimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
-		}
-		return nil, fmt.Errorf("decimal must be declared with either no operation (empty), or with <exponent/> and <mantissa/>")
-	case byteVectorTag:
-		operation, err := getOperation(tagInTemplate, converter.ToByteVector)
-		if err != nil {
-			return nil, err
-		}
-		return fieldbytevector.FieldByteVector{FieldDetails: fieldDetails, Operation: operation}, nil
-	case sequenceTag:
-		sequence := fieldsequence.FieldSequence{FieldDetails: fieldDetails, SequenceFields: make([]store.Unit, 0)}
-
-		if tagInTemplate.NestedTags[0].Type == lengthTag {
-			length, err := createTemplateUnit(&tagInTemplate.NestedTags[0])
-			if err != nil {
-				return nil, err
-			}
-			if length.(fielduint32.FieldUInt32).FieldDetails.Name == "" {
-				length.(*fielduint32.FieldUInt32).FieldDetails.Name = sequence.FieldDetails.Name
-			}
-			sequence.LengthField = length.(fielduint32.FieldUInt32)
-			sequence.LengthField.FieldDetails.Required = sequence.FieldDetails.Required
-		} else {
-			length := fielduint32.FieldUInt32{FieldDetails: properties.Properties{ID: 0, Name: sequence.FieldDetails.Name, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
-			sequence.LengthField = length
-		}
-
-		for _, tagInTemplate := range tagInTemplate.NestedTags {
-			if tagInTemplate.Type == lengthTag {
-				continue
-			}
-			templateUnit, err := createTemplateUnit(&tagInTemplate)
-			if err != nil {
-				return nil, err
-			}
-
-			sequence.SequenceFields = append(sequence.SequenceFields, templateUnit)
-		}
-		return sequence, nil
+		return loadasciistring.Load(tagInTemplate, fieldDetails)
+	case structure.UInt32Tag, structure.LengthTag:
+		return loaduint32.Load(tagInTemplate, fieldDetails)
+	case structure.Int32Tag:
+		return loadint32.Load(tagInTemplate, fieldDetails)
+	case structure.UInt64Tag:
+		return loaduint64.Load(tagInTemplate, fieldDetails)
+	case structure.Int64Tag:
+		return loadint64.Load(tagInTemplate, fieldDetails)
+	case structure.DecimalTag:
+		return loaddecimal.Load(tagInTemplate, fieldDetails)
+	case structure.ByteVectorTag:
+		return loadbytevector.Load(tagInTemplate, fieldDetails)
+	case structure.SequenceTag:
+		return loadSequence(tagInTemplate, fieldDetails)
 	default:
-		return nil, fmt.Errorf("Unsupported tag type: %s", tagInTemplate.Type)
+		return nil, fmt.Errorf("unsupported tag type: %s", tagInTemplate.Type)
 	}
 }
 
-func getOperation(tagInTemplate *tokenxml.Tag, converter valueConverter) (operation.Operation, error) {
-	if len(tagInTemplate.NestedTags) != 1 {
-		return operation.None{}, nil
+func loadSequence(tagInTemplate *tokenxml.Tag, fieldDetails properties.Properties) (fieldsequence.FieldSequence, error) {
+	fields := make([]store.Unit, 0)
+	for _, tagInTemplate := range tagInTemplate.NestedTags {
+		if tagInTemplate.Type == structure.LengthTag {
+			continue
+		}
+		templateUnit, err := createTemplateUnit(&tagInTemplate)
+		if err != nil {
+			return fieldsequence.FieldSequence{}, err
+		}
+
+		fields = append(fields, templateUnit)
 	}
 
-	operationTag := tagInTemplate.NestedTags[0]
-
-	switch operationTag.Type {
-	case constantOperation:
-		operation := operation.Constant{}
-		constant := operationTag.Attributes["value"]
-		if constant == "" {
-			return nil, fmt.Errorf("No value specified for constant operation")
-		}
-		constantAsCorrectValue, err := converter(constant)
+	if tagInTemplate.NestedTags[0].Type == structure.LengthTag {
+		lengthProperties, err := loadproperties.Load(&tagInTemplate.NestedTags[0])
 		if err != nil {
-			return nil, err
+			return fieldsequence.FieldSequence{}, err
 		}
-		operation.ConstantValue = constantAsCorrectValue
-		return operation, nil
-	case defaultOperation:
-		operation := operation.Default{}
-		defaultValue := operationTag.Attributes["value"]
-		if defaultValue == "" {
-			operation.DefaultValue = nil
-			return operation, nil
-		}
-		defaultAsCorrectValue, err := converter(defaultValue)
+		length, err := loaduint32.Load(&tagInTemplate.NestedTags[0], lengthProperties)
 		if err != nil {
-			return nil, err
+			return fieldsequence.FieldSequence{}, err
 		}
-		operation.DefaultValue = defaultAsCorrectValue
-		return operation, nil
-	case copyOperation:
-		operation := operation.Copy{}
-		initialValue := operationTag.Attributes["value"]
-		if initialValue == "" {
-			operation.InitialValue = nil
-		} else {
-			initialAsCorrectValue, err := converter(initialValue)
-			if err != nil {
-				return nil, err
-			}
-			operation.InitialValue = initialAsCorrectValue
+		if structure.IsNullString(length.FieldDetails.Name) {
+			length.FieldDetails.Name = fieldDetails.Name
 		}
-		return operation, nil
-	default:
-		return nil, fmt.Errorf("Unsupported operation type: %s", operationTag)
+		length.FieldDetails.Required = fieldDetails.Required
+		return fieldsequence.New(fieldDetails, length, fields), nil
+	} else {
+		length := fielduint32.New(properties.New(0, fieldDetails.Name, fieldDetails.Required))
+		return fieldsequence.New(fieldDetails, length, fields), nil
 	}
 }

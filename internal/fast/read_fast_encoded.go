@@ -30,7 +30,7 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 		readValue = readValue<<7 | uint32(b)
 	}
 
-	return value.UInt32Value{}, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
+	return value.UInt32Value{}, fmt.Errorf("more than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
 }
 
 // ReadOptionalUInt32 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned. Due to needing to use 0 to.
@@ -89,7 +89,7 @@ func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 		readValue = readValue<<7 | int32(b)
 	}
 
-	return value.Int32Value{}, fmt.Errorf("More than 4 bytes have been read without reading a stop bit, this will overflow an int32")
+	return value.Int32Value{}, fmt.Errorf("more than 4 bytes have been read without reading a stop bit, this will overflow an int32")
 }
 
 // ReadOptionalInt32 reads an int32 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -134,7 +134,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 		readValue = readValue<<7 | uint64(b)
 	}
 
-	return value.UInt64Value{}, fmt.Errorf("More than 8 bytes have been read without reading a stop bit, this will overflow a uint64")
+	return value.UInt64Value{}, fmt.Errorf("more than 8 bytes have been read without reading a stop bit, this will overflow a uint64")
 }
 
 // ReadOptionalUInt64 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -193,7 +193,7 @@ func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
 		readValue = readValue<<7 | int64(b)
 	}
 
-	return value.Int64Value{}, fmt.Errorf("More than 8 bytes have been read without reading a stop bit, this will overflow an int64")
+	return value.Int64Value{}, fmt.Errorf("more than 8 bytes have been read without reading a stop bit, this will overflow an int64")
 }
 
 // ReadOptionalInt64 reads an int64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -292,7 +292,7 @@ func ReadByteVector(inputSource *bytes.Buffer) (value.ByteVector, error) {
 		return value.ByteVector{}, err
 	}
 	if number != int(length.Value) {
-		return value.ByteVector{}, fmt.Errorf("Did not read full length of byte vector, expected to read: %d, but actually read %d", length.Value, number)
+		return value.ByteVector{}, fmt.Errorf("did not read full length of byte vector, expected to read: %d, but actually read %d", length.Value, number)
 	}
 
 	return value.ByteVector{Value: byteVector}, nil
@@ -318,11 +318,11 @@ func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 			return value.ByteVector{}, err
 		}
 		if number != int(t.Value) {
-			return value.ByteVector{}, fmt.Errorf("Did not read full length of byte vector, expected to read: %d, but actually read %d", t.Value, number)
+			return value.ByteVector{}, fmt.Errorf("did not read full length of byte vector, expected to read: %d, but actually read %d", t.Value, number)
 		}
 		return value.ByteVector{Value: byteVector}, nil
 	default:
-		return value.ByteVector{}, fmt.Errorf("Unsupported type returned from reading optional uint32 as length of byte vector")
+		return value.ByteVector{}, fmt.Errorf("unsupported type returned from reading optional uint32 as length of byte vector")
 	}
 }
 

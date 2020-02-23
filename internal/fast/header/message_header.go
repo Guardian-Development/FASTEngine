@@ -16,7 +16,7 @@ type MessageHeader struct {
 func New(message *bytes.Buffer) (MessageHeader, error) {
 	pMap, err := presencemap.New(message)
 	if err != nil {
-		return MessageHeader{}, fmt.Errorf("Unable to create pMap for message, reason: %v", err)
+		return MessageHeader{}, fmt.Errorf("unable to create pMap for message, reason: %v", err)
 	}
 
 	if pMap.GetIsSetAndIncrement() {
@@ -28,5 +28,5 @@ func New(message *bytes.Buffer) (MessageHeader, error) {
 		return MessageHeader{PMap: &pMap, TemplateID: templateID.Value}, nil
 	}
 
-	return MessageHeader{}, fmt.Errorf("Message not supported: message must have template ID encoded")
+	return MessageHeader{}, fmt.Errorf("message not supported: message must have template ID encoded")
 }

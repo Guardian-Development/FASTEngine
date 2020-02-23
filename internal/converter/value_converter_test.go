@@ -233,7 +233,7 @@ func TestConvertStringToByteArrayReturnsErrorIfOddNumberOfCharacters(t *testing.
 	_, err := ToByteVector(unevenInput)
 
 	// Assert
-	if err == nil || err.Error() != "You must specify a byte vector as an even amount of hex digits" {
+	if err == nil || err.Error() != "you must specify a byte vector as an even amount of hex digits" {
 		t.Errorf("Expected error message informing user of correct input type for byteArray value, but got: %v", err)
 	}
 }
