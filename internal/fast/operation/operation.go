@@ -40,6 +40,11 @@ func (operation None) RequiresPmap(required bool) bool {
 }
 
 type Constant struct {
+	// TODO: these should already be fix values, then can remove separate new methods on each field, check refactor from there
+	// TODO: seperate these out into seperate files
+	// TODO: do the thing i wrote below this about fast values!
+	// TODO: look at the public interface, just have the engine, everything else private
+	// TODO: look at test names and make them better
 	ConstantValue interface{}
 }
 

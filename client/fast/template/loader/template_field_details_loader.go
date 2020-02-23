@@ -2,34 +2,30 @@ package loader
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"math/rand"
 	"strconv"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/field"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )
 
-func createFieldDetails(tagInTemplate *tokenxml.Tag) (field.Field, error) {
-	fieldDetails := field.Field{}
-
+func getFieldProperties(tagInTemplate *tokenxml.Tag) (properties.Properties, error) {
 	ID, err := getFieldID(tagInTemplate)
 	if err != nil {
-		return fieldDetails, err
+		return properties.Properties{}, err
 	}
-	fieldDetails.ID = ID
 
 	required, err := getRequiredField(tagInTemplate)
 	if err != nil {
-		return fieldDetails, err
+		return properties.Properties{}, err
 	}
-	fieldDetails.Required = required
 
 	name := tagInTemplate.Attributes["name"]
 	if name == "" {
 		name = getRandomName(tagInTemplate.Type)
 	}
-	fieldDetails.Name = name
 
+	fieldDetails := properties.New(ID, name, required)
 	return fieldDetails, nil
 }
 

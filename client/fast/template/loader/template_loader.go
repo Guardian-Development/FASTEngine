@@ -3,12 +3,21 @@ package loader
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldbytevector"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fielddecimal"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint32"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldsequence"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint32"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
+	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"os"
 	"strconv"
 
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 	"github.com/Guardian-Development/fastengine/internal/converter"
-	"github.com/Guardian-Development/fastengine/internal/fast/field"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )
@@ -98,7 +107,7 @@ func createTemplate(templateRoot *tokenxml.Tag) (store.Template, error) {
 }
 
 func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
-	fieldDetails, err := createFieldDetails(tagInTemplate)
+	fieldDetails, err := getFieldProperties(tagInTemplate)
 	if err != nil {
 		return nil, err
 	}
@@ -110,40 +119,41 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			return nil, err
 		}
 		if tagInTemplate.Attributes["charset"] == unicodeStringLabel {
-			return field.UnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
+			return fieldunicodestring.FieldUnicodeString{FieldDetails: fieldDetails, Operation: operation}, nil
 		}
-		return field.AsciiString{FieldDetails: fieldDetails, Operation: operation}, nil
+
+		return fieldasciistring.FieldAsciiString{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt32Tag, lengthTag:
 		operation, err := getOperation(tagInTemplate, converter.ToUInt32)
 		if err != nil {
 			return nil, err
 		}
-		return field.UInt32{FieldDetails: fieldDetails, Operation: operation}, nil
+		return fielduint32.FieldUInt32{FieldDetails: fieldDetails, Operation: operation}, nil
 	case int32Tag:
 		operation, err := getOperation(tagInTemplate, converter.ToInt32)
 		if err != nil {
 			return nil, err
 		}
-		return field.Int32{FieldDetails: fieldDetails, Operation: operation}, nil
+		return fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: operation}, nil
 	case uInt64Tag:
 		operation, err := getOperation(tagInTemplate, converter.ToUInt64)
 		if err != nil {
 			return nil, err
 		}
-		return field.UInt64{FieldDetails: fieldDetails, Operation: operation}, nil
+		return fielduint64.FieldUInt64{FieldDetails: fieldDetails, Operation: operation}, nil
 	case int64Tag:
 		operation, err := getOperation(tagInTemplate, converter.ToInt64)
 		if err != nil {
 			return nil, err
 		}
-		return field.Int64{FieldDetails: fieldDetails, Operation: operation}, nil
+		return fieldint64.FieldInt64{FieldDetails: fieldDetails, Operation: operation}, nil
 	case decimalTag:
 		if len(tagInTemplate.NestedTags) < 2 {
 			exponentOperation, err := getOperation(tagInTemplate, converter.ToExponent)
 			if err != nil {
 				return nil, err
 			}
-			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+			exponentField := fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: exponentOperation}
 			exponentField.FieldDetails.Name = fmt.Sprintf("%sExponent", fieldDetails.Name)
 			mantissaOperation, err := getOperation(tagInTemplate, converter.ToMantissa)
 			if err != nil {
@@ -151,10 +161,10 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			}
 			mantissaFieldFieldDetails := fieldDetails
 			mantissaFieldFieldDetails.Required = true
-			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+			mantissaField := fieldint64.FieldInt64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
 			mantissaField.FieldDetails.Name = fmt.Sprintf("%sMantissa", fieldDetails.Name)
 
-			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
+			return fielddecimal.FieldDecimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
 		if len(tagInTemplate.NestedTags) == 2 {
 			exponentTag := tagInTemplate.NestedTags[0]
@@ -162,7 +172,7 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			if err != nil {
 				return nil, err
 			}
-			exponentField := field.Int32{FieldDetails: fieldDetails, Operation: exponentOperation}
+			exponentField := fieldint32.FieldInt32{FieldDetails: fieldDetails, Operation: exponentOperation}
 			exponentName := exponentTag.Attributes["name"]
 			if exponentName == "" {
 				exponentName = fmt.Sprintf("%sExponent", fieldDetails.Name)
@@ -176,14 +186,14 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 			}
 			mantissaFieldFieldDetails := fieldDetails
 			mantissaFieldFieldDetails.Required = true
-			mantissaField := field.Int64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
+			mantissaField := fieldint64.FieldInt64{FieldDetails: mantissaFieldFieldDetails, Operation: mantissaOperation}
 			mantissaName := mantissaTag.Attributes["name"]
 			if mantissaName == "" {
 				mantissaName = fmt.Sprintf("%sMantissa", fieldDetails.Name)
 			}
 			mantissaField.FieldDetails.Name = mantissaName
 
-			return field.Decimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
+			return fielddecimal.FieldDecimal{FieldDetails: fieldDetails, ExponentField: exponentField, MantissaField: mantissaField}, nil
 		}
 		return nil, fmt.Errorf("decimal must be declared with either no operation (empty), or with <exponent/> and <mantissa/>")
 	case byteVectorTag:
@@ -191,22 +201,22 @@ func createTemplateUnit(tagInTemplate *tokenxml.Tag) (store.Unit, error) {
 		if err != nil {
 			return nil, err
 		}
-		return field.ByteVector{FieldDetails: fieldDetails, Operation: operation}, nil
+		return fieldbytevector.FieldByteVector{FieldDetails: fieldDetails, Operation: operation}, nil
 	case sequenceTag:
-		sequence := field.Sequence{FieldDetails: fieldDetails, SequenceFields: make([]store.Unit, 0)}
+		sequence := fieldsequence.FieldSequence{FieldDetails: fieldDetails, SequenceFields: make([]store.Unit, 0)}
 
 		if tagInTemplate.NestedTags[0].Type == lengthTag {
 			length, err := createTemplateUnit(&tagInTemplate.NestedTags[0])
 			if err != nil {
 				return nil, err
 			}
-			if length.(field.UInt32).FieldDetails.Name == "" {
-				length.(*field.UInt32).FieldDetails.Name = sequence.FieldDetails.Name
+			if length.(fielduint32.FieldUInt32).FieldDetails.Name == "" {
+				length.(*fielduint32.FieldUInt32).FieldDetails.Name = sequence.FieldDetails.Name
 			}
-			sequence.LengthField = length.(field.UInt32)
+			sequence.LengthField = length.(fielduint32.FieldUInt32)
 			sequence.LengthField.FieldDetails.Required = sequence.FieldDetails.Required
 		} else {
-			length := field.UInt32{FieldDetails: field.Field{ID: 0, Name: sequence.FieldDetails.Name, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
+			length := fielduint32.FieldUInt32{FieldDetails: properties.Properties{ID: 0, Name: sequence.FieldDetails.Name, Required: sequence.FieldDetails.Required}, Operation: operation.None{}}
 			sequence.LengthField = length
 		}
 
