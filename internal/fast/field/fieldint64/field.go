@@ -130,3 +130,27 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 
 	return field
 }
+
+// NewIncrementOperation <int64/> field with the given properties and <increment/> operator
+func NewIncrementOperation(properties properties.Properties) FieldInt64 {
+	field := FieldInt64{
+		FieldDetails: properties,
+		Operation: operation.Increment{
+			InitialValue: fix.NullValue{},
+		},
+	}
+
+	return field
+}
+
+// NewIncrementOperationWithInitialValue <int64/> field with the given properties and <increment value="initialValue"/> operator
+func NewIncrementOperationWithInitialValue(properties properties.Properties, initialValue int64) FieldInt64 {
+	field := FieldInt64{
+		FieldDetails: properties,
+		Operation: operation.Increment{
+			InitialValue: fix.NewRawValue(initialValue),
+		},
+	}
+
+	return field
+}

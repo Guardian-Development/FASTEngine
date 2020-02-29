@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+    <template name="DefaultTypesAndTags" id="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <uInt32 name="unsigned int32" id="1">
+            <increment value="10"/>
+        </uInt32>
+        <int32 name="signed int32" id="2">
+            <increment value="-10"/>
+        </int32>
+        <uInt64 name="unsigned int64" id="3">
+            <increment value="10"/>
+        </uInt64>
+        <int64 name="signed int64" id="4">
+            <increment value="-10"/>
+        </int64>
+        <sequence name="sequence" id="5">
+            <length name="length" id="6">
+                <increment value="2" />
+            </length>
+            <uInt32 name="sequence field 1" id="7">
+                <increment />
+            </uInt32>
+        </sequence>
+    </template>
+</templates>

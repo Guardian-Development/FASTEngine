@@ -8,7 +8,10 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: increment, delta, tail
+// TODO: delta, tail
+// TODO: look at the public interface, just have the engine, everything else private
+// TODO: rename some of the directories to make them more correct
+// TODO: look at test names and make them better
 // TODO: engine should be only public element of this library really, with a nice interface to create it from a template file only.
 // TODO: logging!!
 // TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
@@ -18,7 +21,6 @@ import (
 // TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices)
 // TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
 // TODO: readme and documentation
-// TODO: implement other journey of serialisation to bytes
 // TODO: pretty print FIX message using pipe character to make readable
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {

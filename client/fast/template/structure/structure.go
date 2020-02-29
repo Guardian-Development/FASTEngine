@@ -20,6 +20,7 @@ const UnicodeStringLabel = "unicode"
 const ConstantOperation = "constant"
 const DefaultOperation = "default"
 const CopyOperation = "copy"
+const IncrementOperation = "increment"
 
 const ValueAttribute = "value"
 

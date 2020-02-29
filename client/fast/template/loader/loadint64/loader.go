@@ -60,6 +60,17 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 		}
 
 		return fieldint64.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.IncrementOperation:
+		if !hasOperationValue {
+			return fieldint64.NewIncrementOperation(fieldDetails), nil
+		}
+
+		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fieldint64.FieldInt64{}, err
+		}
+
+		return fieldint64.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldint64.FieldInt64{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

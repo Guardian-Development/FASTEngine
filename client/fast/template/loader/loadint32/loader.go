@@ -17,7 +17,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldint3
 }
 
 // Load an <int32 /> tag with supported operation
-func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Properties, valueConverter Int32Converter) (fieldint32.FieldInt32, error) {
+func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Properties, int32Converter Int32Converter) (fieldint32.FieldInt32, error) {
 	if len(tagInTemplate.NestedTags) != 1 {
 		return fieldint32.New(fieldDetails), nil
 	}
@@ -32,7 +32,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 			return fieldint32.NewDefaultOperation(fieldDetails), nil
 		}
 
-		operationValue, err := valueConverter(operationTag.Attributes[structure.ValueAttribute])
+		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
 			return fieldint32.FieldInt32{}, err
 		}
@@ -43,7 +43,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 			return fieldint32.FieldInt32{}, fmt.Errorf("no value specified for constant operation")
 		}
 
-		operationValue, err := valueConverter(operationTag.Attributes[structure.ValueAttribute])
+		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
 			return fieldint32.FieldInt32{}, err
 		}
@@ -54,12 +54,23 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 			return fieldint32.NewCopyOperation(fieldDetails), nil
 		}
 
-		operationValue, err := valueConverter(operationTag.Attributes[structure.ValueAttribute])
+		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
 			return fieldint32.FieldInt32{}, err
 		}
 
 		return fieldint32.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.IncrementOperation:
+		if !hasOperationValue {
+			return fieldint32.NewIncrementOperation(fieldDetails), nil
+		}
+
+		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fieldint32.FieldInt32{}, err
+		}
+
+		return fieldint32.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldint32.FieldInt32{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

@@ -242,3 +242,37 @@ func TestCanLoadCopyOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
 		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
 	}
 }
+
+func TestCanLoadIncrementOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_increment_operation_on_all_supported_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
+					fielduint32.NewIncrementOperationWithInitialValue(properties.New(1, "unsigned int32", true), 10),
+					fieldint32.NewIncrementOperationWithInitialValue(properties.New(2, "signed int32", true), -10),
+					fielduint64.NewIncrementOperationWithInitialValue(properties.New(3, "unsigned int64", true), 10),
+					fieldint64.NewIncrementOperationWithInitialValue(properties.New(4, "signed int64", true), -10),
+					fieldsequence.New(properties.New(5, "sequence", true),
+						fielduint32.NewIncrementOperationWithInitialValue(properties.New(6, "length", true), 2),
+						[]store.Unit{
+							fielduint32.NewIncrementOperation(properties.New(7, "sequence field 1", true)),
+						}),
+				},
+			},
+		},
+	}
+
+	// Act
+	store, err := Load(file)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error loading the template when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedStore, store)
+	if !areEqual {
+		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
+	}
+}
