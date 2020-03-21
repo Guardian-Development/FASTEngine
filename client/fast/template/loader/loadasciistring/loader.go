@@ -40,6 +40,13 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldasciistring.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.TailOperation:
+		if !hasOperationValue {
+			return fieldasciistring.NewTailOperation(fieldDetails), nil
+		}
+
+		operationValue := operationTag.Attributes[structure.ValueAttribute]
+		return fieldasciistring.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

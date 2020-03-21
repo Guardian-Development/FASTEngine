@@ -20,6 +20,7 @@ type FieldUInt32 struct {
 
 // Deserialise an <uint32/> from the input source
 func (field FieldUInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -34,7 +35,7 @@ func (field FieldUInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 			return nil, err
 		}
 
-		transformedValue, err := field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value, previousValue)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +43,6 @@ func (field FieldUInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 		return transformedValue, nil
 	}
 
-	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 	if err != nil {
 		return nil, err

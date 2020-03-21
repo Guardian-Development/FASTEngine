@@ -8,7 +8,7 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: delta, tail
+// TODO: delta
 // TODO: look at the public interface, just have the engine, everything else private
 // TODO: rename some of the directories to make them more correct
 // TODO: look at test names and make them better

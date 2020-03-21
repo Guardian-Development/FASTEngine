@@ -276,3 +276,31 @@ func TestCanLoadIncrementOperationOnAllSupportedTypesFromTemplateFile(t *testing
 		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
 	}
 }
+
+func TestCanLoadTailOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_tail_operation_on_all_supported_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
+					fieldasciistring.NewTailOperationWithInitialValue(properties.New(1, "String", true), "Hello"),
+					fieldunicodestring.NewTailOperationWithInitialValue(properties.New(2, "StringUnicode", true), "Hello: ϔ"),
+					fieldbytevector.NewTailOperationWithInitialValue(properties.New(3, "byteVector", true), []byte{0x54, 0x45, 0x53, 0x54, 0x3F}),
+				},
+			},
+		},
+	}
+
+	// Act
+	store, err := Load(file)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error loading the template when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedStore, store)
+	if !areEqual {
+		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
+	}
+}

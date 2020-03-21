@@ -20,6 +20,7 @@ type FieldAsciiString struct {
 
 // Deserialise a <string/> from the input source
 func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
+	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -34,7 +35,7 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 			return nil, err
 		}
 
-		transformedValue, err := field.Operation.Apply(value)
+		transformedValue, err := field.Operation.Apply(value, previousValue)
 		if err != nil {
 			return nil, err
 		}
@@ -42,7 +43,6 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 		return transformedValue, nil
 	}
 
-	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 	if err != nil {
 		return nil, err
@@ -128,5 +128,29 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 		},
 	}
 
+	return field
+}
+
+// NewTailOperation <string/> field with the given properties and <tail/> operator
+func NewTailOperation(properties properties.Properties) FieldAsciiString {
+	field := FieldAsciiString{
+		FieldDetails: properties,
+		Operation: operation.Tail{
+			InitialValue: fix.NullValue{},
+			BaseValue: fix.NewRawValue(""),
+		},
+	}
+	return field
+}
+
+// NewTailOperationWithInitialValue <string/> field with the given properties and <tail value="initialValue"/> operator
+func NewTailOperationWithInitialValue(properties properties.Properties, initialValue string) FieldAsciiString {
+	field := FieldAsciiString{
+		FieldDetails: properties,
+		Operation: operation.Tail{
+			InitialValue: fix.NewRawValue(initialValue),
+			BaseValue: fix.NewRawValue(""),
+		},
+	}
 	return field
 }

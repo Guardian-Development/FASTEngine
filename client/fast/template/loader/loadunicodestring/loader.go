@@ -40,6 +40,13 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldunicodestring.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.TailOperation:
+		if !hasOperationValue {
+			return fieldunicodestring.NewTailOperation(fieldDetails), nil
+		}
+
+		operationValue := operationTag.Attributes[structure.ValueAttribute]
+		return fieldunicodestring.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

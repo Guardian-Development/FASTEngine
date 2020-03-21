@@ -50,6 +50,16 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 			return fieldbytevector.FieldByteVector{}, err
 		}
 		return fieldbytevector.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.TailOperation:
+		if !hasOperationValue {
+			return fieldbytevector.NewTailOperation(fieldDetails), nil
+		}
+
+		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fieldbytevector.FieldByteVector{}, err
+		}
+		return fieldbytevector.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldbytevector.FieldByteVector{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}
