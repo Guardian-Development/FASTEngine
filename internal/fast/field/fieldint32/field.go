@@ -2,9 +2,9 @@ package fieldint32
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
@@ -26,9 +26,9 @@ func (field FieldInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = fast.ReadInt32(inputSource)
+			value, err = decoder.ReadInt32(inputSource)
 		} else {
-			value, err = fast.ReadOptionalInt32(inputSource)
+			value, err = decoder.ReadOptionalInt32(inputSource)
 		}
 
 		if err != nil {

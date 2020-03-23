@@ -2,9 +2,9 @@ package fieldint64
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
@@ -26,9 +26,9 @@ func (field FieldInt64) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = fast.ReadInt64(inputSource)
+			value, err = decoder.ReadInt64(inputSource)
 		} else {
-			value, err = fast.ReadOptionalInt64(inputSource)
+			value, err = decoder.ReadOptionalInt64(inputSource)
 		}
 
 		if err != nil {

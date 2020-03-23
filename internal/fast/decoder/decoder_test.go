@@ -1,12 +1,72 @@
-package fast
+package decoder
 
 import (
 	"bytes"
+	"math/big"
 	"reflect"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
+
+func TestCanReadInt64WithAllowedOverflowMaxOverflowValue(t *testing.T) {
+	// Arrange 18446744073709551615 = 00000001 01111111 01111111 01111111 01111111 01111111 01111111 01111111 01111111 11111111
+	expectedintAsBytes := bytes.NewBuffer([]byte{1, 127, 127, 127, 127, 127, 127, 127, 127, 255})
+	bigResult := big.NewInt(0)
+	expectedResult, _ := bigResult.SetString("18446744073709551615", 10)
+
+	// Act
+	result, err := ReadBigInt(expectedintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional uint32 when none was expected: %s", err)
+	}
+
+	areEqual := expectedResult.Cmp(result.Value)
+	if areEqual != 0 {
+		t.Errorf("Did not read the expected uint32 value, expected: %#v, result: %#v", expectedResult, result)
+	}
+}
+
+func TestCanReadInt64WithAllowedOverflowMinOverflowValue(t *testing.T) {
+	// Arrange -18446744073709551615 = 01111110 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 10000001
+	expectedintAsBytes := bytes.NewBuffer([]byte{126, 0, 0, 0, 0, 0, 0, 0, 0, 129})
+	bigResult := big.NewInt(0)
+	expectedResult, _ := bigResult.SetString("-18446744073709551615", 10)
+
+	// Act
+	result, err := ReadBigInt(expectedintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional uint32 when none was expected: %s", err)
+	}
+
+	areEqual := expectedResult.Cmp(result.Value)
+	if areEqual != 0 {
+		t.Errorf("Did not read the expected uint32 value, expected: %#v, result: %#v", expectedResult, result)
+	}
+}
+
+func TestCanReadInt64WithAllowedOverflowNoOverflowRequired(t *testing.T) {
+	// Arrange 101455882 = (00110000 00110000 00110000 10001010)
+	expectedintAsBytes := bytes.NewBuffer([]byte{48, 48, 48, 138})
+	expectedResult := big.NewInt(101455882)
+
+	// Act
+	result, err := ReadBigInt(expectedintAsBytes)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error reading optional uint32 when none was expected: %s", err)
+	}
+
+	areEqual := expectedResult.Cmp(result.Value)
+	if areEqual != 0 {
+		t.Errorf("Did not read the expected uint32 value, expected: %#v, result: %#v", expectedResult, result)
+	}
+}
 
 func TestCanReadSingleByteUint32(t *testing.T) {
 	// Arrange 138 = (10001010)

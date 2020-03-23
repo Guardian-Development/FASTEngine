@@ -3,8 +3,8 @@ package header
 import (
 	"bytes"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
-	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
@@ -20,7 +20,7 @@ func New(message *bytes.Buffer) (MessageHeader, error) {
 	}
 
 	if pMap.GetIsSetAndIncrement() {
-		templateID, err := fast.ReadUInt32(message)
+		templateID, err := decoder.ReadUInt32(message)
 		if err != nil {
 			return MessageHeader{}, err
 		}

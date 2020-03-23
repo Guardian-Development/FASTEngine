@@ -2,9 +2,9 @@ package fieldunicodestring
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
@@ -26,9 +26,9 @@ func (field FieldUnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *pre
 		var err error
 
 		if field.FieldDetails.Required {
-			stringValue, err = fast.ReadByteVector(inputSource)
+			stringValue, err = decoder.ReadByteVector(inputSource)
 		} else {
-			stringValue, err = fast.ReadOptionalByteVector(inputSource)
+			stringValue, err = decoder.ReadOptionalByteVector(inputSource)
 		}
 
 		if err != nil {

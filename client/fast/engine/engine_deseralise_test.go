@@ -9,6 +9,7 @@ import (
 )
 
 // TODO: delta
+// TODO: fix bugs around reading max integers at the decoding bytes level (can read more than 4 bytes for int32 and same for int64), add tests for min and max values
 // TODO: look at the public interface, just have the engine, everything else private
 // TODO: rename some of the directories to make them more correct
 // TODO: look at test names and make them better

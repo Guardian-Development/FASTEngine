@@ -1,6 +1,10 @@
 package value
 
-import "github.com/Guardian-Development/fastengine/client/fix"
+import (
+	"math/big"
+
+	"github.com/Guardian-Development/fastengine/client/fix"
+)
 
 type Value interface {
 	GetAsFix() fix.Value
@@ -44,6 +48,14 @@ type Int64Value struct {
 
 func (value Int64Value) GetAsFix() fix.Value {
 	return fix.NewRawValue(value.Value)
+}
+
+type BigInt struct {
+	Value *big.Int
+}
+
+func (value BigInt) GetAsFix() fix.Value {
+	return fix.NewRawValue(*value.Value)
 }
 
 type ByteVector struct {

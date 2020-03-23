@@ -2,9 +2,9 @@ package fieldasciistring
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/internal/fast"
 	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/fast/operation"
@@ -26,9 +26,9 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = fast.ReadString(inputSource)
+			value, err = decoder.ReadString(inputSource)
 		} else {
-			value, err = fast.ReadOptionalString(inputSource)
+			value, err = decoder.ReadOptionalString(inputSource)
 		}
 
 		if err != nil {

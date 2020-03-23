@@ -2,8 +2,7 @@ package presencemap
 
 import (
 	"bytes"
-
-	"github.com/Guardian-Development/fastengine/internal/fast"
+	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 )
 
 // PresenceMap represents the pMap in the FAST spec, allowing a message to specify whether a field is present or requires the use of an operation specified
@@ -32,7 +31,7 @@ func (pMap *PresenceMap) GetIsSetAndIncrement() bool {
 
 // New pMap is created reading the next FAST encoded value off the message buffer to represent the pMap
 func New(message *bytes.Buffer) (PresenceMap, error) {
-	value, err := fast.ReadValue(message)
+	value, err := decoder.ReadValue(message)
 
 	if err != nil {
 		return PresenceMap{}, err
