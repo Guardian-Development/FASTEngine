@@ -1,7 +1,5 @@
 package properties
 
-// TODO: make immutable
-
 // Properties contains information about a TemplateUnit within a FAST Template
 type Properties struct {
 	ID       uint64

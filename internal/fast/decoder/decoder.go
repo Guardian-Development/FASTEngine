@@ -34,7 +34,7 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 	return value.UInt32Value{}, fmt.Errorf("more than 4 bytes have been read without reading a stop bit, this will overflow a uint32")
 }
 
-// ReadOptionalUInt32 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned. Due to needing to use 0 to.
+// ReadOptionalUInt32 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
 // Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1.
 // i.e. 10000000 would become nil, 10000001 would become 0
 func ReadOptionalUInt32(inputSource *bytes.Buffer) (value.Value, error) {
@@ -217,6 +217,85 @@ func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	return readValue, nil
 }
 
+// ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
+// and therefore we can return a value.BigInt if this happens. The least significant byte is in the overflow value. If the next value would till overflow this structure an err is returned.
+func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
+	var readValue int64 = 0
+
+	b, err := inputSource.ReadByte()
+	if err != nil {
+		return value.BigInt{}, err
+	}
+
+	// 64 = 01000000, indicating this is negative so we should start with all 1's int64 (-1)
+	if isNegative := b & 64; isNegative == 64 {
+		readValue = -1
+	}
+
+	// reset byte buffer by the one byte we had to read to determine negative/positive number
+	err = inputSource.UnreadByte()
+	if err != nil {
+		return value.BigInt{}, err
+	}
+
+	i := 1
+	for ; i < 10; i++ {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.BigInt{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := int64(b & 127)
+			readValue = readValue<<7 | removedStopBit
+			return value.BigInt{Value: big.NewInt(readValue)}, nil
+		}
+
+		// no stop bit present so 0 in most significant bit, add this byte to the int we are reading
+		readValue = readValue<<7 | int64(b)
+	}
+
+	// we try to read one more byte (for the overflow), if this does not read a stop bit we return an error
+	if i == 10 {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.BigInt{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := int64(b & 127)
+			resultBig := big.NewInt(readValue)
+			resultBig = resultBig.Lsh(resultBig, 7)                         // readValue << 7
+			resultBig = resultBig.Or(resultBig, big.NewInt(removedStopBit)) // result | removedStopBit
+			return value.BigInt{Value: resultBig}, nil
+		}
+	}
+
+	return value.BigInt{}, fmt.Errorf("more than 10 bytes have been read without reading a stop bit, this will overflow an int64")
+}
+
+// ReadOptionalBigInt reads a value.BigInt off the input buffer. If the value returned is 0, this is marked as nil, and nil is returned.
+// Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1 for positive numbers only.
+func ReadOptionalBigInt(inputSource *bytes.Buffer) (value.Value, error) {
+	readValue, err := ReadBigInt(inputSource)
+	if err != nil {
+		return value.BigInt{}, err
+	}
+
+	equalToZero := readValue.Value.Cmp(big.NewInt(0))
+	if equalToZero == 0 {
+		return value.NullValue{}, nil
+	}
+
+	if equalToZero > 0 {
+		readValue.Value = readValue.Value.Sub(readValue.Value, big.NewInt(1))
+	}
+
+	return readValue, nil
+}
+
 // ReadString reads an ASCII encoded string off the buffer. This can be done as ASCII is a subset of UTF-8 which is what GO uses to represent strings.
 func ReadString(inputSource *bytes.Buffer) (value.StringValue, error) {
 	stringBuilder := strings.Builder{}
@@ -346,65 +425,4 @@ func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 
 		value = append(value, b<<1)
 	}
-}
-
-// TODO: add a optional BigInt version. then can inject a decoder into the fields if it is a delta operator
-
-// ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
-// and therefore we can return a value.BigInt if this happens. The least significant byte is in the overflow value. If the next value would till overflow this structure an err is returned.
-func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
-	var readValue int64 = 0
-
-	b, err := inputSource.ReadByte()
-	if err != nil {
-		return value.BigInt{}, err
-	}
-
-	// 64 = 01000000, indicating this is negative so we should start with all 1's int64 (-1)
-	if isNegative := b & 64; isNegative == 64 {
-		readValue = -1
-	}
-
-	// reset byte buffer by the one byte we had to read to determine negative/positive number
-	err = inputSource.UnreadByte()
-	if err != nil {
-		return value.BigInt{}, err
-	}
-
-	i := 1
-	for ; i < 10; i++ {
-		b, err := inputSource.ReadByte()
-		if err != nil {
-			return value.BigInt{}, err
-		}
-
-		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
-		if result := b & 128; result == 128 {
-			removedStopBit := int64(b & 127)
-			readValue = readValue<<7 | removedStopBit
-			return value.BigInt{Value: big.NewInt(readValue)}, nil
-		}
-
-		// no stop bit present so 0 in most significant bit, add this byte to the int we are reading
-		readValue = readValue<<7 | int64(b)
-	}
-
-	// we try to read one more byte (for the overflow), if this does not read a stop bit we return an error
-	if i == 10 {
-		b, err := inputSource.ReadByte()
-		if err != nil {
-			return value.BigInt{}, err
-		}
-
-		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
-		if result := b & 128; result == 128 {
-			removedStopBit := int64(b & 127)
-			resultBig := big.NewInt(readValue)
-			resultBig = resultBig.Lsh(resultBig, 7)                         // readValue << 7
-			resultBig = resultBig.Or(resultBig, big.NewInt(removedStopBit)) // result | removedStopBit
-			return value.BigInt{Value: resultBig}, nil
-		}
-	}
-
-	return value.BigInt{}, fmt.Errorf("more than 10 bytes have been read without reading a stop bit, this will overflow an int64")
 }
