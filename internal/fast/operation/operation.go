@@ -225,6 +225,12 @@ func (operation Tail) GetNotEncodedValue(pMap *presencemap.PresenceMap, required
 // Apply takes the previous value and combines it with the read value. If the read value is larger than the previous value, the read value overwrites the
 // previous value
 func (operation Tail) Apply(readValue value.Value, previousValue dictionary.Value) (fix.Value, error) {
+	// if null encoded, field is considered abscent
+	switch readValue.(type) {
+	case value.NullValue:
+		return readValue.GetAsFix(), nil
+	}
+
 	var baseValue fix.Value
 
 	// work out base value based on previous value
@@ -240,11 +246,9 @@ func (operation Tail) Apply(readValue value.Value, previousValue dictionary.Valu
 		}
 	}
 
+	// TODO: move this to be on the fast struct then use type here, but only to check its valid operation
 	// combine base value with read value
 	switch t := readValue.(type) {
-	case value.NullValue:
-		// if encoded null, return base value for type
-		return operation.BaseValue, nil
 	case value.StringValue:
 		baseValueAsChars := []rune(baseValue.Get().(string))
 		readValueAsChars := []rune(t.Value)
@@ -279,4 +283,52 @@ func (operation Tail) Apply(readValue value.Value, previousValue dictionary.Valu
 // RequiresPmap always returns true, as the Tail operator always evaluates the next pMap bit.
 func (operation Tail) RequiresPmap(required bool) bool {
 	return true
+}
+
+type Delta struct {
+	InitialValue fix.Value
+	BaseValue    fix.Value
+}
+
+// ShouldReadValue is always true as delta just informs you of what to do to build the read value, not what to do if the value is not pesent.
+func (operation Delta) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
+	return true
+}
+
+// GetNotEncodedValue returns nil, however value is always encoded
+func (operation Delta) GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool, previousValue dictionary.Value) (fix.Value, error) {
+	return fix.NullValue{}, nil
+}
+
+// Apply returns the result of previous value + read value (delta). If theres no previous value, the initial value (or default value) is used.
+// if the previous value is empty an error is returned (you cannot apply a delta to a null value)
+func (operation Delta) Apply(readValue value.Value, previousValue dictionary.Value) (fix.Value, error) {
+	switch readValue.(type) {
+	case value.NullValue:
+		return readValue.GetAsFix(), nil
+	}
+
+	var baseValue fix.Value
+
+	// work out base value based on previous value
+	switch t := previousValue.(type) {
+	case dictionary.AssignedValue:
+		baseValue = t.Value
+	case dictionary.EmptyValue:
+		return fix.NullValue{}, fmt.Errorf("you cannot apply a delta to a null previous value")
+	case dictionary.UndefinedValue:
+		switch operation.InitialValue.(type) {
+		case fix.NullValue:
+			baseValue = operation.BaseValue
+		default:
+			baseValue = operation.InitialValue
+		}
+	}
+
+	return readValue.Add(baseValue)
+}
+
+// RequiresPmap always returns false as value is always read
+func (operation Delta) RequiresPmap(required bool) bool {
+	return false
 }
