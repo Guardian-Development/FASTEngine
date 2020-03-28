@@ -6,7 +6,24 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
 
+// Decoder is used to couple the reading of required and optional values of the same type
+type Decoder interface {
+	ReadValue(inputSource *bytes.Buffer) (value.Value, error)
+	ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error)
+}
+
 //TODO: tests in this package should use these structs not the underlying methods themselves
+
+type Int32Decoder struct {
+}
+
+func (Int32Decoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadInt32(inputSource)
+}
+
+func (Int32Decoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadOptionalInt32(inputSource)
+}
 
 type Int64Decoder struct {
 }

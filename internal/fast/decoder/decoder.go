@@ -9,12 +9,6 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
 
-// Decoder is used to couple the reading of required and optional values of the same type
-type Decoder interface {
-	ReadValue(inputSource *bytes.Buffer) (value.Value, error)
-	ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error)
-}
-
 // ReadUInt32 reads the next FAST encoded value off the inputSource, treating it as a uint32 value. If the next value would overflow a uint32 an err is returned.
 // i.e. 00010010 10001000 would become 100100001000
 func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {

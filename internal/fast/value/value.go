@@ -13,6 +13,17 @@ type Value interface {
 	Add(value fix.Value) (fix.Value, error)
 }
 
+type NullValue struct {
+}
+
+func (value NullValue) GetAsFix() fix.Value {
+	return fix.NullValue{}
+}
+
+func (value NullValue) Add(toAdd fix.Value) (fix.Value, error) {
+	return fix.NullValue{}, nil
+}
+
 type StringValue struct {
 	Value string
 }
@@ -22,6 +33,19 @@ func (value StringValue) GetAsFix() fix.Value {
 }
 
 func (value StringValue) Add(toAdd fix.Value) (fix.Value, error) {
+	// TODO
+	return fix.NullValue{}, nil
+}
+
+type ByteVector struct {
+	Value []byte
+}
+
+func (value ByteVector) GetAsFix() fix.Value {
+	return fix.NewRawValue(value.Value)
+}
+
+func (value ByteVector) Add(toAdd fix.Value) (fix.Value, error) {
 	// TODO
 	return fix.NullValue{}, nil
 }
@@ -48,8 +72,8 @@ func (value Int32Value) GetAsFix() fix.Value {
 }
 
 func (value Int32Value) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
+	rawValue := toAdd.Get().(int32)
+	return addValueWithinInt32Constraints(int64(value.Value), int64(rawValue))
 }
 
 type UInt64Value struct {
@@ -74,18 +98,14 @@ func (value Int64Value) GetAsFix() fix.Value {
 }
 
 func (value Int64Value) Add(toAdd fix.Value) (fix.Value, error) {
-	rawValue := toAdd.Get().(int64)
-
-	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
-	if value.Value > 0 && rawValue > math.MaxInt64-value.Value {
-		return nil, fmt.Errorf("%v + %v would overflow int64", value.Value, rawValue)
-	}
-	// negative value and you're add is greater than the difference between the negative value and the min value, you will negative overflow
-	if rawValue < math.MinInt64-value.Value {
-		return nil, fmt.Errorf("%v + %v would overflow int64", value.Value, rawValue)
+	switch t := toAdd.Get().(type) {
+	case int32:
+		return addValueWithinInt32Constraints(value.Value, int64(t))
+	case int64:
+		return addValueWithinInt64Constraints(value.Value, t)
 	}
 
-	return fix.NewRawValue(value.Value + rawValue), nil
+	return fix.NullValue{}, fmt.Errorf("unsupported type to add int64 to: %#v", toAdd.Get())
 }
 
 type BigInt struct {
@@ -109,26 +129,28 @@ func (value BigInt) Add(toAdd fix.Value) (fix.Value, error) {
 	return fix.NewRawValue(valueAfterAddition.Int64()), nil
 }
 
-type ByteVector struct {
-	Value []byte
+func addValueWithinInt32Constraints(readValue int64, value int64) (fix.Value, error) {
+	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
+	if readValue > 0 && value > math.MaxInt32-readValue {
+		return nil, fmt.Errorf("%v + %v would overflow int32", readValue, value)
+	}
+	// negative value and you're add is greater than the difference between the negative value and the min value, you will negative overflow
+	if value < math.MinInt32-readValue {
+		return nil, fmt.Errorf("%v + %v would overflow int32", readValue, value)
+	}
+
+	return fix.NewRawValue(int32(readValue + value)), nil
 }
 
-func (value ByteVector) GetAsFix() fix.Value {
-	return fix.NewRawValue(value.Value)
-}
+func addValueWithinInt64Constraints(readValue int64, value int64) (fix.Value, error) {
+	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
+	if readValue > 0 && value > math.MaxInt64-readValue {
+		return nil, fmt.Errorf("%v + %v would overflow int64", readValue, value)
+	}
+	// negative value and you're add is greater than the difference between the negative value and the min value, you will negative overflow
+	if value < math.MinInt64-readValue {
+		return nil, fmt.Errorf("%v + %v would overflow int64", readValue, value)
+	}
 
-func (value ByteVector) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
-}
-
-type NullValue struct {
-}
-
-func (value NullValue) GetAsFix() fix.Value {
-	return fix.NullValue{}
-}
-
-func (value NullValue) Add(toAdd fix.Value) (fix.Value, error) {
-	return fix.NullValue{}, nil
+	return fix.NewRawValue(int64(readValue + value)), nil
 }

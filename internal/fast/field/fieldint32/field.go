@@ -2,6 +2,7 @@ package fieldint32
 
 import (
 	"bytes"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
@@ -16,6 +17,8 @@ import (
 type FieldInt32 struct {
 	FieldDetails properties.Properties
 	Operation    operation.Operation
+
+	decode decoder.Decoder
 }
 
 // Deserialise an <int32/> from the input source
@@ -26,9 +29,9 @@ func (field FieldInt32) Deserialise(inputSource *bytes.Buffer, pMap *presencemap
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = decoder.ReadInt32(inputSource)
+			value, err = field.decode.ReadValue(inputSource)
 		} else {
-			value, err = decoder.ReadOptionalInt32(inputSource)
+			value, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -65,6 +68,7 @@ func (field FieldInt32) RequiresPmap() bool {
 func New(properties properties.Properties) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation:    operation.None{},
 	}
 
@@ -75,6 +79,7 @@ func New(properties properties.Properties) FieldInt32 {
 func NewConstantOperation(properties properties.Properties, constantValue int32) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Constant{
 			ConstantValue: fix.NewRawValue(constantValue),
 		},
@@ -87,6 +92,7 @@ func NewConstantOperation(properties properties.Properties, constantValue int32)
 func NewDefaultOperation(properties properties.Properties) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NullValue{},
 		},
@@ -99,6 +105,7 @@ func NewDefaultOperation(properties properties.Properties) FieldInt32 {
 func NewDefaultOperationWithValue(properties properties.Properties, defaultValue int32) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NewRawValue(defaultValue),
 		},
@@ -111,6 +118,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 func NewCopyOperation(properties properties.Properties) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NullValue{},
 		},
@@ -123,6 +131,7 @@ func NewCopyOperation(properties properties.Properties) FieldInt32 {
 func NewCopyOperationWithInitialValue(properties properties.Properties, initialValue int32) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NewRawValue(initialValue),
 		},
@@ -135,6 +144,7 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 func NewIncrementOperation(properties properties.Properties) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Increment{
 			InitialValue: fix.NullValue{},
 		},
@@ -147,8 +157,37 @@ func NewIncrementOperation(properties properties.Properties) FieldInt32 {
 func NewIncrementOperationWithInitialValue(properties properties.Properties, initialValue int32) FieldInt32 {
 	field := FieldInt32{
 		FieldDetails: properties,
+		decode:       decoder.Int32Decoder{},
 		Operation: operation.Increment{
 			InitialValue: fix.NewRawValue(initialValue),
+		},
+	}
+
+	return field
+}
+
+// NewDeltaOperation <int32/> field with the given properties and <delta/> operator
+func NewDeltaOperation(properties properties.Properties) FieldInt32 {
+	field := FieldInt32{
+		FieldDetails: properties,
+		decode:       decoder.Int64Decoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NullValue{},
+			BaseValue:    fix.NewRawValue(int32(0)),
+		},
+	}
+
+	return field
+}
+
+// NewDeltaOperationWithInitialValue <int32/> field with the given properties and <delta value="initialValue"/> operator
+func NewDeltaOperationWithInitialValue(properties properties.Properties, initialValue int32) FieldInt32 {
+	field := FieldInt32{
+		FieldDetails: properties,
+		decode:       decoder.Int64Decoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NewRawValue(initialValue),
+			BaseValue:    fix.NewRawValue(int32(0)),
 		},
 	}
 
