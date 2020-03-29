@@ -25,6 +25,17 @@ func (Int32Decoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, e
 	return ReadOptionalInt32(inputSource)
 }
 
+type UInt32Decoder struct {
+}
+
+func (UInt32Decoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadUInt32(inputSource)
+}
+
+func (UInt32Decoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadOptionalUInt32(inputSource)
+}
+
 type Int64Decoder struct {
 }
 
@@ -34,6 +45,17 @@ func (Int64Decoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
 
 func (Int64Decoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
 	return ReadOptionalInt64(inputSource)
+}
+
+type UInt64Decoder struct {
+}
+
+func (UInt64Decoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadUInt64(inputSource)
+}
+
+func (UInt64Decoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadOptionalUInt64(inputSource)
 }
 
 type BitIntDecoder struct {

@@ -214,26 +214,6 @@ func TestCanDeseraliseOptionalInt64DeltaOperatorEncodedNullPreviouValueReturnsEr
 }
 
 //<int64 presence="optional">
-//	<delta />
-//</int64>
-func TestCanDeseraliseOptionalInt64DeltaOperatorEncodedPreviousNullValueReturnsError(t *testing.T) {
-	// Arrange pmap = 10000000 1 = 10000011
-	messageAsBytes := bytes.NewBuffer([]byte{129})
-	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int64Field", false))
-
-	// Act
-	dictionary.SetValue("Int64Field", fix.NullValue{})
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
-
-	// Assert
-	if err == nil || err.Error() != "you cannot apply a delta to a null previous value" {
-		t.Errorf("Expected error about nil value when a required field: %#v", err)
-	}
-}
-
-//<int64 presence="optional">
 //	<delta/>
 //</int64>
 func TestCanDeseraliseOptionalInt64DeltaOperatorNotEncodedReturnsNull(t *testing.T) {

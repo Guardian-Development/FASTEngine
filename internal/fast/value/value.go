@@ -59,8 +59,8 @@ func (value UInt32Value) GetAsFix() fix.Value {
 }
 
 func (value UInt32Value) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
+	rawValue := toAdd.Get().(uint32)
+	return addValueWithinUInt32Constraints(int64(value.Value), int64(rawValue))
 }
 
 type Int32Value struct {
@@ -101,8 +101,8 @@ func (value Int64Value) Add(toAdd fix.Value) (fix.Value, error) {
 	switch t := toAdd.Get().(type) {
 	case int32:
 		return addValueWithinInt32Constraints(value.Value, int64(t))
-	case int64:
-		return addValueWithinInt64Constraints(value.Value, t)
+	case uint32:
+		return addValueWithinUInt32Constraints(value.Value, int64(t))
 	}
 
 	return fix.NullValue{}, fmt.Errorf("unsupported type to add int64 to: %#v", toAdd.Get())
@@ -117,16 +117,41 @@ func (value BigInt) GetAsFix() fix.Value {
 }
 
 func (value BigInt) Add(toAdd fix.Value) (fix.Value, error) {
-	rawValue := toAdd.Get().(int64)
 	copy := big.NewInt(0).Set(value.Value)
-	valueAfterAddition := copy.Add(copy, big.NewInt(rawValue))
 
-	// if the addition does not stay within the bounds of an int64, we have an overflow and report an error
-	if !valueAfterAddition.IsInt64() {
-		return nil, fmt.Errorf("%v + %v would overflow int64", rawValue, value.Value.Int64())
+	switch t := toAdd.Get().(type) {
+	case int64:
+		valueAfterAddition := copy.Add(copy, big.NewInt(t))
+
+		// if the addition does not stay within the bounds of an int64, we have an overflow and report an error
+		if !valueAfterAddition.IsInt64() {
+			return nil, fmt.Errorf("%v + %v would overflow int64", t, value.Value.Int64())
+		}
+		return fix.NewRawValue(valueAfterAddition.Int64()), nil
+	case uint64:
+		valueAfterAddition := copy.Add(copy, big.NewInt(0).SetUint64(t))
+
+		// if the addition does not stay within the bounds of an uint64, we have an overflow and report an error
+		if !valueAfterAddition.IsUint64() {
+			return nil, fmt.Errorf("%v + %v would overflow uint64", t, value.Value.Uint64())
+		}
+		return fix.NewRawValue(valueAfterAddition.Uint64()), nil
 	}
 
-	return fix.NewRawValue(valueAfterAddition.Int64()), nil
+	return fix.NullValue{}, fmt.Errorf("unsupported type to add big int to: %#v", toAdd.Get())
+}
+
+func addValueWithinUInt32Constraints(readValue int64, value int64) (fix.Value, error) {
+	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
+	if readValue > 0 && uint64(value) > uint64(math.MaxUint32)-uint64(readValue) {
+		return nil, fmt.Errorf("%v + %v would overflow uint32", readValue, value)
+	}
+	// if subtracting the value would take us below 0, you will negative overflow
+	if 0 > value+readValue {
+		return nil, fmt.Errorf("%v + %v would overflow uint32", readValue, value)
+	}
+
+	return fix.NewRawValue(uint32(readValue + value)), nil
 }
 
 func addValueWithinInt32Constraints(readValue int64, value int64) (fix.Value, error) {
@@ -140,17 +165,4 @@ func addValueWithinInt32Constraints(readValue int64, value int64) (fix.Value, er
 	}
 
 	return fix.NewRawValue(int32(readValue + value)), nil
-}
-
-func addValueWithinInt64Constraints(readValue int64, value int64) (fix.Value, error) {
-	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
-	if readValue > 0 && value > math.MaxInt64-readValue {
-		return nil, fmt.Errorf("%v + %v would overflow int64", readValue, value)
-	}
-	// negative value and you're add is greater than the difference between the negative value and the min value, you will negative overflow
-	if value < math.MinInt64-readValue {
-		return nil, fmt.Errorf("%v + %v would overflow int64", readValue, value)
-	}
-
-	return fix.NewRawValue(int64(readValue + value)), nil
 }

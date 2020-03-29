@@ -1,4 +1,4 @@
-package fieldint32
+package fielduint64
 
 import (
 	"bytes"
@@ -11,16 +11,16 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 )
 
-//<int32>
+//<uint64>
 //	<delta />
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedValueNoPreviousValue(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedValueNoPreviousValue(t *testing.T) {
 	// Arrange pmap = 10000000 2 = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(2)
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", true))
+	expectedMessage := uint64(2)
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -34,16 +34,16 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedValueNoPreviousValue(t *t
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta value="7"/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorWithInitialValueEncodedValueNoPreviousValue(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorWithInitialValueEncodedValueNoPreviousValue(t *testing.T) {
 	// Arrange pmap = 10000000 2 = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(9)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "Int32Field", true), 7)
+	expectedMessage := uint64(9)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -57,19 +57,19 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorWithInitialValueEncodedValueNoPr
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta value="7"/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedPositiveDeltaValueWithNegativePreviousValue(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedPositiveDeltaValuePreviousValue(t *testing.T) {
 	// Arrange pmap = 10000000 9 = 10001001
 	messageAsBytes := bytes.NewBuffer([]byte{137})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(2)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "Int32Field", true), 7)
+	expectedMessage := uint64(11)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(-7)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(2)))
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
@@ -81,19 +81,19 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedPositiveDeltaValueWithNeg
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta value="7"/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedNegativeDeltaValueWithPositivePreviousValue(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedNegativeDeltaValuePreviousValue(t *testing.T) {
 	// Arrange pmap = 10000000 -29 = 11100011
 	messageAsBytes := bytes.NewBuffer([]byte{227})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(-2)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "Int32Field", true), 7)
+	expectedMessage := uint64(500)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(27)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(529)))
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
@@ -105,19 +105,19 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedNegativeDeltaValueWithPos
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta value="7"/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedMaxPositiveInt32ToMaxNegativeInt32(t *testing.T) {
-	// Arrange pmap = 10000000 -4294967295 = 01111111 01110000 00000000 00000000 00000000 10000001
-	messageAsBytes := bytes.NewBuffer([]byte{127, 112, 0, 0, 0, 129})
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedMaxPositiveUInt64ToZero(t *testing.T) {
+	// Arrange pmap = 10000000 -18446744073709551615 = 01111110 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 10000001
+	messageAsBytes := bytes.NewBuffer([]byte{126, 0, 0, 0, 0, 0, 0, 0, 0, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(math.MinInt32)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "Int32Field", true), 7)
+	expectedMessage := uint64(0)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(math.MaxInt32)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(math.MaxUint64)))
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
@@ -129,19 +129,19 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedMaxPositiveInt32ToMaxNega
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta value="7"/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedMaxNegativeInt32ToMaxPositiveInt64(t *testing.T) {
-	// Arrange pmap = 10000000 4294967295 = 00000000 00001111 01111111 01111111 01111111 01111111
-	messageAsBytes := bytes.NewBuffer([]byte{0, 15, 127, 127, 127, 255})
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedZeroToMaxPositiveUInt64(t *testing.T) {
+	// Arrange pmap = 10000000 18446744073709551615 = 00000001 01111111 01111111 01111111 01111111 01111111 01111111 01111111 01111111 11111111
+	messageAsBytes := bytes.NewBuffer([]byte{1, 127, 127, 127, 127, 127, 127, 127, 127, 255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := int32(math.MaxInt32)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "Int32Field", true), 7)
+	expectedMessage := uint64(math.MaxUint64)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UIn64Field", true), 7)
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(math.MinInt32)))
+	dictionary.SetValue("UIn64Field", fix.NewRawValue(uint64(0)))
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
@@ -153,58 +153,58 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedMaxNegativeInt32ToMaxPosi
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedPositiveDeltaValueOverflowsInt32Error(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedPositiveDeltaValueOverflowsUInt64Error(t *testing.T) {
 	// Arrange pmap = 10000000 1 = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(math.MaxInt32)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(math.MaxUint64)))
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "1 + 2147483647 would overflow int32" {
+	if err == nil || err.Error() != "18446744073709551615 + 1 would overflow uint64" {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta/>
-//</int32>
-func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedNegativeDeltaValueOverflowsInt32Error(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedNegativeDeltaValueOverflowsUInt64Error(t *testing.T) {
 	// Arrange pmap = 10000000 -1 = 11111111
 	messageAsBytes := bytes.NewBuffer([]byte{255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(math.MinInt32)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(0)))
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "-1 + -2147483648 would overflow int32" {
+	if err == nil || err.Error() != "0 + 1 would overflow uint64" {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
 
-//<int32 presence="optional">
+//<uint64 presence="optional">
 //	<delta />
-//</int32>
-func TestCanDeseraliseOptionalInt32DeltaOperatorEncodedNullPreviouValueReturnsError(t *testing.T) {
-	// Arrange pmap = 10000000 -1 = 11111111
-	messageAsBytes := bytes.NewBuffer([]byte{255})
+//</uint64>
+func TestCanDeseraliseOptionalUInt64DeltaOperatorEncodedPreviousNullValueReturnsError(t *testing.T) {
+	// Arrange pmap = 10000000 1 = 10000011
+	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NullValue{})
+	dictionary.SetValue("UInt64Field", fix.NullValue{})
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
@@ -213,18 +213,18 @@ func TestCanDeseraliseOptionalInt32DeltaOperatorEncodedNullPreviouValueReturnsEr
 	}
 }
 
-//<int32 presence="optional">
+//<uint64 presence="optional">
 //	<delta/>
-//</int32>
-func TestCanDeseraliseOptionalInt32DeltaOperatorNotEncodedReturnsNull(t *testing.T) {
+//</uint64>
+func TestCanDeseraliseOptionalUInt64DeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 	// Arrange pmap = 10000000 null = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
 
 	// Act
-	dictionary.SetValue("Int32Field", fix.NewRawValue(int32(27)))
+	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(27)))
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
@@ -236,12 +236,12 @@ func TestCanDeseraliseOptionalInt32DeltaOperatorNotEncodedReturnsNull(t *testing
 	}
 }
 
-//<int32>
+//<uint64>
 //	<delta/>
-//</int32>
-func TestRequiresPmapReturnsFalseForRequiredInt32DeltaOperator(t *testing.T) {
+//</uint64>
+func TestRequiresPmapReturnsFalseForRequiredUInt64DeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -252,12 +252,12 @@ func TestRequiresPmapReturnsFalseForRequiredInt32DeltaOperator(t *testing.T) {
 	}
 }
 
-//<int32 presence="optional">
+//<uint64 presence="optional">
 //	<delta/>
-//</int32>
-func TestRequiresPmapReturnsFalseForOptionalInt32DeltaOperator(t *testing.T) {
+//</uint64>
+func TestRequiresPmapReturnsFalseForOptionalUInt64DeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
