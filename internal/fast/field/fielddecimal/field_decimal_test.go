@@ -81,7 +81,7 @@ func TestCanDeseraliseOptionalDecimalExponentPresentMantissaNotEncodedCausesErro
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent" {
+	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: EOF" {
 		t.Errorf("Expected error message informing user of error when decoding mantissa, but got: %v", err)
 	}
 }

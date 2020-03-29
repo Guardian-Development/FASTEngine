@@ -195,7 +195,7 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationNotEncodedNoInitialVal
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent" {
+	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: no value supplied in message and no initial value with required field" {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

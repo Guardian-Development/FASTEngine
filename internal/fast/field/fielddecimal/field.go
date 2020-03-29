@@ -30,9 +30,13 @@ func (field FieldDecimal) Deserialise(inputSource *bytes.Buffer, pMap *presencem
 	case fix.NullValue:
 		return fix.NullValue{}, nil
 	case fix.RawValue:
+		exponentRawValue := exponentValue.Get().(int32)
+		if exponentRawValue < -63 || exponentRawValue > 63 {
+			return nil, fmt.Errorf("a decimal exponent must fall in the range of [-63...63]")
+		}
 		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dict)
 		if err != nil {
-			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent")
+			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent: %s", err)
 		}
 		decimalValue := math.Pow(10, float64(exponentValue.Get().(int32))) * float64(mantissaValue.Get().(int64))
 		fixValue := fix.NewRawValue(decimalValue)
