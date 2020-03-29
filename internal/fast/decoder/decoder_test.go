@@ -646,7 +646,7 @@ func TestReadOptionalStringReturnsEmptyStringIfEncoded(t *testing.T) {
 
 	areEqual := reflect.DeepEqual(expectedString, result)
 	if !areEqual {
-		t.Errorf("Did not read the expected string, expected: %s, result: %#v", expectedString, result)
+		t.Errorf("Did not read the expected string, expected: %#v, result: %#v", expectedString, result)
 	}
 }
 
@@ -665,7 +665,7 @@ func TestReadOptionalStringReturnsEncodedString(t *testing.T) {
 
 	areEqual := reflect.DeepEqual(expectedString, result)
 	if !areEqual {
-		t.Errorf("Did not read the expected string, expected: %s, result: %#v", expectedString, result)
+		t.Errorf("Did not read the expected string, expected: %#v, result: %#v", expectedString, result)
 	}
 }
 

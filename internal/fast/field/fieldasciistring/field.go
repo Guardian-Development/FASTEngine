@@ -2,6 +2,7 @@ package fieldasciistring
 
 import (
 	"bytes"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
@@ -16,6 +17,8 @@ import (
 type FieldAsciiString struct {
 	FieldDetails properties.Properties
 	Operation    operation.Operation
+
+	decode decoder.Decoder
 }
 
 // Deserialise a <string/> from the input source
@@ -26,9 +29,9 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = decoder.ReadString(inputSource)
+			value, err = field.decode.ReadValue(inputSource)
 		} else {
-			value, err = decoder.ReadOptionalString(inputSource)
+			value, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -65,6 +68,7 @@ func (field FieldAsciiString) RequiresPmap() bool {
 func New(properties properties.Properties) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation:    operation.None{},
 	}
 
@@ -75,6 +79,7 @@ func New(properties properties.Properties) FieldAsciiString {
 func NewConstantOperation(properties properties.Properties, constantValue string) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Constant{
 			ConstantValue: fix.NewRawValue(constantValue),
 		},
@@ -87,6 +92,7 @@ func NewConstantOperation(properties properties.Properties, constantValue string
 func NewDefaultOperation(properties properties.Properties) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NullValue{},
 		},
@@ -99,6 +105,7 @@ func NewDefaultOperation(properties properties.Properties) FieldAsciiString {
 func NewDefaultOperationWithValue(properties properties.Properties, defaultValue string) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NewRawValue(defaultValue),
 		},
@@ -111,6 +118,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 func NewCopyOperation(properties properties.Properties) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NullValue{},
 		},
@@ -123,6 +131,7 @@ func NewCopyOperation(properties properties.Properties) FieldAsciiString {
 func NewCopyOperationWithInitialValue(properties properties.Properties, initialValue string) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NewRawValue(initialValue),
 		},
@@ -135,9 +144,10 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 func NewTailOperation(properties properties.Properties) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NullValue{},
-			BaseValue: fix.NewRawValue(""),
+			BaseValue:    fix.NewRawValue(""),
 		},
 	}
 	return field
@@ -147,10 +157,39 @@ func NewTailOperation(properties properties.Properties) FieldAsciiString {
 func NewTailOperationWithInitialValue(properties properties.Properties, initialValue string) FieldAsciiString {
 	field := FieldAsciiString{
 		FieldDetails: properties,
+		decode:       decoder.AsciiStringDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NewRawValue(initialValue),
-			BaseValue: fix.NewRawValue(""),
+			BaseValue:    fix.NewRawValue(""),
 		},
 	}
+	return field
+}
+
+// NewDeltaOperation <string/> field with the given properties and <delta/> operator
+func NewDeltaOperation(properties properties.Properties) FieldAsciiString {
+	field := FieldAsciiString{
+		FieldDetails: properties,
+		decode:       decoder.AsciiStringDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NullValue{},
+			BaseValue:    fix.NewRawValue(""),
+		},
+	}
+
+	return field
+}
+
+// NewDeltaOperationWithInitialValue <string/> field with the given properties and <delta value="initialValue"/> operator
+func NewDeltaOperationWithInitialValue(properties properties.Properties, initialValue string) FieldAsciiString {
+	field := FieldAsciiString{
+		FieldDetails: properties,
+		decode:       decoder.AsciiStringDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NewRawValue(initialValue),
+			BaseValue:    fix.NewRawValue(""),
+		},
+	}
+
 	return field
 }

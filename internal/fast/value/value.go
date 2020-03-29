@@ -25,7 +25,8 @@ func (value NullValue) Add(toAdd fix.Value) (fix.Value, error) {
 }
 
 type StringValue struct {
-	Value string
+	Value         string
+	ItemsToRemove int32
 }
 
 func (value StringValue) GetAsFix() fix.Value {
@@ -33,8 +34,28 @@ func (value StringValue) GetAsFix() fix.Value {
 }
 
 func (value StringValue) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
+	existingValue := toAdd.Get().(string)
+	// prepend
+	if value.ItemsToRemove < 0 {
+		if value.ItemsToRemove == -1 {
+			return fix.NewRawValue(value.Value + existingValue), nil
+		}
+
+		itemsToRemove := (-value.ItemsToRemove) - 1
+		if itemsToRemove > int32(len(existingValue)) {
+			return nil, fmt.Errorf("you cannot remove %d values from a string %s", itemsToRemove, existingValue)
+		}
+		stringWithRemovedChars := existingValue[itemsToRemove:]
+		return fix.NewRawValue(value.Value + stringWithRemovedChars), nil
+	}
+
+	// append
+	itemsToRemove := int32(len(existingValue)) - value.ItemsToRemove
+	if itemsToRemove < 0 {
+		return nil, fmt.Errorf("you cannot remove %d values from a string %s", value.ItemsToRemove, existingValue)
+	}
+	stringWithRemovedChars := existingValue[:int32(len(existingValue))-value.ItemsToRemove]
+	return fix.NewRawValue(stringWithRemovedChars + value.Value), nil
 }
 
 type ByteVector struct {
