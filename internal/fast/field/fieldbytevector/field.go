@@ -2,6 +2,7 @@ package fieldbytevector
 
 import (
 	"bytes"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
@@ -16,6 +17,8 @@ import (
 type FieldByteVector struct {
 	FieldDetails properties.Properties
 	Operation    operation.Operation
+
+	decode decoder.Decoder
 }
 
 // Deserialise a <byteVector/> from the input source
@@ -26,9 +29,9 @@ func (field FieldByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presen
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = decoder.ReadByteVector(inputSource)
+			value, err = field.decode.ReadValue(inputSource)
 		} else {
-			value, err = decoder.ReadOptionalByteVector(inputSource)
+			value, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -65,6 +68,7 @@ func (field FieldByteVector) RequiresPmap() bool {
 func New(properties properties.Properties) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation:    operation.None{},
 	}
 
@@ -75,6 +79,7 @@ func New(properties properties.Properties) FieldByteVector {
 func NewConstantOperation(properties properties.Properties, constantValue []byte) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Constant{
 			ConstantValue: fix.NewRawValue(constantValue),
 		},
@@ -87,6 +92,7 @@ func NewConstantOperation(properties properties.Properties, constantValue []byte
 func NewDefaultOperation(properties properties.Properties) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NullValue{},
 		},
@@ -99,6 +105,7 @@ func NewDefaultOperation(properties properties.Properties) FieldByteVector {
 func NewDefaultOperationWithValue(properties properties.Properties, defaultValue []byte) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NewRawValue(defaultValue),
 		},
@@ -111,6 +118,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 func NewCopyOperation(properties properties.Properties) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NullValue{},
 		},
@@ -123,6 +131,7 @@ func NewCopyOperation(properties properties.Properties) FieldByteVector {
 func NewCopyOperationWithInitialValue(properties properties.Properties, initialValue []byte) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NewRawValue(initialValue),
 		},
@@ -131,26 +140,56 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 	return field
 }
 
-// NewTailOperation <byteVector charset="unicode"/> field with the given properties and <tail/> operator
+// NewTailOperation <byteVector/> field with the given properties and <tail/> operator
 func NewTailOperation(properties properties.Properties) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NullValue{},
-			BaseValue: fix.NewRawValue([]byte{}),
+			BaseValue:    fix.NewRawValue([]byte{}),
 		},
 	}
 	return field
 }
 
-// NewTailOperationWithInitialValue <byteVector charset="unicode"/> field with the given properties and <tail value="initialValue"/> operator
+// NewTailOperationWithInitialValue <byteVector/> field with the given properties and <tail value="initialValue"/> operator
 func NewTailOperationWithInitialValue(properties properties.Properties, initialValue []byte) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NewRawValue(initialValue),
-			BaseValue: fix.NewRawValue([]byte{}),
+			BaseValue:    fix.NewRawValue([]byte{}),
 		},
 	}
+	return field
+}
+
+// NewDeltaOperation <string/> field with the given properties and <delta/> operator
+func NewDeltaOperation(properties properties.Properties) FieldByteVector {
+	field := FieldByteVector{
+		FieldDetails: properties,
+		decode:       decoder.ByteVectorDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NullValue{},
+			BaseValue:    fix.NewRawValue([]byte{}),
+		},
+	}
+
+	return field
+}
+
+// NewDeltaOperationWithInitialValue <string/> field with the given properties and <delta value="initialValue"/> operator
+func NewDeltaOperationWithInitialValue(properties properties.Properties, initialValue []byte) FieldByteVector {
+	field := FieldByteVector{
+		FieldDetails: properties,
+		decode:       decoder.ByteVectorDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NewRawValue(initialValue),
+			BaseValue:    fix.NewRawValue([]byte{}),
+		},
+	}
+
 	return field
 }

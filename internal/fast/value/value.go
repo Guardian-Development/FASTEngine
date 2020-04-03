@@ -59,7 +59,8 @@ func (value StringValue) Add(toAdd fix.Value) (fix.Value, error) {
 }
 
 type ByteVector struct {
-	Value []byte
+	Value         []byte
+	ItemsToRemove int32
 }
 
 func (value ByteVector) GetAsFix() fix.Value {
@@ -67,8 +68,28 @@ func (value ByteVector) GetAsFix() fix.Value {
 }
 
 func (value ByteVector) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
+	existingValue := toAdd.Get().([]byte)
+	// prepend
+	if value.ItemsToRemove < 0 {
+		if value.ItemsToRemove == -1 {
+			return fix.NewRawValue(append(value.Value, existingValue...)), nil
+		}
+
+		itemsToRemove := (-value.ItemsToRemove) - 1
+		if itemsToRemove > int32(len(existingValue)) {
+			return nil, fmt.Errorf("you cannot remove %d values from a bytevector %#v", itemsToRemove, existingValue)
+		}
+		vectorWithRemovedBytes := existingValue[itemsToRemove:]
+		return fix.NewRawValue(append(value.Value, vectorWithRemovedBytes...)), nil
+	}
+
+	// append
+	itemsToRemove := int32(len(existingValue)) - value.ItemsToRemove
+	if itemsToRemove < 0 {
+		return nil, fmt.Errorf("you cannot remove %d values from a bytevector %#v", value.ItemsToRemove, existingValue)
+	}
+	vectorWithRemovedBytes := existingValue[:int32(len(existingValue))-value.ItemsToRemove]
+	return fix.NewRawValue(append(vectorWithRemovedBytes, value.Value...)), nil
 }
 
 type UInt32Value struct {
@@ -106,8 +127,8 @@ func (value UInt64Value) GetAsFix() fix.Value {
 }
 
 func (value UInt64Value) Add(toAdd fix.Value) (fix.Value, error) {
-	// TODO
-	return fix.NullValue{}, nil
+	// this is never used, as we use BigInt to allow addition where we temporarily overflow int64
+	return nil, fmt.Errorf("unsupported operation, big int should be used to add uint64 operations")
 }
 
 type Int64Value struct {
@@ -119,6 +140,7 @@ func (value Int64Value) GetAsFix() fix.Value {
 }
 
 func (value Int64Value) Add(toAdd fix.Value) (fix.Value, error) {
+	// this is used to add to 32 bit integer types, allowing for temporarily overflow of 32 bits
 	switch t := toAdd.Get().(type) {
 	case int32:
 		return addValueWithinInt32Constraints(value.Value, int64(t))

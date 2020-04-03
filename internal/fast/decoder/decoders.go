@@ -116,3 +116,51 @@ func (AsciiStringDeltaDecoder) ReadOptionalValue(inputSource *bytes.Buffer) (val
 	asciiValue.ItemsToRemove = subtractionLength.(value.Int32Value).Value
 	return asciiValue, nil
 }
+
+type ByteVectorDecoder struct {
+}
+
+func (ByteVectorDecoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadByteVector(inputSource)
+}
+
+func (ByteVectorDecoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
+	return ReadOptionalByteVector(inputSource)
+}
+
+type ByteVectorDeltaDecoder struct {
+}
+
+func (ByteVectorDeltaDecoder) ReadValue(inputSource *bytes.Buffer) (value.Value, error) {
+	subtractionLength, err := ReadInt32(inputSource)
+	if err != nil {
+		return nil, err
+	}
+
+	byteVector, err := ReadByteVector(inputSource)
+	if err != nil {
+		return nil, err
+	}
+	byteVector.ItemsToRemove = subtractionLength.Value
+	return byteVector, nil
+}
+
+func (ByteVectorDeltaDecoder) ReadOptionalValue(inputSource *bytes.Buffer) (value.Value, error) {
+	subtractionLength, err := ReadOptionalInt32(inputSource)
+	if err != nil {
+		return nil, err
+	}
+
+	// if no subtraction length present, then no delta encoded
+	switch t := subtractionLength.(type) {
+	case value.NullValue:
+		return t, nil
+	}
+
+	byteVector, err := ReadByteVector(inputSource)
+	if err != nil {
+		return nil, err
+	}
+	byteVector.ItemsToRemove = subtractionLength.(value.Int32Value).Value
+	return byteVector, nil
+}
