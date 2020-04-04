@@ -19,7 +19,7 @@ import (
 // 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: series of messages should focus on state (copy, increment etc) to show the engine works when parsing a feed
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
-// TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices)
+// TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices) USE ERROR CODES FROM SPEC!
 // TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
 // TODO: readme and documentation
 // TODO: pretty print FIX message using pipe character to make readable

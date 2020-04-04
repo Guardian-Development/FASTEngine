@@ -2,6 +2,7 @@ package fieldunicodestring
 
 import (
 	"bytes"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
 
 	"github.com/Guardian-Development/fastengine/client/fix"
@@ -16,6 +17,8 @@ import (
 type FieldUnicodeString struct {
 	FieldDetails properties.Properties
 	Operation    operation.Operation
+
+	decode decoder.Decoder
 }
 
 // Deserialise a <string charset="unicode"/> from the input source
@@ -26,9 +29,9 @@ func (field FieldUnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *pre
 		var err error
 
 		if field.FieldDetails.Required {
-			stringValue, err = decoder.ReadByteVector(inputSource)
+			stringValue, err = field.decode.ReadValue(inputSource)
 		} else {
-			stringValue, err = decoder.ReadOptionalByteVector(inputSource)
+			stringValue, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -37,7 +40,7 @@ func (field FieldUnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *pre
 
 		switch t := stringValue.(type) {
 		case value.ByteVector:
-			stringValue = value.StringValue{Value: string(t.Value)}
+			stringValue = value.StringValue{Value: string(t.Value), ItemsToRemove: t.ItemsToRemove}
 		}
 
 		transformedValue, err := field.Operation.Apply(stringValue, previousValue)
@@ -70,6 +73,7 @@ func (field FieldUnicodeString) RequiresPmap() bool {
 func New(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation:    operation.None{},
 	}
 
@@ -80,6 +84,7 @@ func New(properties properties.Properties) FieldUnicodeString {
 func NewConstantOperation(properties properties.Properties, constantValue string) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Constant{
 			ConstantValue: fix.NewRawValue(constantValue),
 		},
@@ -92,6 +97,7 @@ func NewConstantOperation(properties properties.Properties, constantValue string
 func NewDefaultOperation(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NullValue{},
 		},
@@ -104,6 +110,7 @@ func NewDefaultOperation(properties properties.Properties) FieldUnicodeString {
 func NewDefaultOperationWithValue(properties properties.Properties, defaultValue string) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Default{
 			DefaultValue: fix.NewRawValue(defaultValue),
 		},
@@ -116,6 +123,7 @@ func NewDefaultOperationWithValue(properties properties.Properties, defaultValue
 func NewCopyOperation(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NullValue{},
 		},
@@ -128,6 +136,7 @@ func NewCopyOperation(properties properties.Properties) FieldUnicodeString {
 func NewCopyOperationWithInitialValue(properties properties.Properties, initialValue string) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Copy{
 			InitialValue: fix.NewRawValue(initialValue),
 		},
@@ -140,9 +149,10 @@ func NewCopyOperationWithInitialValue(properties properties.Properties, initialV
 func NewTailOperation(properties properties.Properties) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NullValue{},
-			BaseValue: fix.NewRawValue(""),
+			BaseValue:    fix.NewRawValue(""),
 		},
 	}
 	return field
@@ -152,10 +162,39 @@ func NewTailOperation(properties properties.Properties) FieldUnicodeString {
 func NewTailOperationWithInitialValue(properties properties.Properties, initialValue string) FieldUnicodeString {
 	field := FieldUnicodeString{
 		FieldDetails: properties,
+		decode:       decoder.ByteVectorDecoder{},
 		Operation: operation.Tail{
 			InitialValue: fix.NewRawValue(initialValue),
-			BaseValue: fix.NewRawValue(""),
+			BaseValue:    fix.NewRawValue(""),
 		},
 	}
+	return field
+}
+
+// NewDeltaOperation <string/> field with the given properties and <delta/> operator
+func NewDeltaOperation(properties properties.Properties) FieldUnicodeString {
+	field := FieldUnicodeString{
+		FieldDetails: properties,
+		decode:       decoder.ByteVectorDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NullValue{},
+			BaseValue:    fix.NewRawValue(""),
+		},
+	}
+
+	return field
+}
+
+// NewDeltaOperationWithInitialValue <string/> field with the given properties and <delta value="initialValue"/> operator
+func NewDeltaOperationWithInitialValue(properties properties.Properties, initialValue string) FieldUnicodeString {
+	field := FieldUnicodeString{
+		FieldDetails: properties,
+		decode:       decoder.ByteVectorDeltaDecoder{},
+		Operation: operation.Delta{
+			InitialValue: fix.NewRawValue(initialValue),
+			BaseValue:    fix.NewRawValue(""),
+		},
+	}
+
 	return field
 }

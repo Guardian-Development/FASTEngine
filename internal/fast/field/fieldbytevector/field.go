@@ -166,7 +166,7 @@ func NewTailOperationWithInitialValue(properties properties.Properties, initialV
 	return field
 }
 
-// NewDeltaOperation <string/> field with the given properties and <delta/> operator
+// NewDeltaOperation <byteVector/> field with the given properties and <delta/> operator
 func NewDeltaOperation(properties properties.Properties) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
@@ -180,7 +180,7 @@ func NewDeltaOperation(properties properties.Properties) FieldByteVector {
 	return field
 }
 
-// NewDeltaOperationWithInitialValue <string/> field with the given properties and <delta value="initialValue"/> operator
+// NewDeltaOperationWithInitialValue <byteVector/> field with the given properties and <delta value="initialValue"/> operator
 func NewDeltaOperationWithInitialValue(properties properties.Properties, initialValue []byte) FieldByteVector {
 	field := FieldByteVector{
 		FieldDetails: properties,
