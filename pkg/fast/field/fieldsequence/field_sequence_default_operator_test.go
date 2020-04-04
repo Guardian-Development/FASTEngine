@@ -1,12 +1,12 @@
 package fieldsequence
 
 import (
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldasciistring"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint32"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 

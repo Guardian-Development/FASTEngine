@@ -2,10 +2,10 @@ package operation
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
-	"github.com/Guardian-Development/fastengine/internal/fast/value"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 

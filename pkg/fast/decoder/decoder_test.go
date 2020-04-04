@@ -2,11 +2,10 @@ package decoder
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"reflect"
 	"testing"
-
-	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
 
 func TestCanReadSingleByteUint32(t *testing.T) {
@@ -669,7 +668,7 @@ func TestCanReadMaximumOptionalInt64(t *testing.T) {
 func TestCanReadMinimumOptionalInt64(t *testing.T) {
 	// Arrange -9223372036854775808 = (01111111 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 10000000)
 	expectedIntAsBytes := bytes.NewBuffer([]byte{127, 0, 0, 0, 0, 0, 0, 0, 0, 128})
-	expectedResult := value.Int64Value{Value:  -9223372036854775808}
+	expectedResult := value.Int64Value{Value: -9223372036854775808}
 
 	// Act
 	result, err := ReadOptionalInt64(expectedIntAsBytes)

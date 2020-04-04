@@ -2,8 +2,7 @@ package decoder
 
 import (
 	"bytes"
-
-	"github.com/Guardian-Development/fastengine/internal/fast/value"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 )
 
 // Decoder is used to couple the reading of required and optional values of the same type

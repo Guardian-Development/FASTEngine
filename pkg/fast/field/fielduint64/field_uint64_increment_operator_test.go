@@ -2,9 +2,9 @@ package fielduint64
 
 import (
 	"bytes"
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 	"testing"
 )
@@ -113,7 +113,7 @@ func TestCanDeseraliseRequiredUInt64IncrementOperatorNotEncodedNoPreviousValueRe
 	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	_, err :=unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
 	if err == nil || err.Error() != "no value supplied in message and no initial value with required field" {

@@ -5,23 +5,23 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldbytevector"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielddecimal"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldsequence"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldasciistring"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldbytevector"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielddecimal"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldsequence"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint32"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldunicodestring"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/store"
+	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 
 func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -72,7 +72,7 @@ func TestCanLoadAllSupportedTypesFromTemplateFile(t *testing.T) {
 
 func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 	// Arrange
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_all_supported_optional_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_all_supported_optional_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -116,7 +116,7 @@ func TestCanLoadAllSupportedOptionalTypesFromTemplateFile(t *testing.T) {
 }
 
 func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_constant_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_constant_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -159,7 +159,7 @@ func TestCanLoadConstantOperationOnAllSupportedTypesFromTemplateFile(t *testing.
 }
 
 func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_default_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_default_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -202,7 +202,7 @@ func TestCanLoadDefaultOperationOnAllSupportedTypesFromTemplateFile(t *testing.T
 }
 
 func TestCanLoadCopyOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_copy_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_copy_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -245,7 +245,7 @@ func TestCanLoadCopyOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
 }
 
 func TestCanLoadIncrementOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_increment_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_increment_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -279,7 +279,7 @@ func TestCanLoadIncrementOperationOnAllSupportedTypesFromTemplateFile(t *testing
 }
 
 func TestCanLoadTailOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_tail_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_tail_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{
@@ -307,7 +307,7 @@ func TestCanLoadTailOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
 }
 
 func TestCanLoadDeltaOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
-	file, _ := os.Open("../../../../test/template-loader-tests/test_load_delta_operation_on_all_supported_types.xml")
+	file, _ := os.Open("../../../test/template-loader-tests/test_load_delta_operation_on_all_supported_types.xml")
 	expectedStore := store.Store{
 		Templates: map[uint32]store.Template{
 			144: store.Template{

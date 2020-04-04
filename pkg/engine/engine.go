@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/store"
-	"github.com/Guardian-Development/fastengine/client/fix"
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/header"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/header"
+	"github.com/Guardian-Development/fastengine/pkg/fix"
+	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 
 type FastEngine interface {

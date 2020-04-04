@@ -2,7 +2,7 @@ package presencemap
 
 import (
 	"bytes"
-	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
+	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 )
 
 // PresenceMap represents the pMap in the FAST spec, allowing a message to specify whether a field is present or requires the use of an operation specified

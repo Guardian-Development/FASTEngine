@@ -2,12 +2,12 @@ package loadint64
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/template/structure"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
-	"github.com/Guardian-Development/fastengine/internal/converter"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
 )
 
 type Int64Converter func(string) (int64, error)

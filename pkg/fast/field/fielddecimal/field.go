@@ -3,21 +3,21 @@ package fielddecimal
 import (
 	"bytes"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	fieldint322 "github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
+	fieldint642 "github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
+	properties2 "github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"math"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint32"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 
 // FieldDecimal represents a FAST template <decimal/> type
 type FieldDecimal struct {
-	FieldDetails  properties.Properties
-	ExponentField fieldint32.FieldInt32
-	MantissaField fieldint64.FieldInt64
+	FieldDetails  properties2.Properties
+	ExponentField fieldint322.FieldInt32
+	MantissaField fieldint642.FieldInt64
 }
 
 // Deserialise a <decimal/> from the input source
@@ -58,7 +58,7 @@ func (field FieldDecimal) RequiresPmap() bool {
 }
 
 // New <decimal/> field with the given properties, exponent and mantissa
-func New(properties properties.Properties, exponent fieldint32.FieldInt32, mantissa fieldint64.FieldInt64) FieldDecimal {
+func New(properties properties2.Properties, exponent fieldint322.FieldInt32, mantissa fieldint642.FieldInt64) FieldDecimal {
 	field := FieldDecimal{
 		FieldDetails:  properties,
 		ExponentField: exponent,

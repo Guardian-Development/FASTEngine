@@ -2,14 +2,13 @@ package fielduint32
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/operation"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
-
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/internal/fast/operation"
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
-	"github.com/Guardian-Development/fastengine/internal/fast/value"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 

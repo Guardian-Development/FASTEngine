@@ -2,11 +2,11 @@ package loadunicodestring
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/template/structure"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldunicodestring"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 )
 
 // Load an <string charset="unicode"/> tag with supported operation

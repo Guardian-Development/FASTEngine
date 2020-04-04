@@ -2,11 +2,11 @@ package loadasciistring
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/template/structure"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldasciistring"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 )
 
 // Load an <string /> tag with supported operation

@@ -2,8 +2,8 @@ package loadproperties
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"math/rand"
 	"strconv"
 )

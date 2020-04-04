@@ -2,14 +2,13 @@ package loaddecimal
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
-
-	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadint32"
-	"github.com/Guardian-Development/fastengine/client/fast/template/loader/loadint64"
-	"github.com/Guardian-Development/fastengine/internal/converter"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielddecimal"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielddecimal"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/template/loader/loadint32"
+	"github.com/Guardian-Development/fastengine/pkg/template/loader/loadint64"
+	"github.com/Guardian-Development/fastengine/pkg/template/structure"
 )
 
 // Load a <decimal /> tag with supported operation

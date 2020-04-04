@@ -2,12 +2,12 @@ package loaduint64
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/template/structure"
 
-	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
-	"github.com/Guardian-Development/fastengine/internal/converter"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
 )
 
 // Load an <uint64 /> tag with supported operation

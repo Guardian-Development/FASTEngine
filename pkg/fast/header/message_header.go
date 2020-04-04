@@ -3,9 +3,8 @@ package header
 import (
 	"bytes"
 	"fmt"
-	"github.com/Guardian-Development/fastengine/internal/fast/decoder"
-
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
+	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 )
 
 type MessageHeader struct {

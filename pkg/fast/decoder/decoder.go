@@ -3,10 +3,9 @@ package decoder
 import (
 	"bytes"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"strings"
-
-	"github.com/Guardian-Development/fastengine/internal/fast/value"
 )
 
 // ReadUInt32 reads the next FAST encoded value off the inputSource, treating it as a uint32 value. If the next value would overflow a uint32 an err is returned.

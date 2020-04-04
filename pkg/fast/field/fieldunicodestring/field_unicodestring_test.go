@@ -2,11 +2,11 @@ package fieldunicodestring
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/internal/fast/dictionary"
-	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/internal/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 
