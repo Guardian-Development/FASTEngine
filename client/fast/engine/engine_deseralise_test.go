@@ -8,19 +8,14 @@ import (
 	"github.com/Guardian-Development/fastengine/client/fast/template/loader"
 )
 
-// TODO: delta
-// TODO: fix bugs around reading max integers at the decoding bytes level (can read more than 4 bytes for int32 and same for int64), add tests for min and max values
-// TODO: look at the public interface, just have the engine, everything else private
 // TODO: rename some of the directories to make them more correct
 // TODO: look at test names and make them better
-// TODO: engine should be only public element of this library really, with a nice interface to create it from a template file only.
 // TODO: logging!!
 // TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
 // 			look at codecoverage and how we can use them to generate coverage for the whole project
 // TODO: series of messages should focus on state (copy, increment etc) to show the engine works when parsing a feed
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
-// TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices) USE ERROR CODES FROM SPEC!
-// TODO: move to an interface / factory based method of generating FIX message itself, so abstraction can be made if needed
+// TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices) USE ERROR CODES FROM SPEC
 // TODO: readme and documentation
 // TODO: pretty print FIX message using pipe character to make readable
 
