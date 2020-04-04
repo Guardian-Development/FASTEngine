@@ -2,6 +2,7 @@ package loadunicodestring
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
@@ -47,6 +48,13 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldunicodestring.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.DeltaOperation:
+		if !hasOperationValue {
+			return fieldunicodestring.NewDeltaOperation(fieldDetails), nil
+		}
+
+		operationValue := operationTag.Attributes[structure.ValueAttribute]
+		return fieldunicodestring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

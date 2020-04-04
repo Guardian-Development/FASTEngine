@@ -2,6 +2,7 @@ package loadbytevector
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/converter"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldbytevector"
@@ -60,6 +61,16 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 			return fieldbytevector.FieldByteVector{}, err
 		}
 		return fieldbytevector.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.DeltaOperation:
+		if !hasOperationValue {
+			return fieldbytevector.NewDeltaOperation(fieldDetails), nil
+		}
+
+		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fieldbytevector.FieldByteVector{}, err
+		}
+		return fieldbytevector.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldbytevector.FieldByteVector{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

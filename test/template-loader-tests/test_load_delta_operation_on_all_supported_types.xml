@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+    <template name="DefaultTypesAndTags" id="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <string name="String" id="1"> 
+            <delta value="Hello"/>
+        </string>
+        <uInt32 name="unsigned int32" id="2">
+            <delta value="10"/>
+        </uInt32>
+        <int32 name="signed int32" id="3">
+            <delta value="-10"/>
+        </int32>
+        <uInt64 name="unsigned int64" id="4">
+            <delta value="10"/>
+        </uInt64>
+        <int64 name="signed int64" id="5">
+            <delta value="-10"/>
+        </int64>
+        <decimal name="decimal" id="6">
+            <delta value="5.7" />
+        </decimal>
+        <decimal name="decimal with exp/man" id="7">
+            <exponent>
+                <delta value="-2"/>
+            </exponent>
+            <mantissa>
+                <delta value="2"/>
+            </mantissa>
+        </decimal>
+        <string name="StringUnicode" charset="unicode" id="8">
+            <delta value="Hello: ϔ" />
+        </string>
+        <byteVector name="byteVector" id="9" > 
+            <delta value="54 45 53 54 3F" />
+        </byteVector>
+        <sequence name="sequence" id="10">
+            <length name="length" id="11">
+                <delta value="2" />
+            </length>
+            <string name="sequence field 1" id="12"/>
+        </sequence>
+    </template>
+</templates>

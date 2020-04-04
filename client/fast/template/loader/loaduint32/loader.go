@@ -2,6 +2,7 @@ package loaduint32
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/converter"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint32"
@@ -64,6 +65,17 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fielduint
 		}
 
 		return fielduint32.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.DeltaOperation:
+		if !hasOperationValue {
+			return fielduint32.NewDeltaOperation(fieldDetails), nil
+		}
+
+		operationValue, err := converter.ToUInt32(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fielduint32.FieldUInt32{}, err
+		}
+
+		return fielduint32.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fielduint32.FieldUInt32{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

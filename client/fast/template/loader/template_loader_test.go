@@ -1,6 +1,10 @@
 package loader
 
 import (
+	"os"
+	"reflect"
+	"testing"
+
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldbytevector"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fielddecimal"
@@ -11,9 +15,6 @@ import (
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldunicodestring"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
-	"os"
-	"reflect"
-	"testing"
 
 	"github.com/Guardian-Development/fastengine/client/fast/template/store"
 )
@@ -286,6 +287,49 @@ func TestCanLoadTailOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
 					fieldasciistring.NewTailOperationWithInitialValue(properties.New(1, "String", true), "Hello"),
 					fieldunicodestring.NewTailOperationWithInitialValue(properties.New(2, "StringUnicode", true), "Hello: ϔ"),
 					fieldbytevector.NewTailOperationWithInitialValue(properties.New(3, "byteVector", true), []byte{0x54, 0x45, 0x53, 0x54, 0x3F}),
+				},
+			},
+		},
+	}
+
+	// Act
+	store, err := Load(file)
+
+	// Assert
+	if err != nil {
+		t.Errorf("Got an error loading the template when none was expected: %s", err)
+	}
+
+	areEqual := reflect.DeepEqual(expectedStore, store)
+	if !areEqual {
+		t.Errorf("The returned store and expected store were not equal:\nexpected:\t%v\nactual:\t\t%v", expectedStore, store)
+	}
+}
+
+func TestCanLoadDeltaOperationOnAllSupportedTypesFromTemplateFile(t *testing.T) {
+	file, _ := os.Open("../../../../test/template-loader-tests/test_load_delta_operation_on_all_supported_types.xml")
+	expectedStore := store.Store{
+		Templates: map[uint32]store.Template{
+			144: store.Template{
+				TemplateUnits: []store.Unit{
+					fieldasciistring.NewDeltaOperationWithInitialValue(properties.New(1, "String", true), "Hello"),
+					fielduint32.NewDeltaOperationWithInitialValue(properties.New(2, "unsigned int32", true), 10),
+					fieldint32.NewDeltaOperationWithInitialValue(properties.New(3, "signed int32", true), -10),
+					fielduint64.NewDeltaOperationWithInitialValue(properties.New(4, "unsigned int64", true), 10),
+					fieldint64.NewDeltaOperationWithInitialValue(properties.New(5, "signed int64", true), -10),
+					fielddecimal.New(properties.New(6, "decimal", true),
+						fieldint32.NewDeltaOperationWithInitialValue(properties.New(6, "decimalExponent", true), -1),
+						fieldint64.NewDeltaOperationWithInitialValue(properties.New(6, "decimalMantissa", true), 57)),
+					fielddecimal.New(properties.New(7, "decimal with exp/man", true),
+						fieldint32.NewDeltaOperationWithInitialValue(properties.New(7, "decimal with exp/manExponent", true), -2),
+						fieldint64.NewDeltaOperationWithInitialValue(properties.New(7, "decimal with exp/manMantissa", true), 2)),
+					fieldunicodestring.NewDeltaOperationWithInitialValue(properties.New(8, "StringUnicode", true), "Hello: ϔ"),
+					fieldbytevector.NewDeltaOperationWithInitialValue(properties.New(9, "byteVector", true), []byte{0x54, 0x45, 0x53, 0x54, 0x3F}),
+					fieldsequence.New(properties.New(10, "sequence", true),
+						fielduint32.NewDeltaOperationWithInitialValue(properties.New(11, "length", true), 2),
+						[]store.Unit{
+							fieldasciistring.New(properties.New(12, "sequence field 1", true)),
+						}),
 				},
 			},
 		},

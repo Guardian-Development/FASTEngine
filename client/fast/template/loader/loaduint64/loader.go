@@ -2,6 +2,7 @@ package loaduint64
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/converter"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fielduint64"
@@ -64,6 +65,17 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fielduint
 		}
 
 		return fielduint64.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.DeltaOperation:
+		if !hasOperationValue {
+			return fielduint64.NewDeltaOperation(fieldDetails), nil
+		}
+
+		operationValue, err := converter.ToUInt64(operationTag.Attributes[structure.ValueAttribute])
+		if err != nil {
+			return fielduint64.FieldUInt64{}, err
+		}
+
+		return fielduint64.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fielduint64.FieldUInt64{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

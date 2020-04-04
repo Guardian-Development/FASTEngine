@@ -2,6 +2,7 @@ package loadasciistring
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/client/fast/template/structure"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/fieldasciistring"
 	"github.com/Guardian-Development/fastengine/internal/fast/field/properties"
@@ -47,6 +48,13 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldasciistring.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
+	case structure.DeltaOperation:
+		if !hasOperationValue {
+			return fieldasciistring.NewDeltaOperation(fieldDetails), nil
+		}
+
+		operationValue := operationTag.Attributes[structure.ValueAttribute]
+		return fieldasciistring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
 		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
 	}

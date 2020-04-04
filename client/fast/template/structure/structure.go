@@ -22,6 +22,7 @@ const DefaultOperation = "default"
 const CopyOperation = "copy"
 const IncrementOperation = "increment"
 const TailOperation = "tail"
+const DeltaOperation = "delta"
 
 const ValueAttribute = "value"
 
