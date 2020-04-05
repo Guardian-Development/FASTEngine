@@ -2,12 +2,12 @@ package loadbytevector
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/template/structure"
-
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldbytevector"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
 )
 
 // Load an <bytevector /> tag with supported operation
@@ -22,6 +22,10 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 
 	switch operationType {
 	case structure.DefaultOperation:
+		if !hasOperationValue && fieldDetails.Required {
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s", errors.S5)
+		}
+
 		if !hasOperationValue {
 			return fieldbytevector.NewDefaultOperation(fieldDetails), nil
 		}
@@ -33,12 +37,12 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 		return fieldbytevector.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldbytevector.FieldByteVector{}, fmt.Errorf("no value specified for constant operation")
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s", errors.S4)
 		}
 
 		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldbytevector.FieldByteVector{}, err
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 		return fieldbytevector.NewConstantOperation(fieldDetails, operationValue), nil
 	case structure.CopyOperation:
@@ -48,7 +52,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 
 		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldbytevector.FieldByteVector{}, err
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 		return fieldbytevector.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
 	case structure.TailOperation:
@@ -58,7 +62,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 
 		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldbytevector.FieldByteVector{}, err
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 		return fieldbytevector.NewTailOperationWithInitialValue(fieldDetails, operationValue), nil
 	case structure.DeltaOperation:
@@ -68,10 +72,10 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldbyte
 
 		operationValue, err := converter.ToByteVector(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldbytevector.FieldByteVector{}, err
+			return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 		return fieldbytevector.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldbytevector.FieldByteVector{}, fmt.Errorf("unsupported operation type: %s", operationTag)
+		return fieldbytevector.FieldByteVector{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
 	}
 }

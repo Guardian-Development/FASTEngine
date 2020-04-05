@@ -3,6 +3,7 @@ package converter
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"strconv"
 	"strings"
 )
@@ -52,7 +53,7 @@ func toDecimal(value string) (int32, int64, error) {
 
 	mantissaValue, err := strconv.ParseInt(mantissaBuilder.String(), 10, 64)
 	if err != nil {
-		return 0, 0, err
+		return 0, 0, fmt.Errorf("%s: %s", errors.R1, err)
 	}
 
 	if decimalLocation == 0 {
@@ -68,6 +69,10 @@ func toDecimal(value string) (int32, int64, error) {
 		exponentValue = -(arrayLength % decimalLocation)
 	}
 
+	if exponentValue < -63 || exponentValue > 63 {
+		return 0, 0, fmt.Errorf("%s", errors.R1)
+	}
+
 	return int32(exponentValue), int64(mantissaValue), nil
 }
 
@@ -75,7 +80,7 @@ func toDecimal(value string) (int32, int64, error) {
 func ToInt32(value string) (int32, error) {
 	val, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return -1, err
+		return -1, fmt.Errorf("%s: %s", errors.R4, err)
 	}
 	return int32(val), nil
 }
@@ -84,7 +89,7 @@ func ToInt32(value string) (int32, error) {
 func ToUInt32(value string) (uint32, error) {
 	val, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%s: %s", errors.R4, err)
 	}
 	return uint32(val), nil
 }
@@ -93,7 +98,7 @@ func ToUInt32(value string) (uint32, error) {
 func ToInt64(value string) (int64, error) {
 	val, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
-		return -1, err
+		return -1, fmt.Errorf("%s: %s", errors.R4, err)
 	}
 	return int64(val), nil
 }
@@ -102,7 +107,7 @@ func ToInt64(value string) (int64, error) {
 func ToUInt64(value string) (uint64, error) {
 	val, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%s: %s", errors.R4, err)
 	}
 	return uint64(val), nil
 }

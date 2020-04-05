@@ -3,9 +3,11 @@ package fieldint64
 import (
 	"bytes"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"math"
+	"strings"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
@@ -168,7 +170,7 @@ func TestCanDeseraliseRequiredInt64DeltaOperatorEncodedPositiveDeltaValueOverflo
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "9223372036854775807 + 1 would overflow int64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R4) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -188,7 +190,7 @@ func TestCanDeseraliseRequiredInt64DeltaOperatorEncodedNegativeDeltaValueOverflo
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "-9223372036854775808 + -1 would overflow int64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R4) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -208,7 +210,7 @@ func TestCanDeseraliseOptionalInt64DeltaOperatorEncodedNullPreviouValueReturnsEr
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "you cannot apply a delta to a null previous value" {
+	if err == nil || !strings.Contains(err.Error(), errors.D6) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

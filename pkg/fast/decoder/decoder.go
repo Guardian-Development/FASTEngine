@@ -3,6 +3,7 @@ package decoder
 import (
 	"bytes"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"strings"
@@ -30,7 +31,7 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 		readValue = readValue<<7 | uint32(b)
 	}
 
-	return value.UInt32Value{}, fmt.Errorf("more than 5 bytes have been read without reading a stop bit, this will overflow a uint32")
+	return value.UInt32Value{}, fmt.Errorf("%s, uint32", errors.R6)
 }
 
 // ReadOptionalUInt32 reads a uint32 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -87,7 +88,7 @@ func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 		readValue = readValue<<7 | int32(b)
 	}
 
-	return value.Int32Value{}, fmt.Errorf("more than 5 bytes have been read without reading a stop bit, this will overflow an int32")
+	return value.Int32Value{}, fmt.Errorf("%s, int32", errors.R6)
 }
 
 // ReadOptionalInt32 reads an int32 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -132,7 +133,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 		readValue = readValue<<7 | uint64(b)
 	}
 
-	return value.UInt64Value{}, fmt.Errorf("more than 10 bytes have been read without reading a stop bit, this will overflow a uint64")
+	return value.UInt64Value{}, fmt.Errorf("%s, uint64", errors.R6)
 }
 
 // ReadOptionalUInt64 reads a uint64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -155,7 +156,7 @@ func ReadOptionalUInt64(inputSource *bytes.Buffer) (value.Value, error) {
 		return value.UInt64Value{Value: readValue.Value.Uint64()}, nil
 	}
 
-	return value.NullValue{}, fmt.Errorf("a value larger than a uint64 was read: %v", readValue.Value)
+	return value.NullValue{}, fmt.Errorf("%s, uint64", errors.R6)
 }
 
 // ReadInt64 reads the next FAST encoded value off the inputSource, treating it as an int64 value (2's compliment encoded). If the next value would overflow an int64 an err is returned.
@@ -196,7 +197,7 @@ func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
 		readValue = readValue<<7 | int64(b)
 	}
 
-	return value.Int64Value{}, fmt.Errorf("more than 10 bytes have been read without reading a stop bit, this will overflow an int64")
+	return value.Int64Value{}, fmt.Errorf("%s, int64", errors.R6)
 }
 
 // ReadOptionalInt64 reads an int64 off the buffer. If the value returned is 0, this is marked as nil, and nil is returned.
@@ -221,7 +222,7 @@ func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
 		return value.Int64Value{Value: readValue.Value.Int64()}, nil
 	}
 
-	return value.NullValue{}, fmt.Errorf("a value larger than an int64 was read: %v", readValue.Value)
+	return value.NullValue{}, fmt.Errorf("%s, int64", errors.R6)
 }
 
 // ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
@@ -274,13 +275,13 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 		if result := b & 128; result == 128 {
 			removedStopBit := int64(b & 127)
 			resultBig := big.NewInt(readValue)
-			resultBig = resultBig.Lsh(resultBig, 7)                         // readValue << 7
+			resultBig = resultBig.Lsh(resultBig, 7)                      // readValue << 7
 			resultBig = resultBig.Or(resultBig, big.NewInt(removedStopBit)) // result | removedStopBit
 			return value.BigInt{Value: resultBig}, nil
 		}
 	}
 
-	return value.BigInt{}, fmt.Errorf("more than 10 bytes have been read without reading a stop bit, this will overflow an int64")
+	return value.BigInt{}, fmt.Errorf("%s, int64", errors.R6)
 }
 
 // ReadOptionalBigInt reads a value.BigInt off the input buffer. If the value returned is 0, this is marked as nil, and nil is returned.

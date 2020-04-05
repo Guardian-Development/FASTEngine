@@ -2,6 +2,7 @@ package value
 
 import (
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"math"
 	"math/big"
 
@@ -43,7 +44,7 @@ func (value StringValue) Add(toAdd fix.Value) (fix.Value, error) {
 
 		itemsToRemove := (-value.ItemsToRemove) - 1
 		if itemsToRemove > int32(len(existingValue)) {
-			return nil, fmt.Errorf("you cannot remove %d values from a string %s", itemsToRemove, existingValue)
+			return nil, fmt.Errorf("%s: removing %d values from string %s", errors.D7, itemsToRemove, existingValue)
 		}
 		stringWithRemovedChars := existingValue[itemsToRemove:]
 		return fix.NewRawValue(value.Value + stringWithRemovedChars), nil
@@ -52,7 +53,7 @@ func (value StringValue) Add(toAdd fix.Value) (fix.Value, error) {
 	// append
 	itemsToRemove := int32(len(existingValue)) - value.ItemsToRemove
 	if itemsToRemove < 0 {
-		return nil, fmt.Errorf("you cannot remove %d values from a string %s", value.ItemsToRemove, existingValue)
+		return nil, fmt.Errorf("%s: removing %d values from string %s", errors.D7, value.ItemsToRemove, existingValue)
 	}
 	stringWithRemovedChars := existingValue[:int32(len(existingValue))-value.ItemsToRemove]
 	return fix.NewRawValue(stringWithRemovedChars + value.Value), nil
@@ -77,7 +78,7 @@ func (value ByteVector) Add(toAdd fix.Value) (fix.Value, error) {
 
 		itemsToRemove := (-value.ItemsToRemove) - 1
 		if itemsToRemove > int32(len(existingValue)) {
-			return nil, fmt.Errorf("you cannot remove %d values from a bytevector %#v", itemsToRemove, existingValue)
+			return nil, fmt.Errorf("%s: removing %d values from bytevector %#v", errors.D7, itemsToRemove, existingValue)
 		}
 		vectorWithRemovedBytes := existingValue[itemsToRemove:]
 		return fix.NewRawValue(append(value.Value, vectorWithRemovedBytes...)), nil
@@ -86,7 +87,7 @@ func (value ByteVector) Add(toAdd fix.Value) (fix.Value, error) {
 	// append
 	itemsToRemove := int32(len(existingValue)) - value.ItemsToRemove
 	if itemsToRemove < 0 {
-		return nil, fmt.Errorf("you cannot remove %d values from a bytevector %#v", value.ItemsToRemove, existingValue)
+		return nil, fmt.Errorf("%s: removing %d values from bytevector %#v", errors.D7, value.ItemsToRemove, existingValue)
 	}
 	vectorWithRemovedBytes := existingValue[:int32(len(existingValue))-value.ItemsToRemove]
 	return fix.NewRawValue(append(vectorWithRemovedBytes, value.Value...)), nil
@@ -168,7 +169,7 @@ func (value BigInt) Add(toAdd fix.Value) (fix.Value, error) {
 
 		// if the addition does not stay within the bounds of an int64, we have an overflow and report an error
 		if !valueAfterAddition.IsInt64() {
-			return nil, fmt.Errorf("%v + %v would overflow int64", t, value.Value.Int64())
+			return nil, fmt.Errorf("%s, %v + %v would overflow int64", errors.R4, t, value.Value.Int64())
 		}
 		return fix.NewRawValue(valueAfterAddition.Int64()), nil
 	case uint64:
@@ -176,7 +177,7 @@ func (value BigInt) Add(toAdd fix.Value) (fix.Value, error) {
 
 		// if the addition does not stay within the bounds of an uint64, we have an overflow and report an error
 		if !valueAfterAddition.IsUint64() {
-			return nil, fmt.Errorf("%v + %v would overflow uint64", t, value.Value.Uint64())
+			return nil, fmt.Errorf("%s, %v + %v would overflow uint64", errors.R4, t, value.Value.Uint64())
 		}
 		return fix.NewRawValue(valueAfterAddition.Uint64()), nil
 	}
@@ -187,11 +188,11 @@ func (value BigInt) Add(toAdd fix.Value) (fix.Value, error) {
 func addValueWithinUInt32Constraints(readValue int64, value int64) (fix.Value, error) {
 	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
 	if readValue > 0 && uint64(value) > uint64(math.MaxUint32)-uint64(readValue) {
-		return nil, fmt.Errorf("%v + %v would overflow uint32", readValue, value)
+		return nil, fmt.Errorf("%s, %v + %v would overflow uint32", errors.R4, readValue, value)
 	}
 	// if subtracting the value would take us below 0, you will negative overflow
 	if 0 > value+readValue {
-		return nil, fmt.Errorf("%v + %v would overflow uint32", readValue, value)
+		return nil, fmt.Errorf("%s, %v + %v would overflow uint32", errors.R4, readValue, value)
 	}
 
 	return fix.NewRawValue(uint32(readValue + value)), nil
@@ -200,11 +201,11 @@ func addValueWithinUInt32Constraints(readValue int64, value int64) (fix.Value, e
 func addValueWithinInt32Constraints(readValue int64, value int64) (fix.Value, error) {
 	// positive value and value you add is greater than the difference between the positive value and the max value, you will positive overflow
 	if readValue > 0 && value > math.MaxInt32-readValue {
-		return nil, fmt.Errorf("%v + %v would overflow int32", readValue, value)
+		return nil, fmt.Errorf("%s, %v + %v would overflow int32", errors.R4, readValue, value)
 	}
 	// negative value and you're add is greater than the difference between the negative value and the min value, you will negative overflow
 	if value < math.MinInt32-readValue {
-		return nil, fmt.Errorf("%v + %v would overflow int32", readValue, value)
+		return nil, fmt.Errorf("%s, %v + %v would overflow int32", errors.R4, readValue, value)
 	}
 
 	return fix.NewRawValue(int32(readValue + value)), nil

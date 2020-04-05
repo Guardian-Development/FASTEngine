@@ -3,10 +3,12 @@ package fielddecimal
 import (
 	"bytes"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"strings"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
@@ -87,7 +89,7 @@ func TestCanDeseraliseRequiredDecimalExponentCopyOperationNotEncodedNoInitialVal
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "no value supplied in message and no initial value with required field" {
+	if err == nil || !strings.Contains(err.Error(), errors.D5) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -195,7 +197,7 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationNotEncodedNoInitialVal
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: no value supplied in message and no initial value with required field" {
+	if err == nil || !strings.Contains(err.Error(), errors.D5) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

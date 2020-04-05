@@ -11,8 +11,8 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
-	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 
 //<sequence>

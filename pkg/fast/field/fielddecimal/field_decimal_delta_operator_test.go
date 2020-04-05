@@ -3,11 +3,13 @@ package fielddecimal
 import (
 	"bytes"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"math"
+	"strings"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
@@ -138,7 +140,7 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedPositiveExponentDeltaVa
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "a decimal exponent must fall in the range of [-63...63]" {
+	if err == nil || !strings.Contains(err.Error(), errors.R1) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -160,7 +162,7 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeExponentDeltaVa
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "a decimal exponent must fall in the range of [-63...63]" {
+	if err == nil || !strings.Contains(err.Error(), errors.R1) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -182,7 +184,7 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedPositiveMantissaDeltaVa
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: 9223372036854775807 + 1 would overflow int64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R4) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -204,7 +206,7 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeMantissaDeltaVa
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: -9223372036854775808 + -1 would overflow int64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R4) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -226,7 +228,7 @@ func TestCanDeseraliseOptionalDecimalDeltaOperatorEncodedNullExponentPreviouValu
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "you cannot apply a delta to a null previous value" {
+	if err == nil || !strings.Contains(err.Error(), errors.D6) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

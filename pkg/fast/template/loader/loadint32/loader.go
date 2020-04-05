@@ -2,12 +2,12 @@ package loadint32
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/template/structure"
-
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
 )
 
 type Int32Converter func(string) (int32, error)
@@ -29,24 +29,28 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 	switch operationType {
 	case structure.DefaultOperation:
+		if !hasOperationValue && fieldDetails.Required {
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s", errors.S5)
+		}
+
 		if !hasOperationValue {
 			return fieldint32.NewDefaultOperation(fieldDetails), nil
 		}
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, err
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint32.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldint32.FieldInt32{}, fmt.Errorf("no value specified for constant operation")
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s", errors.S4)
 		}
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, err
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint32.NewConstantOperation(fieldDetails, operationValue), nil
@@ -57,7 +61,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, err
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint32.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -68,7 +72,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, err
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint32.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -79,11 +83,11 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, err
+			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint32.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldint32.FieldInt32{}, fmt.Errorf("unsupported operation type: %s", operationTag)
+		return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
 	}
 }

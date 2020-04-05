@@ -7,7 +7,7 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/pkg/template/store"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 )
 
 //<sequence>

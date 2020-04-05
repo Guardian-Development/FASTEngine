@@ -3,13 +3,14 @@ package engine
 import (
 	"bytes"
 	"os"
+	"strings"
 	"testing"
 
-	"github.com/Guardian-Development/fastengine/pkg/template/loader"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
+
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader"
 )
 
-// TODO: rename some of the directories to make them more correct
-// TODO: evaluate errors properly and make them useful, use custom errors at each level (follow best practices) USE ERROR CODES FROM SPEC
 // TODO: readme and documentation
 // TODO: pretty print FIX message using pipe character to make readable
 // TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
@@ -30,7 +31,7 @@ func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	_, err := fastEngine.Deserialise(message)
 
 	// Assert
-	if err == nil || err.Error() != "no template found in store to deserialise message with ID: 150" {
+	if err == nil || !strings.Contains(err.Error(), errors.D9) {
 		t.Errorf("Expected error message informing user template ID is not found in store for message, but got: %v", err)
 	}
 }

@@ -2,12 +2,12 @@ package loadint64
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/template/structure"
-
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
-	"github.com/Guardian-Development/fastengine/pkg/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader/converter"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
 )
 
 type Int64Converter func(string) (int64, error)
@@ -29,24 +29,28 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 	switch operationType {
 	case structure.DefaultOperation:
+		if !hasOperationValue && fieldDetails.Required {
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s", errors.S5)
+		}
+
 		if !hasOperationValue {
 			return fieldint64.NewDefaultOperation(fieldDetails), nil
 		}
 
 		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint64.FieldInt64{}, err
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint64.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldint64.FieldInt64{}, fmt.Errorf("no value specified for constant operation")
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s", errors.S4)
 		}
 
 		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint64.FieldInt64{}, err
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint64.NewConstantOperation(fieldDetails, operationValue), nil
@@ -57,7 +61,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint64.FieldInt64{}, err
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint64.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -68,7 +72,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint64.FieldInt64{}, err
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint64.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -79,11 +83,11 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int64Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint64.FieldInt64{}, err
+			return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S3, err)
 		}
 
 		return fieldint64.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldint64.FieldInt64{}, fmt.Errorf("unsupported operation type: %s", operationTag)
+		return fieldint64.FieldInt64{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
 	}
 }

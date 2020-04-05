@@ -3,8 +3,10 @@ package fieldasciistring
 import (
 	"bytes"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"strings"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
@@ -94,7 +96,7 @@ func TestCanDeseraliseAsciiStringCopyOperatorNotEncodedReturnsErrorIfNoPreviousV
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
-	if err == nil || err.Error() != "no value supplied in message and no initial value with required field" {
+	if err == nil || !strings.Contains(err.Error(), errors.D5) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

@@ -2,9 +2,11 @@ package decoder
 
 import (
 	"bytes"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -70,7 +72,7 @@ func TestUInt32IfStopBitNotFoundWithinBoundsReturnsError(t *testing.T) {
 	_, err := ReadUInt32(expectedUintAsBytes)
 
 	// Assert
-	if err == nil || err.Error() != "more than 5 bytes have been read without reading a stop bit, this will overflow a uint32" {
+	if err == nil || !strings.Contains(err.Error(), errors.R6) {
 		t.Errorf("Expected error about uint32 overflow but got: %#v", err)
 	}
 }
@@ -247,7 +249,7 @@ func TestDoesNotOverflowInt32IfStopBitNotFoundWithinBounds(t *testing.T) {
 	_, err := ReadInt32(expectedIntAsBytes)
 
 	// Assert
-	if err == nil || err.Error() != "more than 5 bytes have been read without reading a stop bit, this will overflow an int32" {
+	if err == nil || !strings.Contains(err.Error(), errors.R6) {
 		t.Errorf("Expected error about int32 overflow but got: %#v", err)
 	}
 }
@@ -408,7 +410,7 @@ func TestDoesNotOverflowUInt64IfStopBitNotFoundWithinBounds(t *testing.T) {
 	_, err := ReadUInt64(expectedUintAsBytes)
 
 	// Assert
-	if err == nil || err.Error() != "more than 10 bytes have been read without reading a stop bit, this will overflow a uint64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R6) {
 		t.Errorf("Expected error about uint64 overflow but got: %v", err)
 	}
 }
@@ -585,7 +587,7 @@ func TestDoesNotOverflowInt64IfStopBitNotFoundWithinBounds(t *testing.T) {
 	_, err := ReadInt64(expectedIntAsBytes)
 
 	// Assert
-	if err == nil || err.Error() != "more than 10 bytes have been read without reading a stop bit, this will overflow an int64" {
+	if err == nil || !strings.Contains(err.Error(), errors.R6) {
 		t.Errorf("Expected error about int64 overflow but got: %v", err)
 	}
 }

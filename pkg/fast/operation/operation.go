@@ -3,6 +3,7 @@ package operation
 import (
 	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 
@@ -116,7 +117,7 @@ func (operation Copy) GetNotEncodedValue(pMap *presencemap.PresenceMap, required
 		switch operation.InitialValue.(type) {
 		case fix.NullValue:
 			if required {
-				return nil, fmt.Errorf("no value supplied in message and no initial value with required field")
+				return nil, fmt.Errorf("%s", errors.D5)
 			}
 		}
 
@@ -164,12 +165,15 @@ func (operation Increment) GetNotEncodedValue(pMap *presencemap.PresenceMap, req
 			return nil, fmt.Errorf("unsupported type for increment operator, can only increment integers")
 		}
 	case dictionary.EmptyValue:
+		if required {
+			return nil, fmt.Errorf("%s", errors.D6)
+		}
 		return fix.NullValue{}, nil
 	case dictionary.UndefinedValue:
 		switch operation.InitialValue.(type) {
 		case fix.NullValue:
 			if required {
-				return nil, fmt.Errorf("no value supplied in message and no initial value with required field")
+				return nil, fmt.Errorf("%s", errors.D5)
 			}
 		}
 
@@ -225,7 +229,7 @@ func (operation Tail) GetNotEncodedValue(pMap *presencemap.PresenceMap, required
 // Apply takes the previous value and combines it with the read value. If the read value is larger than the previous value, the read value overwrites the
 // previous value
 func (operation Tail) Apply(readValue value.Value, previousValue dictionary.Value) (fix.Value, error) {
-	// if null encoded, field is considered abscent
+	// if null encoded, field is considered absent
 	switch readValue.(type) {
 	case value.NullValue:
 		return readValue.GetAsFix(), nil
@@ -315,7 +319,7 @@ func (operation Delta) Apply(readValue value.Value, previousValue dictionary.Val
 	case dictionary.AssignedValue:
 		baseValue = t.Value
 	case dictionary.EmptyValue:
-		return fix.NullValue{}, fmt.Errorf("you cannot apply a delta to a null previous value")
+		return fix.NullValue{}, fmt.Errorf("%s", errors.D6)
 	case dictionary.UndefinedValue:
 		switch operation.InitialValue.(type) {
 		case fix.NullValue:

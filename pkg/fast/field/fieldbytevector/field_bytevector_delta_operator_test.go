@@ -3,9 +3,11 @@ package fieldbytevector
 import (
 	"bytes"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
@@ -172,7 +174,7 @@ func TestRequiredByteVectorDeltaOperatorAppendWithOverwiteTooLargeReturnsError(t
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "you cannot remove 4 values from a bytevector []byte{0xa1, 0xb2, 0xcf}" {
+	if err == nil || !strings.Contains(err.Error(), errors.D7) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -192,7 +194,7 @@ func TestRequiredByteVectorDeltaOperatorPrependWithOverwiteTooLargeReturnsError(
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "you cannot remove 4 values from a bytevector []byte{0xa1, 0xb2, 0xcf}" {
+	if err == nil || !strings.Contains(err.Error(), errors.D7) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }
@@ -235,7 +237,7 @@ func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueReturnsError(t *
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "you cannot apply a delta to a null previous value" {
+	if err == nil || !strings.Contains(err.Error(), errors.D6) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

@@ -2,11 +2,11 @@ package loadunicodestring
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/template/structure"
-
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldunicodestring"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
 )
 
 // Load an <string charset="unicode"/> tag with supported operation
@@ -21,6 +21,10 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 
 	switch operationType {
 	case structure.DefaultOperation:
+		if !hasOperationValue && fieldDetails.Required {
+			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s", errors.S5)
+		}
+
 		if !hasOperationValue {
 			return fieldunicodestring.NewDefaultOperation(fieldDetails), nil
 		}
@@ -29,7 +33,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 		return fieldunicodestring.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("no value specified for constant operation")
+			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s", errors.S4)
 		}
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
@@ -56,6 +60,6 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldunicodestring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
+		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
 	}
 }

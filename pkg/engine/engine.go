@@ -3,11 +3,12 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/header"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
-	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 
 type FastEngine interface {
@@ -24,7 +25,7 @@ type fastEngine struct {
 func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error) {
 	engine.globalDictionary.Reset()
 
-	messageHeader, err := header.New(message)
+	messageHeader, err := header.New(message, &engine.globalDictionary)
 	if err != nil {
 		return nil, fmt.Errorf("unable to parse message, reason: %v", err)
 	}
@@ -33,7 +34,7 @@ func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error
 		return template.Deserialise(message, messageHeader.PMap, &engine.globalDictionary)
 	}
 
-	return nil, fmt.Errorf("no template found in store to deserialise message with ID: %d", messageHeader.TemplateID)
+	return nil, fmt.Errorf("%s: id %d", errors.D9, messageHeader.TemplateID)
 }
 
 // New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided

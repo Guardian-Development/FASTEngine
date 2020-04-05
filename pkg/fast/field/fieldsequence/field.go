@@ -7,8 +7,8 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
-	"github.com/Guardian-Development/fastengine/pkg/template/store"
 )
 
 // FieldSequence represents a FAST template <sequence /> type

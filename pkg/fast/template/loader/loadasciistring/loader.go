@@ -2,11 +2,11 @@ package loadasciistring
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/template/structure"
-
 	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldasciistring"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
 )
 
 // Load an <string /> tag with supported operation
@@ -21,6 +21,10 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 
 	switch operationType {
 	case structure.DefaultOperation:
+		if !hasOperationValue && fieldDetails.Required {
+			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s", errors.S5)
+		}
+
 		if !hasOperationValue {
 			return fieldasciistring.NewDefaultOperation(fieldDetails), nil
 		}
@@ -29,7 +33,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 		return fieldasciistring.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("no value specified for constant operation")
+			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s", errors.S4)
 		}
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
@@ -56,6 +60,6 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldasciistring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("unsupported operation type: %s", operationTag)
+		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
 	}
 }

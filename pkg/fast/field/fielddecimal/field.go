@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
-	fieldint322 "github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
-	fieldint642 "github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
-	properties2 "github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint32"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"math"
 
@@ -15,9 +16,9 @@ import (
 
 // FieldDecimal represents a FAST template <decimal/> type
 type FieldDecimal struct {
-	FieldDetails  properties2.Properties
-	ExponentField fieldint322.FieldInt32
-	MantissaField fieldint642.FieldInt64
+	FieldDetails  properties.Properties
+	ExponentField fieldint32.FieldInt32
+	MantissaField fieldint64.FieldInt64
 }
 
 // Deserialise a <decimal/> from the input source
@@ -32,7 +33,7 @@ func (field FieldDecimal) Deserialise(inputSource *bytes.Buffer, pMap *presencem
 	case fix.RawValue:
 		exponentRawValue := exponentValue.Get().(int32)
 		if exponentRawValue < -63 || exponentRawValue > 63 {
-			return nil, fmt.Errorf("a decimal exponent must fall in the range of [-63...63]")
+			return nil, fmt.Errorf("%s", errors.R1)
 		}
 		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dict)
 		if err != nil {
@@ -58,7 +59,7 @@ func (field FieldDecimal) RequiresPmap() bool {
 }
 
 // New <decimal/> field with the given properties, exponent and mantissa
-func New(properties properties2.Properties, exponent fieldint322.FieldInt32, mantissa fieldint642.FieldInt64) FieldDecimal {
+func New(properties properties.Properties, exponent fieldint32.FieldInt32, mantissa fieldint64.FieldInt64) FieldDecimal {
 	field := FieldDecimal{
 		FieldDetails:  properties,
 		ExponentField: exponent,
