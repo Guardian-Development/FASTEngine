@@ -275,7 +275,7 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 		if result := b & 128; result == 128 {
 			removedStopBit := int64(b & 127)
 			resultBig := big.NewInt(readValue)
-			resultBig = resultBig.Lsh(resultBig, 7)                      // readValue << 7
+			resultBig = resultBig.Lsh(resultBig, 7)                         // readValue << 7
 			resultBig = resultBig.Or(resultBig, big.NewInt(removedStopBit)) // result | removedStopBit
 			return value.BigInt{Value: resultBig}, nil
 		}

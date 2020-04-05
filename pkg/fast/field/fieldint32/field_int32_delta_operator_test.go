@@ -190,7 +190,7 @@ func TestCanDeseraliseRequiredInt32DeltaOperatorEncodedNegativeDeltaValueOverflo
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || !strings.Contains(err.Error(), errors.R4){
+	if err == nil || !strings.Contains(err.Error(), errors.R4) {
 		t.Errorf("Expected error about nil value when a required field: %#v", err)
 	}
 }

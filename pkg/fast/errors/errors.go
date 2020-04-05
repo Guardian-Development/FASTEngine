@@ -13,4 +13,3 @@ const D9 = "[ERR D9] decoder cannot find a template associated with a template i
 const R1 = "[ERR R1] decimal must be represented by an exponent in the range [-63 ... 63] and the mantissa must fit in an int64"
 const R4 = "[ERR R4] value of an integer type cannot be represented in the target integer type in a conversion"
 const R6 = "[ERR R6] read integer does not fit into target type (overlong encoding)"
-

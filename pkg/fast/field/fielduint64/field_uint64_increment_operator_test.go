@@ -115,7 +115,7 @@ func TestCanDeseraliseRequiredUInt64IncrementOperatorNotEncodedNoPreviousValueRe
 	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", true))
 
 	// Act
-	_, err :=unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D5) {

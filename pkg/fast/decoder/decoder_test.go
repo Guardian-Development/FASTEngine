@@ -455,7 +455,7 @@ func TestReadOptionalUInt64ReturnsValueMinusOneForNonNilValues(t *testing.T) {
 func TestCanReadMaximumOptionalUInt64(t *testing.T) {
 	// Arrange 18446744073709551615 = (00000010 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 10000000)
 	expectedIntAsBytes := bytes.NewBuffer([]byte{2, 0, 0, 0, 0, 0, 0, 0, 0, 128})
-	expectedResult := value.UInt64Value{Value: 18446744073709551615 }
+	expectedResult := value.UInt64Value{Value: 18446744073709551615}
 
 	// Act
 	result, err := ReadOptionalUInt64(expectedIntAsBytes)
