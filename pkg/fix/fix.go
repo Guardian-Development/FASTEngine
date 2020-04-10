@@ -2,14 +2,18 @@ package fix
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 )
 
 type Message struct {
-	Tags map[uint64]Value
+	Tags        map[uint64]Value
+	tagsInOrder []uint64
 }
 
 func (message *Message) SetTag(tag uint64, value Value) {
 	message.Tags[tag] = value
+	message.tagsInOrder = append(message.tagsInOrder, tag)
 }
 
 func (message Message) GetTag(tag uint64) (interface{}, error) {
@@ -18,6 +22,7 @@ func (message Message) GetTag(tag uint64) (interface{}, error) {
 		case NullValue:
 			return nil, nil
 		case SequenceValue:
+			return t.Get(), nil
 		case RawValue:
 			return t.Get(), nil
 		default:
@@ -28,9 +33,21 @@ func (message Message) GetTag(tag uint64) (interface{}, error) {
 	return nil, fmt.Errorf("no tag in message with value: %d", tag)
 }
 
+func (message Message) String() string {
+	stringBuilder := strings.Builder{}
+	for _, tag := range message.tagsInOrder {
+		stringBuilder.WriteString(strconv.FormatUint(tag, 10))
+		stringBuilder.WriteString("=")
+		stringBuilder.WriteString(message.Tags[tag].String())
+		stringBuilder.WriteString("|")
+	}
+	return stringBuilder.String()
+}
+
 func New() Message {
 	message := Message{
-		Tags: make(map[uint64]Value),
+		Tags:        make(map[uint64]Value),
+		tagsInOrder: make([]uint64, 0),
 	}
 
 	return message
@@ -38,6 +55,7 @@ func New() Message {
 
 type Value interface {
 	Get() interface{}
+	String() string
 }
 
 type RawValue struct {
@@ -46,6 +64,10 @@ type RawValue struct {
 
 func (rawValue RawValue) Get() interface{} {
 	return rawValue.value
+}
+
+func (rawValue RawValue) String() string {
+	return fmt.Sprint(rawValue.value)
 }
 
 func NewRawValue(value interface{}) Value {
@@ -63,6 +85,10 @@ func (nullValue NullValue) Get() interface{} {
 	return nil
 }
 
+func (nullValue NullValue) String() string {
+	return "nil"
+}
+
 type SequenceValue struct {
 	Values []Message
 }
@@ -73,6 +99,17 @@ func (sequenceValue SequenceValue) Get() interface{} {
 
 func (sequenceValue *SequenceValue) SetValue(index uint32, tag uint64, value Value) {
 	sequenceValue.Values[index].SetTag(tag, value)
+}
+
+func (sequenceValue SequenceValue) String() string {
+	stringBuilder := strings.Builder{}
+	// write length of this tag
+	stringBuilder.WriteString(string(len(sequenceValue.Values)))
+	stringBuilder.WriteString("|")
+	for _, value := range sequenceValue.Values {
+		stringBuilder.WriteString(value.String())
+	}
+	return stringBuilder.String()
 }
 
 func NewSequenceValue(sequenceSize uint32) SequenceValue {

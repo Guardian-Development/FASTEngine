@@ -3,10 +3,13 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	"os"
+
 	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/header"
+	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader"
 	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
@@ -37,10 +40,25 @@ func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error
 	return nil, fmt.Errorf("%s: id %d", errors.D9, messageHeader.TemplateID)
 }
 
-// New instance of a FAST engine, that can serialise/deserialise FAST messages using the templates provided
+// New instance of a FAST engine, that can serialise/deserialise FAST messages using the template store provided
 func New(templateStore store.Store) FastEngine {
 	return fastEngine{
 		templateStore:    templateStore,
 		globalDictionary: dictionary.New(),
 	}
+}
+
+// NewFromTemplateFile of a FAST engine, that can serialise/deserialise FAST messages using the template file provided.
+// This file should be xml, if we are unable to find the file or parse it, an error is returned
+func NewFromTemplateFile(templateFile string) (FastEngine, error) {
+	file, err := os.Open(templateFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to open template file: %s", err)
+	}
+	templateStore, err := loader.Load(file)
+	if err != nil {
+		return nil, fmt.Errorf("unable to load template file: %s", err)
+	}
+	fastEngine := New(templateStore)
+	return fastEngine, nil
 }
