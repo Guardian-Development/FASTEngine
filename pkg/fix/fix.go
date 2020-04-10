@@ -39,7 +39,6 @@ func (message Message) String() string {
 		stringBuilder.WriteString(strconv.FormatUint(tag, 10))
 		stringBuilder.WriteString("=")
 		stringBuilder.WriteString(message.Tags[tag].String())
-		stringBuilder.WriteString("|")
 	}
 	return stringBuilder.String()
 }
@@ -67,7 +66,7 @@ func (rawValue RawValue) Get() interface{} {
 }
 
 func (rawValue RawValue) String() string {
-	return fmt.Sprint(rawValue.value)
+	return fmt.Sprintf("%v|", rawValue.value)
 }
 
 func NewRawValue(value interface{}) Value {
@@ -86,7 +85,7 @@ func (nullValue NullValue) Get() interface{} {
 }
 
 func (nullValue NullValue) String() string {
-	return "nil"
+	return "nil|"
 }
 
 type SequenceValue struct {
@@ -104,7 +103,7 @@ func (sequenceValue *SequenceValue) SetValue(index uint32, tag uint64, value Val
 func (sequenceValue SequenceValue) String() string {
 	stringBuilder := strings.Builder{}
 	// write length of this tag
-	stringBuilder.WriteString(string(len(sequenceValue.Values)))
+	stringBuilder.WriteString(fmt.Sprint(len(sequenceValue.Values)))
 	stringBuilder.WriteString("|")
 	for _, value := range sequenceValue.Values {
 		stringBuilder.WriteString(value.String())

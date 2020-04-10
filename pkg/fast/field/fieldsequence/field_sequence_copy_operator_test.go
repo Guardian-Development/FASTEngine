@@ -93,22 +93,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(3)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(2)),
-					3: fix.NewRawValue("TEST2"),
-				},
-			},
-		},
-	}
+	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", true),
 		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true)),
@@ -124,9 +110,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 
@@ -144,22 +129,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsPreviousVa
 	messageAsBytes := bytes.NewBuffer([]byte{131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(3)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(2)),
-					3: fix.NewRawValue("TEST2"),
-				},
-			},
-		},
-	}
+	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", true),
 		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true)),
@@ -176,9 +147,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsPreviousVa
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 
@@ -196,22 +166,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsInitialVal
 	messageAsBytes := bytes.NewBuffer([]byte{131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(3)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(2)),
-					3: fix.NewRawValue("TEST2"),
-				},
-			},
-		},
-	}
+	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", true),
 		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", true), 2),
@@ -227,9 +183,8 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsInitialVal
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 
@@ -289,28 +244,8 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 	})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(1)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(1)),
-					3: fix.NewRawValue("TEST2"),
-				},
-			},
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(3)),
-					3: fix.NewRawValue("TEST2"),
-				},
-			},
-		},
-	}
+	expectedMessage := "3|2=1|3=TEST1|2=1|3=TEST2|2=3|3=TEST2|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", true),
 		fielduint32.New(properties.New(1, "SequenceField", true)),
@@ -326,9 +261,8 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 

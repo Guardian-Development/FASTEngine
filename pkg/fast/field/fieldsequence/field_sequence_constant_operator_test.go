@@ -8,11 +8,9 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
-	"reflect"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
-	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 
 //<sequence>
@@ -28,16 +26,8 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(1)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-		},
-	}
+	expectedMessage := "1|2=1|3=TEST1|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", true),
 		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", true), 1),
@@ -53,9 +43,8 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 
@@ -72,16 +61,8 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
-	expectedMessage := fix.SequenceValue{
-		Values: []fix.Message{
-			fix.Message{
-				Tags: map[uint64]fix.Value{
-					2: fix.NewRawValue(int64(1)),
-					3: fix.NewRawValue("TEST1"),
-				},
-			},
-		},
-	}
+	expectedMessage := "1|2=1|3=TEST1|"
+
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", false),
 		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false), 1),
@@ -97,9 +78,8 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	}
 
 	// Assert
-	areEqual := reflect.DeepEqual(expectedMessage, result)
-	if !areEqual {
-		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
+	if expectedMessage != result.String() {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.String())
 	}
 }
 
