@@ -198,20 +198,24 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedNegativeDeltaValueOverfl
 //<uint64 presence="optional">
 //	<delta />
 //</uint64>
-func TestCanDeseraliseOptionalUInt64DeltaOperatorEncodedPreviousNullValueReturnsError(t *testing.T) {
+func TestCanDeseraliseOptionalUInt64DeltaOperatorEncodedPreviousNullValueReturnsBaseValue(t *testing.T) {
 	// Arrange pmap = 10000000 1 = 10000011
-	messageAsBytes := bytes.NewBuffer([]byte{129})
+	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
+	expectedMessage := uint64(1)
 	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NullValue{})
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
 
 	// Assert
-	if err == nil || !strings.Contains(err.Error(), errors.D6) {
-		t.Errorf("Expected error about nil value when a required field: %#v", err)
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 

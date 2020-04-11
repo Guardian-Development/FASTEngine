@@ -136,6 +136,12 @@ func loadSequence(tagInTemplate *tokenxml.Tag, fieldDetails properties.Propertie
 		if err != nil {
 			return fieldsequence.FieldSequence{}, err
 		}
+
+		// if sequence tag does not have id, use id of length field
+		if fieldDetails.ID == 0 {
+			fieldDetails.ID = lengthProperties.ID
+		}
+
 		length, err := loaduint32.Load(&tagInTemplate.NestedTags[0], lengthProperties)
 		if err != nil {
 			return fieldsequence.FieldSequence{}, err

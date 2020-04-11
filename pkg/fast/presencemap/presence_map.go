@@ -9,22 +9,19 @@ import (
 // within the FAST template instead
 type PresenceMap struct {
 	pMap         []byte
-	currentIndex uint32
-	currentByte  uint32
+	currentIndex int
 }
 
 // GetIsSetAndIncrement returns the next value in the pMap, incrementing the internal counter
 func (pMap *PresenceMap) GetIsSetAndIncrement() bool {
-	byteInPmap := pMap.pMap[pMap.currentByte]
-	valueInByte := (1 << pMap.currentIndex) & byteInPmap
-	isSet := valueInByte == (1 << pMap.currentIndex)
-
-	if pMap.currentIndex == 1 {
-		pMap.currentByte = pMap.currentByte + 1
-		pMap.currentIndex = 7
-	} else {
-		pMap.currentIndex = pMap.currentIndex - 1
+	offset := pMap.currentIndex / 7
+	if offset >= len(pMap.pMap) {
+		return false
 	}
+
+	bit := 64 >> byte(pMap.currentIndex-(offset*7))
+	isSet := (pMap.pMap[offset] & byte(bit)) > 0
+	pMap.currentIndex = pMap.currentIndex + 1
 
 	return isSet
 }
@@ -37,5 +34,5 @@ func New(message *bytes.Buffer) (PresenceMap, error) {
 		return PresenceMap{}, err
 	}
 
-	return PresenceMap{pMap: value, currentIndex: 7}, nil
+	return PresenceMap{pMap: value, currentIndex: 0}, nil
 }

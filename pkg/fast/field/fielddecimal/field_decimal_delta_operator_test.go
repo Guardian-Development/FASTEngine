@@ -121,8 +121,6 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeDeltaWithPrevio
 	}
 }
 
-// TODO: implement max to min tests once decimal uses big int for its final value
-
 //<decimal>
 //	<delta />
 //</decimal>
@@ -214,22 +212,26 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeMantissaDeltaVa
 //<decimal presence="optional">
 //	<delta />
 //</decimal>
-func TestCanDeseraliseOptionalDecimalDeltaOperatorEncodedNullExponentPreviouValueReturnsError(t *testing.T) {
-	// Arrange pmap = 10000000 exp = 10000001 (1) man = 11111111 (-1)
-	messageAsBytes := bytes.NewBuffer([]byte{129, 255})
+func TestCanDeseraliseOptionalDecimalDeltaOperatorEncodedNullExponentPreviouValueReturnsBaseValue(t *testing.T) {
+	// Arrange pmap = 10000000 exp = 10000010 (1) man = 11111111 (-1)
+	messageAsBytes := bytes.NewBuffer([]byte{130, 255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
+	expectedMessage := float64(-10)
 	unitUnderTest := New(properties.New(1, "DecimalField", false),
 		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false)),
 		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldExponent", fix.NullValue{})
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
 
 	// Assert
-	if err == nil || !strings.Contains(err.Error(), errors.D6) {
-		t.Errorf("Expected error about nil value when a required field: %#v", err)
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 

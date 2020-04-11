@@ -140,7 +140,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 // Due to needing to use 0 as a nil value for optionals, the value returned by this is: value - 1.
 // i.e. 10000000 would become nil, 10000001 would become 0
 func ReadOptionalUInt64(inputSource *bytes.Buffer) (value.Value, error) {
-	readValue, err := ReadBigInt(inputSource)
+	readValue, err := ReadBigUInt(inputSource)
 	if err != nil {
 		return value.UInt64Value{}, err
 	}
@@ -223,6 +223,49 @@ func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	}
 
 	return value.NullValue{}, fmt.Errorf("%s, int64", errors.R6)
+}
+
+// ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
+// and therefore we can return a value.BigInt if this happens. The least significant byte is in the overflow value. If the next value would till overflow this structure an err is returned.
+func ReadBigUInt(inputSource *bytes.Buffer) (value.BigInt, error) {
+	var readValue uint64 = 0
+
+	i := 1
+	for ; i < 10; i++ {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.BigInt{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := uint64(b & 127)
+			readValue = readValue<<7 | removedStopBit
+			return value.BigInt{Value: big.NewInt(0).SetUint64(readValue)}, nil
+		}
+
+		// no stop bit present so 0 in most significant bit, add this byte to the int we are reading
+		readValue = readValue<<7 | uint64(b)
+	}
+
+	// we try to read one more byte (for the overflow), if this does not read a stop bit we return an error
+	if i == 10 {
+		b, err := inputSource.ReadByte()
+		if err != nil {
+			return value.BigInt{}, err
+		}
+
+		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
+		if result := b & 128; result == 128 {
+			removedStopBit := int64(b & 127)
+			resultBig := big.NewInt(0).SetUint64(readValue)
+			resultBig = resultBig.Lsh(resultBig, 7)                         // readValue << 7
+			resultBig = resultBig.Or(resultBig, big.NewInt(removedStopBit)) // result | removedStopBit
+			return value.BigInt{Value: resultBig}, nil
+		}
+	}
+
+	return value.BigInt{}, fmt.Errorf("%s, uint64", errors.R6)
 }
 
 // ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
@@ -323,9 +366,27 @@ func ReadOptionalString(inputSource *bytes.Buffer) (value.Value, error) {
 		return value.NullValue{}, nil
 	}
 
+	stringBuilder := strings.Builder{}
+
+	// if this is the end of the string (its a 1 byte string) return result
+	if result := possibleNullIndiciator & 128; result == 128 {
+		removedStopBit := byte(possibleNullIndiciator & 127)
+		appendNotNullChar(removedStopBit, &stringBuilder)
+
+		return value.StringValue{Value: stringBuilder.String()}, nil
+	}
+
 	possibleEmptyStringIndicator, err := inputSource.ReadByte()
 	if err != nil {
 		return value.StringValue{}, err
+	}
+
+	// if this is the end of the string (its a 2 byte string) return result
+	if result := possibleEmptyStringIndicator & 128; result == 128 {
+		appendNotNullChar(byte(possibleNullIndiciator&127), &stringBuilder)
+		appendNotNullChar(byte(possibleEmptyStringIndicator&127), &stringBuilder)
+
+		return value.StringValue{Value: stringBuilder.String()}, nil
 	}
 
 	// 0 = 00000000, 128 = 10000000, this is seen as empty string
@@ -333,7 +394,7 @@ func ReadOptionalString(inputSource *bytes.Buffer) (value.Value, error) {
 		return value.StringValue{Value: ""}, nil
 	}
 
-	stringBuilder := strings.Builder{}
+	// not an empty or null string, append bytes read and read rest of string as normal
 	appendNotNullChar(possibleNullIndiciator, &stringBuilder)
 	appendNotNullChar(possibleEmptyStringIndicator, &stringBuilder)
 
@@ -414,8 +475,6 @@ func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 	}
 }
 
-// ReadValue reads the next FAST encoded value off the inputSource, shifting each value by <<1 to remove the stop bit FAST encoding
-// i.e. 00010010 10001000 would become [00100100, 00010000]
 func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 	value := make([]byte, 0)
 
@@ -427,10 +486,10 @@ func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
 		if result := b & 128; result == 128 {
-			value = append(value, b<<1)
+			value = append(value, b)
 			return value, nil
 		}
 
-		value = append(value, b<<1)
+		value = append(value, b)
 	}
 }

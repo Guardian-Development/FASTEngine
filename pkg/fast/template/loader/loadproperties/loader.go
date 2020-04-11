@@ -44,7 +44,7 @@ func getFieldID(tagInTemplate *xml.Tag) (uint64, error) {
 	fieldID := tagInTemplate.Attributes["id"]
 
 	if fieldID == "" {
-		return 0, fmt.Errorf("every template field must have an id specified")
+		return 0, nil
 	}
 
 	ID, err := strconv.ParseUint(fieldID, 10, 32)

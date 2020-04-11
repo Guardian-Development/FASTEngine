@@ -225,20 +225,22 @@ func TestOptionalByteVectorDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 //<byteVector presence="optional">
 //	<delta/>
 //</byteVector>
-func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueReturnsError(t *testing.T) {
+func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t *testing.T) {
 	// Arrange length = 10000001 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{129, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
+	expectedMessage := []byte{146, 170}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NullValue{})
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, _ := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || !strings.Contains(err.Error(), errors.D6) {
-		t.Errorf("Expected error about nil value when a required field: %#v", err)
+	areEqual := reflect.DeepEqual(expectedMessage, result.Get())
+	if !areEqual {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 

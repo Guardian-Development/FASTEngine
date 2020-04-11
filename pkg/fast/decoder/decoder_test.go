@@ -948,10 +948,10 @@ func TestReadOptionalByteVectorReturnsNilIfEncoded(t *testing.T) {
 	}
 }
 
-func TestReadValueReturnsRawBytesWithStopBitRemoved(t *testing.T) {
-	// Arrrange 00010010 10001000 -> [00100100, 00010000]
-	expectedBytes := bytes.NewBuffer([]byte{18, 136})
-	expectedResult := []byte{36, 16}
+func TestReadValueReturnsRawBytesUpToStopBit(t *testing.T) {
+	// Arrrange 00010010 10001000 10000000
+	expectedBytes := bytes.NewBuffer([]byte{18, 136, 128})
+	expectedResult := []byte{18, 136}
 
 	// Act
 	result, err := ReadValue(expectedBytes)

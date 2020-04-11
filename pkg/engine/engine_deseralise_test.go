@@ -2,6 +2,8 @@ package engine
 
 import (
 	"bytes"
+	"log"
+	"os"
 	"strings"
 	"testing"
 
@@ -9,18 +11,13 @@ import (
 )
 
 // TODO: readme and documentation (cleanup all warnings)
-// TODO: pretty print FIX message using pipe character to make readable
 // TODO: logging!!
-
-// TODO: making everything immutable, use constructor init methods, cleanup what should be public/private
-// TODO: add a series of messages, ranging in complexity, that cover all types we want to test at integration level (integration test directory or something?)
-// 			look at codecoverage and how we can use them to generate coverage for the whole project
-// TODO: series of messages should focus on state (copy, increment etc) to show the engine works when parsing a feed
+// TODO: code cleanup and doc strings
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange
 	message := bytes.NewBuffer([]byte{192, 1, 150, 130, 210, 129, 210, 130, 131})
-	fastEngine, _ := NewFromTemplateFile("../../test/test_heartbeat_template.xml")
+	fastEngine, _ := NewFromTemplateFile("../../test/test_heartbeat_template.xml", log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile))
 
 	// Act
 	_, err := fastEngine.Deserialise(message)
@@ -41,7 +38,7 @@ func TestCanDeserialiseHeartbeatMessageBasedOnTemplateInTemplateStore(t *testing
 		10001011           52 = 11
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 138, 139})
-	fastEngine, _ := NewFromTemplateFile("../../test/test_heartbeat_template.xml")
+	fastEngine, _ := NewFromTemplateFile("../../test/test_heartbeat_template.xml", log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile))
 
 	// Act
 	fixMessage, _ := fastEngine.Deserialise(message)
@@ -63,7 +60,7 @@ func TestCanDeserialiseMessageWithOptionalValueNotPresent(t *testing.T) {
 		10001010           52 = 10
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 128, 138})
-	fastEngine, _ := NewFromTemplateFile("../../test/test_optional_value_template.xml")
+	fastEngine, _ := NewFromTemplateFile("../../test/test_optional_value_template.xml", log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile))
 
 	// Act
 	fixMessage, _ := fastEngine.Deserialise(message)
@@ -85,7 +82,7 @@ func TestCanDeserialiseMessageWithOptionalValuePresent(t *testing.T) {
 		10001010           52 = 10
 	*/
 	message := bytes.NewBuffer([]byte{192, 1, 144, 129, 138})
-	fastEngine, _ := NewFromTemplateFile("../../test/test_optional_value_template.xml")
+	fastEngine, _ := NewFromTemplateFile("../../test/test_optional_value_template.xml", log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile))
 
 	// Act
 	fixMessage, _ := fastEngine.Deserialise(message)

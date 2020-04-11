@@ -218,20 +218,24 @@ func TestOptionalAsciiStringDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 //<string presence="optional">
 //	<delta/>
 //</string>
-func TestOptionalAsciiStringDeltaOperatorEncodedPreviousNullValueReturnsError(t *testing.T) {
+func TestOptionalAsciiStringDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t *testing.T) {
 	// Arrange length = 10000001 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
+	expectedMessage := "TEST1"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", false))
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NullValue{})
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	if err != nil {
+		t.Errorf("Got an error when none was expected: %s", err)
+	}
 
 	// Assert
-	if err == nil || !strings.Contains(err.Error(), errors.D6) {
-		t.Errorf("Expected error about nil value when a required field: %#v", err)
+	if result.Get() != expectedMessage {
+		t.Errorf("Expected value and deserialised value were not equal, expected: %v, actual: %v", expectedMessage, result.Get())
 	}
 }
 

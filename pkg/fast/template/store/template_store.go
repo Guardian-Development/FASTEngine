@@ -2,6 +2,7 @@ package store
 
 import (
 	"bytes"
+	"log"
 
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
@@ -11,6 +12,7 @@ import (
 // Store represents a loaded set of Templates that can be used to Serialise/Deserialise FAST messages
 type Store struct {
 	Templates map[uint32]Template
+	logger    *log.Logger
 }
 
 // Template represents an ordered List of operations needed to Serialise/Deserialise a FAST message
@@ -30,7 +32,7 @@ func (template Template) Deserialise(inputSource *bytes.Buffer, pMap *presencema
 	for _, unit := range template.TemplateUnits {
 		value, err := unit.Deserialise(inputSource, pMap, dictionary)
 		if err != nil {
-			return nil, err
+			return &fixMessage, err
 		}
 		tagID := unit.GetTagId()
 		fixMessage.SetTag(tagID, value)

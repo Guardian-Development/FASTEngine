@@ -318,9 +318,7 @@ func (operation Delta) Apply(readValue value.Value, previousValue dictionary.Val
 	switch t := previousValue.(type) {
 	case dictionary.AssignedValue:
 		baseValue = t.Value
-	case dictionary.EmptyValue:
-		return fix.NullValue{}, fmt.Errorf("%s", errors.D6)
-	case dictionary.UndefinedValue:
+	case dictionary.EmptyValue, dictionary.UndefinedValue:
 		switch operation.InitialValue.(type) {
 		case fix.NullValue:
 			baseValue = operation.BaseValue
