@@ -14,8 +14,8 @@ func TestCanReadInstrumentMessages(t *testing.T) {
 	file, _ := os.Open("../../test/example-decoding-tests/instrument-messages-hex.txt")
 	defer file.Close()
 
-	log := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
-	engine, err := NewFromTemplateFile("../../test/example-decoding-tests/templates.xml", log)
+	logger := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
+	engine, err := NewFromTemplateFile("../../test/example-decoding-tests/templates.xml", logger)
 	if err != nil {
 		t.Fatalf("unable to load engine: %v", err)
 	}
@@ -32,7 +32,7 @@ func TestCanReadInstrumentMessages(t *testing.T) {
 			t.Fatalf("unable to decode message: %s", message)
 		}
 
-		log.Printf("message decoded: %s", fix.String())
+		logger.Printf("message decoded: %s", fix.String())
 	}
 }
 
@@ -41,8 +41,8 @@ func TestCanReadSnapshotMessagesTest(t *testing.T) {
 	file, _ := os.Open("../../test/example-decoding-tests/snapshot-messages-hex.txt")
 	defer file.Close()
 
-	log := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
-	engine, err := NewFromTemplateFile("../../test/example-decoding-tests/templates.xml", log)
+	logger := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
+	engine, err := NewFromTemplateFile("../../test/example-decoding-tests/templates.xml", logger)
 	if err != nil {
 		t.Fatalf("unable to load engine: %v", err)
 	}
@@ -59,6 +59,6 @@ func TestCanReadSnapshotMessagesTest(t *testing.T) {
 			t.Fatalf("unable to decode message: %s", message)
 		}
 
-		log.Printf("message decoded: %s", fix.String())
+		logger.Printf("message decoded: %s", fix.String())
 	}
 }
