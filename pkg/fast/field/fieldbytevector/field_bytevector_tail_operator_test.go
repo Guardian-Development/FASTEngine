@@ -18,12 +18,12 @@ func TestCanDeseraliseByteVectorTailOperatorNotEncodedNoPreviousValueReturnsInit
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -42,13 +42,13 @@ func TestCanDeseraliseByteVectorTailOperatorNotEncodedNoPreviousValueReturnsPrev
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA2, 0xB3, 0xC1}
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA2, 0xB3, 0xC1}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA2, 0xB3, 0xC1}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -67,12 +67,12 @@ func TestCanDeseraliseOptionlByteVectorTailOperatorNotEncodedEmptyPreviousValueR
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -90,12 +90,12 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedReturnsInitialValueCombinedWi
 	// Arrange pmap = 11000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0x92, 0xAA}
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -114,12 +114,12 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedReturnsValueFromStream(t *tes
 	// Arrange pmap = 11000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
 	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -138,13 +138,13 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueReturnsPreviousV
 	// Arrange pmap = 11000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0x92, 0xAA}
 	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -163,13 +163,13 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueReturnsValueFrom
 	// Arrange pmap = 11000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
 	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xAA}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xAA}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -188,13 +188,13 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueEmptyReturnsValu
 	// Arrange pmap = 11000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
 	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

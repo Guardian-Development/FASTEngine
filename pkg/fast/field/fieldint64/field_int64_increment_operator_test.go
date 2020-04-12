@@ -18,12 +18,12 @@ func TestCanDeseraliseInt64IncrementOperatorEncodedReturnsValueFromStream(t *tes
 	// Arrange pmap = 11000000 2 = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(2)
 	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(5))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -41,12 +41,12 @@ func TestCanDeseraliseInt64IncrementOperatorNotEncodedReturnsInitialValue(t *tes
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(5)
 	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(5))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -64,13 +64,13 @@ func TestCanDeseraliseInt64IncrementOperatorNotEncodedPreviousValuePresentReturn
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(11)
 	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(5))
 
 	// Act
-	dictionary.SetValue("Int64Field", fix.NewRawValue(int64(10)))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("Int64Field", fix.NewRawValue(int64(10)))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -111,11 +111,11 @@ func TestCanDeseraliseRequiredInt64IncrementOperatorNotEncodedNoPreviousValueRet
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewIncrementOperation(properties.New(1, "Int64Field", true, testLog))
 
 	// Act
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D5) {

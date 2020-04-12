@@ -2,11 +2,12 @@ package loadproperties
 
 import (
 	"fmt"
-	"github.com/Guardian-Development/fastengine/internal/xml"
-	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"log"
 	"math/rand"
 	"strconv"
+
+	"github.com/Guardian-Development/fastengine/internal/xml"
+	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyz")

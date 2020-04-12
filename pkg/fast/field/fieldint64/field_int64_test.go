@@ -19,12 +19,12 @@ func TestCanDeseraliseRequiredPositiveInt64(t *testing.T) {
 	// Arrange 2 = 10000010
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(2)
 	unitUnderTest := New(properties.New(1, "Int64Field", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -40,12 +40,12 @@ func TestCanDeseraliseRequiredNegativeInt64(t *testing.T) {
 	// Arrange -2 = 11111110
 	messageAsBytes := bytes.NewBuffer([]byte{254})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(-2)
 	unitUnderTest := New(properties.New(1, "Int64Field", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -61,12 +61,12 @@ func TestCanDeseraliseOptionalPositiveInt64Present(t *testing.T) {
 	// Arrange 3 = 10000100
 	messageAsBytes := bytes.NewBuffer([]byte{132})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(3)
 	unitUnderTest := New(properties.New(1, "Int64Field", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -82,12 +82,12 @@ func TestCanDeseraliseOptionalNegativeInt64Present(t *testing.T) {
 	// Arrange 3 = 11111101
 	messageAsBytes := bytes.NewBuffer([]byte{253})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := int64(-3)
 	unitUnderTest := New(properties.New(1, "Int64Field", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -103,11 +103,11 @@ func TestCanDeseraliseOptionalInt64Null(t *testing.T) {
 	// Arrange 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(properties.New(1, "Int64Field", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

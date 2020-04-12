@@ -3,10 +3,11 @@ package store
 import (
 	"bytes"
 	"fmt"
+	"log"
+
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
-	"log"
 )
 
 // Store represents a loaded set of Templates that can be used to Serialise/Deserialise FAST messages

@@ -19,12 +19,12 @@ func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
 	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := New(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -40,12 +40,12 @@ func TestCanDeseraliseOptionalAsciiStringPresent(t *testing.T) {
 	// Arrange TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -61,11 +61,11 @@ func TestCanDeseraliseOptionalAsciiStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

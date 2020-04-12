@@ -20,12 +20,12 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorEncodedReturnsValueFromStrea
 	// Arrange pmap = 11000000, value = 11000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{198}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170}
 	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -44,12 +44,12 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorNotEncodedReturnsInitialValu
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
 	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

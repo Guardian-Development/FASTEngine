@@ -3,6 +3,7 @@ package fieldasciistring
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -26,13 +27,13 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 
 	if field.Operation.ShouldReadValue(pMap) {
-		var value value.Value
+		var readValue value.Value
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = field.decode.ReadValue(inputSource)
+			readValue, err = field.decode.ReadValue(inputSource)
 		} else {
-			value, err = field.decode.ReadOptionalValue(inputSource)
+			readValue, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -40,10 +41,10 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 			return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
 		}
 
-		transformedValue, err := field.Operation.Apply(value, previousValue)
+		transformedValue, err := field.Operation.Apply(readValue, previousValue)
 		if err != nil {
-			field.FieldDetails.Logger.Printf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
-			return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
+			field.FieldDetails.Logger.Printf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, readValue, previousValue, err)
+			return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, readValue, previousValue, err)
 		}
 
 		dictionary.SetValue(field.FieldDetails.Name, transformedValue)

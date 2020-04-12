@@ -50,8 +50,6 @@ If you wish to only load the templates once, you can use the following code to i
 package main 
 
 import (
-    "bytes"
-	"fmt"
     "log"
     "os"
 	
@@ -60,18 +58,19 @@ import (
 )
 
 func main() { 
+    logger := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
+    
     // load templates
     file, err := os.Open("file path to fasttemplates.xml")
     if err != nil {
         // handle file error
     }
-    templateStore, err := loader.Load(file)
+    templateStore, err := loader.Load(file, logger)
     if err != nil {
         // handle store load failure
     }
 
     // create engines from same store
-    logger := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
     fastEngine1 := engine.New(templateStore, logger)
     fastEngine2 := engine.New(templateStore, logger)
     fastEngine3 := engine.New(templateStore, logger)

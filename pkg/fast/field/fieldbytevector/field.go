@@ -25,13 +25,13 @@ type FieldByteVector struct {
 func (field FieldByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
 	if field.Operation.ShouldReadValue(pMap) {
-		var value value.Value
+		var readValue value.Value
 		var err error
 
 		if field.FieldDetails.Required {
-			value, err = field.decode.ReadValue(inputSource)
+			readValue, err = field.decode.ReadValue(inputSource)
 		} else {
-			value, err = field.decode.ReadOptionalValue(inputSource)
+			readValue, err = field.decode.ReadOptionalValue(inputSource)
 		}
 
 		if err != nil {
@@ -39,10 +39,10 @@ func (field FieldByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presen
 			return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
 		}
 
-		transformedValue, err := field.Operation.Apply(value, previousValue)
+		transformedValue, err := field.Operation.Apply(readValue, previousValue)
 		if err != nil {
-			field.FieldDetails.Logger.Printf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
-			return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
+			field.FieldDetails.Logger.Printf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, readValue, previousValue, err)
+			return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, readValue, previousValue, err)
 		}
 
 		dictionary.SetValue(field.FieldDetails.Name, transformedValue)

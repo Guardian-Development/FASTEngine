@@ -20,12 +20,12 @@ func TestRequiredByteVectorDeltaOperatorAppendToBaseValue(t *testing.T) {
 	// Arrange length = 1000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{128, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -44,12 +44,12 @@ func TestRequiredByteVectorDeltaOperatorPrependToBaseValue(t *testing.T) {
 	// Arrange length = 1111111 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{255, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -68,12 +68,12 @@ func TestRequiredByteVectorDeltaOperatorAppendToInitialValue(t *testing.T) {
 	// Arrange length = 1000000 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{128, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF, 146, 170}
 	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -92,12 +92,12 @@ func TestRequiredByteVectorDeltaOperatorPrependToInitialValue(t *testing.T) {
 	// Arrange length = 11111111 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{255, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170, 0xA1, 0xB2, 0xCF}
 	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -116,13 +116,13 @@ func TestRequiredByteVectorDeltaOperatorAppendWithOverwiteToPreviousValue(t *tes
 	// Arrange length = 10000100 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{132, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF, 146, 170}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -141,13 +141,13 @@ func TestRequiredByteVectorDeltaOperatorPrependWithOverwriteToPreviousValue(t *t
 	// Arrange length = 11111010 (-6) value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{250, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170, 223, 224}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -166,12 +166,12 @@ func TestRequiredByteVectorDeltaOperatorAppendWithOverwiteTooLargeReturnsError(t
 	// Arrange length = 10000100 (4) value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{132, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D7) {
@@ -186,12 +186,12 @@ func TestRequiredByteVectorDeltaOperatorPrependWithOverwiteTooLargeReturnsError(
 	// Arrange length = 11111011 (-5) value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{251, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D7) {
@@ -206,12 +206,12 @@ func TestOptionalByteVectorDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 	// Arrange length = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -229,13 +229,13 @@ func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t 
 	// Arrange length = 10000001 value = 10000010 10010010 10101010
 	messageAsBytes := bytes.NewBuffer([]byte{129, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := []byte{146, 170}
 	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
-	dictionary.SetValue("ByteVectorField", fix.NullValue{})
-	result, _ := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("ByteVectorField", fix.NullValue{})
+	result, _ := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	areEqual := reflect.DeepEqual(expectedMessage, result.Get())

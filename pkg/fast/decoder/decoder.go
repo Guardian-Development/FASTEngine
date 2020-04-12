@@ -3,10 +3,11 @@ package decoder
 import (
 	"bytes"
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
-	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"strings"
+
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 )
 
 // ReadUInt32 reads the next FAST encoded value off the inputSource, treating it as a uint32 value. If the next value would overflow a uint32 an err is returned.
@@ -477,7 +478,7 @@ func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 
 // ReadValue reads the values off the byte buffer until a stop but is detected. Stop bits are not removed from the bytes returned.
 func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
-	value := make([]byte, 0)
+	readValue := make([]byte, 0)
 
 	for {
 		b, err := inputSource.ReadByte()
@@ -487,10 +488,10 @@ func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
 		if result := b & 128; result == 128 {
-			value = append(value, b)
-			return value, nil
+			readValue = append(readValue, b)
+			return readValue, nil
 		}
 
-		value = append(value, b)
+		readValue = append(readValue, b)
 	}
 }

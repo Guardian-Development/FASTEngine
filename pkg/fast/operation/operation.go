@@ -2,6 +2,7 @@ package operation
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
@@ -10,6 +11,7 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 
+// Operation is applied when reading a fast value off a byte buffer
 type Operation interface {
 	ShouldReadValue(pMap *presencemap.PresenceMap) bool
 	GetNotEncodedValue(pMap *presencemap.PresenceMap, required bool, previousValue dictionary.Value) (fix.Value, error)
@@ -17,6 +19,7 @@ type Operation interface {
 	RequiresPmap(required bool) bool
 }
 
+// None represents applying no operation to the read value
 type None struct {
 }
 
@@ -40,6 +43,7 @@ func (operation None) RequiresPmap(required bool) bool {
 	return false
 }
 
+// Constant represents the fast <constant/> operation
 type Constant struct {
 	ConstantValue fix.Value
 }
@@ -71,6 +75,7 @@ func (operation Constant) Apply(readValue value.Value, previousValue dictionary.
 	return readValue.GetAsFix(), nil
 }
 
+// Default represents the fast <default/> operation
 type Default struct {
 	DefaultValue fix.Value
 }
@@ -95,6 +100,7 @@ func (operation Default) RequiresPmap(required bool) bool {
 	return true
 }
 
+// Copy represents the fast <copy/> operation
 type Copy struct {
 	InitialValue fix.Value
 }
@@ -137,6 +143,7 @@ func (operation Copy) RequiresPmap(required bool) bool {
 	return true
 }
 
+// Increment represents the fast <increment/> operation
 type Increment struct {
 	InitialValue fix.Value
 }
@@ -193,6 +200,7 @@ func (operation Increment) RequiresPmap(required bool) bool {
 	return true
 }
 
+// Tail represents the fast <tail/> operation
 type Tail struct {
 	InitialValue fix.Value
 	BaseValue    fix.Value
@@ -250,51 +258,29 @@ func (operation Tail) Apply(readValue value.Value, previousValue dictionary.Valu
 		}
 	}
 
-	// TODO: move this to be on the fast struct then use type here, but only to check its valid operation
 	// combine base value with read value
 	switch t := readValue.(type) {
 	case value.StringValue:
-		baseValueAsChars := []rune(baseValue.Get().(string))
-		readValueAsChars := []rune(t.Value)
-		indexToAppendReadValue := len(baseValueAsChars) - len(readValueAsChars)
-
-		// read more than base value, read value replaces all of base value
-		if indexToAppendReadValue <= 0 {
-			return readValue.GetAsFix(), nil
-		}
-
-		start := baseValueAsChars[0:indexToAppendReadValue]
-		combinedValue := append(start, readValueAsChars...)
-		return fix.NewRawValue(string(combinedValue)), nil
+		return t.ApplyTail(baseValue)
 	case value.ByteVector:
-		baseValueAsBytes := baseValue.Get().([]byte)
-		readValueAsBytes := t.Value
-		indexToAppendReadValue := len(baseValueAsBytes) - len(readValueAsBytes)
-
-		// read more than base value, read value replaces all of base value
-		if indexToAppendReadValue <= 0 {
-			return readValue.GetAsFix(), nil
-		}
-
-		start := baseValueAsBytes[0:indexToAppendReadValue]
-		combinedValue := append(start, readValueAsBytes...)
-		return fix.NewRawValue(combinedValue), nil
+		return t.ApplyTail(baseValue)
 	}
 
 	return nil, fmt.Errorf("unsupported type for tail operator, you can only use this with strings and byte vectors")
 }
 
-// RequiresPmap always returns true, as the Tail operator always evaluates the next pMap bit.
+// RequiresPmap always returns true, as the Tail operator always evaluates the next pMap bit
 func (operation Tail) RequiresPmap(required bool) bool {
 	return true
 }
 
+// Delta represents the fast <delta/> operation.
 type Delta struct {
 	InitialValue fix.Value
 	BaseValue    fix.Value
 }
 
-// ShouldReadValue is always true as delta just informs you of what to do to build the read value, not what to do if the value is not pesent.
+// ShouldReadValue is always true as delta just informs you of what to do to build the read value, not what to do if the value is not present.
 func (operation Delta) ShouldReadValue(pMap *presencemap.PresenceMap) bool {
 	return true
 }

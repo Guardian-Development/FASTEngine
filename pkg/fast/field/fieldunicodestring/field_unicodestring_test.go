@@ -19,12 +19,12 @@ func TestCanDeseraliseRequiredUnicodeString(t *testing.T) {
 	// Arrange TEST1 = 10000101 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := New(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -40,12 +40,12 @@ func TestCanDeseraliseOptionalUnicodeStringPresent(t *testing.T) {
 	// Arrange TEST1 = 10000110 01010100 01000101 01010011 01010100 00110001
 	messageAsBytes := bytes.NewBuffer([]byte{134, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -61,11 +61,11 @@ func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	// Arrange TEST1 = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

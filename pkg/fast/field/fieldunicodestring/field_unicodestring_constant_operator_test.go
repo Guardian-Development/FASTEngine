@@ -15,12 +15,12 @@ func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -38,11 +38,11 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilV
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -60,12 +60,12 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 	// Arrange pmap = 11000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

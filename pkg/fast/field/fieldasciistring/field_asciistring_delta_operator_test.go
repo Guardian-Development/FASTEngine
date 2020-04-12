@@ -19,12 +19,12 @@ func TestRequiredAsciiStringDeltaOperatorAppendToBaseValue(t *testing.T) {
 	// Arrange length = 1000000 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{128, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -42,12 +42,12 @@ func TestRequiredAsciiStringDeltaOperatorPrependToBaseValue(t *testing.T) {
 	// Arrange length = 1111111 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{255, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -65,12 +65,12 @@ func TestRequiredAsciiStringDeltaOperatorAppendToInitialValue(t *testing.T) {
 	// Arrange length = 1000000 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{128, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "THE TEST IS: TEST1"
 	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "THE TEST IS: ")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -88,12 +88,12 @@ func TestRequiredAsciiStringDeltaOperatorPrependToInitialValue(t *testing.T) {
 	// Arrange length = 1111111 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{255, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1: TEST COMPLETE"
 	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), ": TEST COMPLETE")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -111,13 +111,13 @@ func TestRequiredAsciiStringDeltaOperatorAppendWithOverwiteToPreviousValue(t *te
 	// Arrange length = 10000100 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{132, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "THE TEST IS: TEST1"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("THE TEST IS: OVER"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("THE TEST IS: OVER"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -135,13 +135,13 @@ func TestRequiredAsciiStringDeltaOperatorPrependWithOverwriteToPreviousValue(t *
 	// Arrange length = 11111010 (-6) TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{250, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1: TEST COMPLETE"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -159,12 +159,12 @@ func TestRequiredAsciiStringDeltaOperatorAppendWithOverwiteTooLargeReturnsError(
 	// Arrange length = 10000100 (4) TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{132, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("FAI"))
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("FAI"))
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D7) {
@@ -179,12 +179,12 @@ func TestRequiredAsciiStringDeltaOperatorPrependWithOverwiteTooLargeReturnsError
 	// Arrange length = 11111011 (-5) TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{251, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("FAI"))
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("FAI"))
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), errors.D7) {
@@ -199,12 +199,12 @@ func TestOptionalAsciiStringDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 	// Arrange length = 10000000 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -222,13 +222,13 @@ func TestOptionalAsciiStringDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t
 	// Arrange length = 10000001 TEST1 = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := NewDeltaOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

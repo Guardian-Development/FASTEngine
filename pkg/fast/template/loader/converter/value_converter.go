@@ -3,9 +3,10 @@ package converter
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"strconv"
 	"strings"
+
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 )
 
 // ToString passes back the value given to it

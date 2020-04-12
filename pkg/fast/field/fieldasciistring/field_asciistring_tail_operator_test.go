@@ -17,12 +17,12 @@ func TestCanDeseraliseAsciiStringTailOperatorNotEncodedNoPreviousValueReturnsIni
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -40,13 +40,13 @@ func TestCanDeseraliseAsciiStringTailOperatorNotEncodedNoPreviousValueReturnsPre
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST2"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("TEST2"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -64,12 +64,12 @@ func TestCanDeseraliseOptionlAsciiStringTailOperatorNotEncodedEmptyPreviousValue
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", false, testLog), "TEST1")
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -87,12 +87,12 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedReturnsInitialValueCombinedW
 	// Arrange pmap = 11000000 TEST2 = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST: TEST2"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST: TEST1")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -110,12 +110,12 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedReturnsValueFromStream(t *te
 	// Arrange pmap = 11000000 TEST2 = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -133,13 +133,13 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueReturnsPrevious
 	// Arrange pmap = 11000000 TEST2 = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST: TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST: TEST1"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("TEST: TEST1"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -157,13 +157,13 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueReturnsValueFro
 	// Arrange pmap = 11000000 TEST2 = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NewRawValue("1"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NewRawValue("1"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -181,13 +181,13 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueEmptyReturnsVal
 	// Arrange pmap = 11000000 TEST2 = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("AsciiStringField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("AsciiStringField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

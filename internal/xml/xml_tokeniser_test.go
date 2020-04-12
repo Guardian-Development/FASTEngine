@@ -18,7 +18,7 @@ func TestCanTokeniseHeartbeatTemplateFile(t *testing.T) {
 			"xmlns": "http://www.fixprotocol.org/ns/fast/td/1.1",
 		},
 		NestedTags: []Tag{
-			Tag{
+			{
 				Type: "template",
 				Attributes: map[string]string{
 					"name":       "MDHeartbeat_144",
@@ -27,14 +27,14 @@ func TestCanTokeniseHeartbeatTemplateFile(t *testing.T) {
 					"xmlns":      "http://www.fixprotocol.org/ns/fast/td/1.1",
 				},
 				NestedTags: []Tag{
-					Tag{
+					{
 						Type: "string",
 						Attributes: map[string]string{
 							"name": "ApplVerID",
 							"id":   "1128",
 						},
 						NestedTags: []Tag{
-							Tag{
+							{
 								Type: "constant",
 								Attributes: map[string]string{
 									"value": "9",
@@ -42,14 +42,14 @@ func TestCanTokeniseHeartbeatTemplateFile(t *testing.T) {
 							},
 						},
 					},
-					Tag{
+					{
 						Type: "string",
 						Attributes: map[string]string{
 							"name": "MsgType",
 							"id":   "35",
 						},
 						NestedTags: []Tag{
-							Tag{
+							{
 								Type: "constant",
 								Attributes: map[string]string{
 									"value": "0",
@@ -57,14 +57,14 @@ func TestCanTokeniseHeartbeatTemplateFile(t *testing.T) {
 							},
 						},
 					},
-					Tag{
+					{
 						Type: "uInt32",
 						Attributes: map[string]string{
 							"name": "MsgSeqNum",
 							"id":   "34",
 						},
 					},
-					Tag{
+					{
 						Type: "uInt64",
 						Attributes: map[string]string{
 							"name": "SendingTime",

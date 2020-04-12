@@ -2,6 +2,7 @@ package loaddecimal
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/internal/xml"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielddecimal"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"

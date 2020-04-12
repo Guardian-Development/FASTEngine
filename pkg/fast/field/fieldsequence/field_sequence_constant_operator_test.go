@@ -25,7 +25,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	// 1: int64 = 10000001	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "1|2=1|3=TEST1|"
 
 	unitUnderTest := New(
@@ -37,7 +37,7 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 		})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -60,7 +60,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	// 1: int64 = 10000001	string(TEST1) = 01010100 01000101 01010011 01010100 10110001
 	messageAsBytes := bytes.NewBuffer([]byte{129, 84, 69, 83, 84, 177})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "1|2=1|3=TEST1|"
 
 	unitUnderTest := New(
@@ -72,7 +72,7 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 		})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -94,7 +94,7 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(
 		properties.New(1, "SequenceField", false, testLog),
 		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false, testLog), 1),
@@ -104,7 +104,7 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 		})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

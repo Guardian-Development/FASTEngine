@@ -92,7 +92,7 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
 	// 2: int64 = 10000010	string(TEST2) = 01010100 01000101 01010011 01010100 10110010
 	messageAsBytes := bytes.NewBuffer([]byte{130, 131, 84, 69, 83, 84, 177, 130, 84, 69, 83, 84, 178})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
 
 	unitUnderTest := New(
@@ -104,7 +104,7 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
 		})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -243,7 +243,7 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 		192, 131,
 	})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "3|2=1|3=TEST1|2=1|3=TEST2|2=3|3=TEST2|"
 
 	unitUnderTest := New(
@@ -255,7 +255,7 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 		})
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

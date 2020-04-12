@@ -2,12 +2,13 @@ package decoder
 
 import (
 	"bytes"
-	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
-	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 	"math/big"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
+	"github.com/Guardian-Development/fastengine/pkg/fast/value"
 )
 
 func TestCanReadSingleByteUint32(t *testing.T) {
@@ -785,7 +786,7 @@ func TestReadOptionalBigIntReturnsValueMinusOneForNonNilValues(t *testing.T) {
 func TestCanReadSingleByteString(t *testing.T) {
 	// Arrange 'A' = (11000001)
 	expectedStringAsBytes := bytes.NewBuffer([]byte{193})
-	var expectedString string = "A"
+	expectedString := "A"
 
 	// Act
 	result, err := ReadString(expectedStringAsBytes)
@@ -821,7 +822,7 @@ func TestCanReadEmptyString(t *testing.T) {
 func TestCanReadMultipleByteString(t *testing.T) {
 	// Arrange 'AbC12~' = (01000001, 01100010, 01000011, 00110001, 00110010, 11111110)
 	expectedStringAsBytes := bytes.NewBuffer([]byte{65, 98, 67, 49, 50, 254})
-	var expectedString string = "AbC12~"
+	expectedString := "AbC12~"
 
 	// Act
 	result, err := ReadString(expectedStringAsBytes)

@@ -17,12 +17,12 @@ func TestCanDeseraliseUnicodeStringTailOperatorNotEncodedNoPreviousValueReturnsI
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST1"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST1")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -40,13 +40,13 @@ func TestCanDeseraliseUnicodeStringTailOperatorNotEncodedNoPreviousValueReturnsP
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST1")
 
 	// Act
-	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST2"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("UnicodeStringField", fix.NewRawValue("TEST2"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -64,12 +64,12 @@ func TestCanDeseraliseOptionlUnicodeStringTailOperatorNotEncodedEmptyPreviousVal
 	// Arrange pmap = 10000000
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", false, testLog), "TEST1")
 
 	// Act
-	dictionary.SetValue("UnicodeStringField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("UnicodeStringField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -87,12 +87,12 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedReturnsInitialValueCombine
 	// Arrange pmap = 11000000 TEST2 = 10000101 01010100 01000101 01010011 01010100 00110010
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 50})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST: TEST2"
 	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST: TEST1")
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -110,12 +110,12 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedReturnsValueFromStream(t *
 	// Arrange pmap = 11000000 TEST2 = 10000101 01010100 01000101 01010011 01010100 00110010
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 50})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -133,13 +133,13 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueReturnsPrevio
 	// Arrange pmap = 11000000 TEST2 = 10000101 01010100 01000101 01010011 01010100 00110010
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 50})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST: TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST: TEST1"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("UnicodeStringField", fix.NewRawValue("TEST: TEST1"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -157,13 +157,13 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueReturnsValueF
 	// Arrange pmap = 11000000 TEST2 = 10000101 01010100 01000101 01010011 01010100 00110010
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 50})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("1"))
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("UnicodeStringField", fix.NewRawValue("1"))
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -181,13 +181,13 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueEmptyReturnsV
 	// Arrange pmap = 11000000 TEST2 = 10000101 01010100 01000101 01010011 01010100 00110010
 	messageAsBytes := bytes.NewBuffer([]byte{133, 84, 69, 83, 84, 50})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := "TEST2"
 	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
-	dictionary.SetValue("UnicodeStringField", fix.NullValue{})
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	dict.SetValue("UnicodeStringField", fix.NullValue{})
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

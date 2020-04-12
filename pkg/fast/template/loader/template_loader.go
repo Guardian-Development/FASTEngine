@@ -3,6 +3,10 @@ package loader
 import (
 	"encoding/xml"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldsequence"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -17,9 +21,6 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/template/loader/loadunicodestring"
 	"github.com/Guardian-Development/fastengine/pkg/fast/template/store"
 	"github.com/Guardian-Development/fastengine/pkg/fast/template/structure"
-	"log"
-	"os"
-	"strconv"
 
 	tokenxml "github.com/Guardian-Development/fastengine/internal/xml"
 )

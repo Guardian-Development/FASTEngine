@@ -13,8 +13,6 @@ const ByteVectorTag = "byteVector"
 const SequenceTag = "sequence"
 const LengthTag = "length"
 const DecimalTag = "decimal"
-const ExponentTag = "exponent"
-const MantissaTag = "mantissa"
 const UnicodeStringLabel = "unicode"
 
 const ConstantOperation = "constant"
@@ -26,10 +24,12 @@ const DeltaOperation = "delta"
 
 const ValueAttribute = "value"
 
+// HasValue returns whether the value attribute is set on the xml tags
 func HasValue(tagInTemplate *xml.Tag) bool {
 	return tagInTemplate.Attributes[ValueAttribute] != ""
 }
 
+// IsNullString returns whether the value is equal to ""
 func IsNullString(value string) bool {
 	return value == ""
 }

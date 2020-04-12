@@ -2,6 +2,7 @@ package loaduint64
 
 import (
 	"fmt"
+
 	"github.com/Guardian-Development/fastengine/internal/xml"
 	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint64"

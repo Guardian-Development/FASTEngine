@@ -25,14 +25,14 @@ func TestCanDeseraliseRequiredDecimal(t *testing.T) {
 	// Arrange exp = 10000010 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{130, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
 		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
 		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -51,14 +51,14 @@ func TestCanDeseraliseOptionalDecimalExponentPresent(t *testing.T) {
 	// Arrange exp = 10000011 man = 10000001
 	messageAsBytes := bytes.NewBuffer([]byte{131, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	expectedMessage := float64(100)
 	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
 		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
 		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}
@@ -77,13 +77,13 @@ func TestCanDeseraliseOptionalDecimalExponentPresentMantissaNotEncodedCausesErro
 	// Arrange exp = 10000011 man = nil
 	messageAsBytes := bytes.NewBuffer([]byte{131})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
 		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
 		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
-	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 
 	// Assert
 	if err == nil || !strings.Contains(err.Error(), "failed to read mantissa value after successful read of exponent") {
@@ -99,13 +99,13 @@ func TestCanDeseraliseOptionalDecimalExponentNullMantissaNotEncoded(t *testing.T
 	// Arrange exp = 10000000 man = NOT ENCODED EVEN THOUGH REQUIRED
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
-	dictionary := dictionary.New()
+	dict := dictionary.New()
 	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
 		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
 		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
-	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
+	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
 	if err != nil {
 		t.Errorf("Got an error when none was expected: %s", err)
 	}

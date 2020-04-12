@@ -61,12 +61,13 @@ func New(templateStore store.Store, logger *log.Logger) FastEngine {
 // This file should be xml, if we are unable to find the file or parse it, an error is returned
 func NewFromTemplateFile(templateFile string, logger *log.Logger) (FastEngine, error) {
 	file, err := os.Open(templateFile)
-	defer file.Close()
 
 	if err != nil {
 		logger.Println("unable to open template file")
 		return nil, fmt.Errorf("unable to open template file: %s", err)
 	}
+	defer file.Close()
+
 	templateStore, err := loader.Load(file, logger)
 	if err != nil {
 		logger.Println("unable to load template store")
