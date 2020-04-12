@@ -10,9 +10,6 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/errors"
 )
 
-// TODO: readme and documentation (cleanup all warnings)
-// TODO: code cleanup and doc strings
-
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
 	// Arrange
 	message := bytes.NewBuffer([]byte{192, 1, 150, 130, 210, 129, 210, 130, 131})

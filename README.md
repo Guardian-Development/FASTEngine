@@ -13,11 +13,11 @@ package main
 
 import (
     "bytes"
-	"fmt"
+    "fmt"
     "log"
     "os"
-	
-	"github.com/Guardian-Development/fastengine/pkg/engine"
+    
+    "github.com/Guardian-Development/fastengine/pkg/engine"
 )
 
 func main() { 
@@ -52,8 +52,8 @@ package main
 import (
     "log"
     "os"
-	
-	"github.com/Guardian-Development/fastengine/pkg/engine"
+    
+    "github.com/Guardian-Development/fastengine/pkg/engine"
     "github.com/Guardian-Development/fastengine/pkg/fast/template/loader"
 )
 
@@ -76,6 +76,79 @@ func main() {
     fastEngine3 := engine.New(templateStore, logger)
 }
 ```
+
+## example message decoding
+
+Given the following message template:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+    <template name="MDHeartbeat_144" id="144" dictionary="144" xmlns="http://www.fixprotocol.org/ns/fast/td/1.1">
+        <string name="ApplVerID" id="1128">
+            <constant value="9"/>
+        </string>
+        <string name="MsgType" id="35">
+            <constant value="0"/>
+        </string>
+        <uInt32 name="MsgSeqNum" id="34"/>
+        <uInt64 name="SendingTime" id="52"/>
+    </template>
+</templates>
+```
+
+and the corresponding message to decode arrives: 
+
+```go
+/*
+    Message format:
+    11000000           pmap
+    00000001 10010000  template 144
+    10001010           34 = 10
+    10001011           52 = 11
+*/
+message := bytes.NewBuffer([]byte{192, 1, 144, 138, 139})
+```
+
+the engine can be used like so, to decode the message:
+```go
+package main 
+
+import (
+    "bytes"
+    "fmt"
+    "log"
+    "os"
+    
+    "github.com/Guardian-Development/fastengine/pkg/engine"
+)
+
+func main() { 
+    // create engine
+    logger := log.New(os.Stdout, "engine: ", log.Ldate|log.Ltime|log.Lshortfile)
+    fastEngine, err := engine.NewFromTemplateFile("ExampleTemplate.xml", logger)
+    if err != nil {
+        panic("unable to load templates, stopping application")
+    }
+    
+    // read message
+    fixMessage, err := fastEngine.Deserialise(message)
+    
+    if err != nil {
+    	panic("unable to read message, stopping application")
+    }
+    
+    fmt.Printf("%v", fixMessage)
+    // this produces => 1128=9|35=0|34=10|52=11|
+}
+```
+
+explaining fix message result:
+- template 144 used: we read pmap as a single byte (11000000). As there is a 1 at position 2, we know the template id is encoded. We decode this as 00000001 10010000 (remove stop bit => 0000001 0010000 => 00000010010000 => 144). We then use this template to decode the rest of the message.
+- 1128=9: this is not encoded in message (pmap has a 0 at position 3), this has a constant operation in template, so the constant value is returned.
+- 35=0: this is not encoded in message (pmap has a 0 at position 4), this has a constant operation in template, so the constant value is returned.
+- 34=10: this is encoded in the message and we read byte 10001010 as 10 (remove stop bit => 0001010 => 10).
+- 52=11: this is encoded in the message and we read byte 10001011 as 11 (remove stop bit => 0001011 => 11).
 
 # logging
 
@@ -156,4 +229,12 @@ pkg
  ┃ ┃ ┗ value.go : represents a fast value read from byte buffer (decoders read into these types)
  ┗ fix
  ┃ ┗ fix.go : represents a fix value (the engine returns these types, fields decode from fast values to fix values using operations)
+```
+
+## building from source
+
+In order to build this project, running all tests, the following command is used from the root of the project: 
+
+```bash
+docker build --no-cache -t fastengine .
 ```
