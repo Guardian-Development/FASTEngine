@@ -145,8 +145,8 @@ func main() {
 
 explaining fix message result:
 - template 144 used: we read pmap as a single byte (11000000). As there is a 1 at position 2, we know the template id is encoded. We decode this as 00000001 10010000 (remove stop bit => 0000001 0010000 => 00000010010000 => 144). We then use this template to decode the rest of the message.
-- 1128=9: this is not encoded in message (pmap has a 0 at position 3), this has a constant operation in template, so the constant value is returned.
-- 35=0: this is not encoded in message (pmap has a 0 at position 4), this has a constant operation in template, so the constant value is returned.
+- 1128=9: this is not encoded in the message as this is a required constant operation in the template, so the constant value is returned.
+- 35=0: this is not encoded in message as this is a required constant operation in the template, so the constant value is returned.
 - 34=10: this is encoded in the message and we read byte 10001010 as 10 (remove stop bit => 0001010 => 10).
 - 52=11: this is encoded in the message and we read byte 10001011 as 11 (remove stop bit => 0001011 => 11).
 
