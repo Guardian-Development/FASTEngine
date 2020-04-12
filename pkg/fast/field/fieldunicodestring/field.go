@@ -2,6 +2,7 @@ package fieldunicodestring
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -34,7 +35,8 @@ func (field FieldUnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *pre
 		}
 
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldUnicodeString][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
+			return nil, fmt.Errorf("[FieldUnicodeString][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
 		}
 
 		switch t := stringValue.(type) {
@@ -44,16 +46,20 @@ func (field FieldUnicodeString) Deserialise(inputSource *bytes.Buffer, pMap *pre
 
 		transformedValue, err := field.Operation.Apply(stringValue, previousValue)
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldUnicodeString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, stringValue, previousValue, err)
+			return nil, fmt.Errorf("[FieldUnicodeString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, stringValue, previousValue, err)
 		}
+
 		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 		return transformedValue, nil
 	}
 
 	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 	if err != nil {
-		return nil, err
+		field.FieldDetails.Logger.Printf("[FieldUnicodeString][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
+		return nil, fmt.Errorf("[FieldUnicodeString][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
 	}
+
 	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 	return transformedValue, nil
 }

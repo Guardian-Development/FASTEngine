@@ -25,7 +25,8 @@ type FieldDecimal struct {
 func (field FieldDecimal) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dict *dictionary.Dictionary) (fix.Value, error) {
 	exponentValue, err := field.ExponentField.Deserialise(inputSource, pMap, dict)
 	if err != nil {
-		return nil, err
+		field.FieldDetails.Logger.Printf("[FieldDecimal][%#v] failed to read exponent value, reason: %s", field.FieldDetails, err)
+		return nil, fmt.Errorf("[FieldDecimal][%#v] failed to read exponent value, reason: %s", field.FieldDetails, err)
 	}
 	switch exponentValue.(type) {
 	case fix.NullValue:
@@ -33,19 +34,21 @@ func (field FieldDecimal) Deserialise(inputSource *bytes.Buffer, pMap *presencem
 	case fix.RawValue:
 		exponentRawValue := exponentValue.Get().(int32)
 		if exponentRawValue < -63 || exponentRawValue > 63 {
-			return nil, fmt.Errorf("%s", errors.R1)
+			return nil, fmt.Errorf("[FieldDecimal][%#v] %s", field.FieldDetails, errors.R1)
 		}
 		mantissaValue, err := field.MantissaField.Deserialise(inputSource, pMap, dict)
 		if err != nil {
-			return nil, fmt.Errorf("unable to decode mantissa after successful decoding of exponent: %s", err)
+			field.FieldDetails.Logger.Printf("[FieldDecimal][%#v] failed to read mantissa value after successful read of exponent, reason: %s", field.FieldDetails, err)
+			return nil, fmt.Errorf("[FieldDecimal][%#v] failed to read mantissa value after successful read of exponent, reason: %s", field.FieldDetails, err)
 		}
+
 		decimalValue := math.Pow(10, float64(exponentValue.Get().(int32))) * float64(mantissaValue.Get().(int64))
 		fixValue := fix.NewRawValue(decimalValue)
 		dict.SetValue(field.FieldDetails.Name, fixValue)
 		return fixValue, nil
 	}
 
-	return nil, fmt.Errorf("exponent value of decimal was not expected type: %v", exponentValue)
+	return nil, fmt.Errorf("[FieldDecimal][%#v] exponent value of decimal was not expected type: %#v", field.FieldDetails, exponentValue)
 }
 
 // GetTagId for this field

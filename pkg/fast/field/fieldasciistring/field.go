@@ -2,6 +2,7 @@ package fieldasciistring
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -23,6 +24,7 @@ type FieldAsciiString struct {
 // Deserialise a <string/> from the input source
 func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, dictionary *dictionary.Dictionary) (fix.Value, error) {
 	previousValue := dictionary.GetValue(field.FieldDetails.Name)
+
 	if field.Operation.ShouldReadValue(pMap) {
 		var value value.Value
 		var err error
@@ -34,21 +36,26 @@ func (field FieldAsciiString) Deserialise(inputSource *bytes.Buffer, pMap *prese
 		}
 
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldAsciiString][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
+			return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
 		}
 
 		transformedValue, err := field.Operation.Apply(value, previousValue)
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
+			return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
 		}
+
 		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 		return transformedValue, nil
 	}
 
 	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 	if err != nil {
-		return nil, err
+		field.FieldDetails.Logger.Printf("[FieldAsciiString][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
+		return nil, fmt.Errorf("[FieldAsciiString][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
 	}
+
 	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 	return transformedValue, nil
 }

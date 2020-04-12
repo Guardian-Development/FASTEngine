@@ -2,6 +2,7 @@ package fieldsequence
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fielduint32"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -22,7 +23,8 @@ type FieldSequence struct {
 func (field FieldSequence) Deserialise(inputSource *bytes.Buffer, pMap *presencemap.PresenceMap, previousValues *dictionary.Dictionary) (fix.Value, error) {
 	numberOfElements, err := field.LengthField.Deserialise(inputSource, pMap, previousValues)
 	if err != nil {
-		return nil, err
+		field.FieldDetails.Logger.Printf("[FieldSequence][%#v] failed to decode number of elements in sequence from byte buffer, reason: %s", field.FieldDetails, err)
+		return nil, fmt.Errorf("[FieldSequence][%#v] failed to decode number of elements in sequence from byte buffer, reason: %s", field.FieldDetails, err)
 	}
 
 	switch t := numberOfElements.(type) {
@@ -38,15 +40,20 @@ func (field FieldSequence) Deserialise(inputSource *bytes.Buffer, pMap *presence
 		if field.subFieldsRequirePmap() {
 			sequencePmap, err = presencemap.New(inputSource)
 			if err != nil {
-				return nil, err
+				field.FieldDetails.Logger.Printf("[FieldSequence][%#v] failed to decode pmap for repeating group [%d] in sequence, reason: %s", field.FieldDetails, repeatingGroup, err)
+				field.FieldDetails.Logger.Printf("[FieldSequence][%#v] sequence currently decoded before failure %d=%s", field.FieldDetails, field.FieldDetails.ID, sequenceValue.String())
+				return nil, fmt.Errorf("[FieldSequence][%#v] failed to decode pmap for repeating group [%d] in sequence, reason: %s", field.FieldDetails, repeatingGroup, err)
 			}
 		}
 
 		for _, element := range field.SequenceFields {
 			value, err := element.Deserialise(inputSource, &sequencePmap, previousValues)
 			if err != nil {
-				return nil, err
+				field.FieldDetails.Logger.Printf("[FieldSequence][%#v] failed to decode element for repeating group [%d] in sequence, reason: %s", field.FieldDetails, repeatingGroup, err)
+				field.FieldDetails.Logger.Printf("[FieldSequence][%#v] sequence currently decoded before failure %d=%s", field.FieldDetails, field.FieldDetails.ID, sequenceValue.String())
+				return nil, fmt.Errorf("[FieldSequence][%#v] failed to decode element for repeating group [%d] in sequence, reason: %s", field.FieldDetails, repeatingGroup, err)
 			}
+
 			sequenceValue.SetValue(repeatingGroup, element.GetTagId(), value)
 		}
 	}

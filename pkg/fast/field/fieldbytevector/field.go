@@ -2,6 +2,7 @@ package fieldbytevector
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
@@ -34,21 +35,26 @@ func (field FieldByteVector) Deserialise(inputSource *bytes.Buffer, pMap *presen
 		}
 
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldByteVector][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
+			return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to decode value from byte buffer, reason: %s", field.FieldDetails, field.Operation, err)
 		}
 
 		transformedValue, err := field.Operation.Apply(value, previousValue)
 		if err != nil {
-			return nil, err
+			field.FieldDetails.Logger.Printf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
+			return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to apply operation with readValue %#v, previousValue: %#v, reason: %s", field.FieldDetails, field.Operation, value, previousValue, err)
 		}
+
 		dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 		return transformedValue, nil
 	}
 
 	transformedValue, err := field.Operation.GetNotEncodedValue(pMap, field.FieldDetails.Required, previousValue)
 	if err != nil {
-		return nil, err
+		field.FieldDetails.Logger.Printf("[FieldByteVector][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
+		return nil, fmt.Errorf("[FieldByteVector][%#v][%#v] failed to get value for field when not encoded in message, reason: %s", field.FieldDetails, field.Operation, err)
 	}
+
 	dictionary.SetValue(field.FieldDetails.Name, transformedValue)
 	return transformedValue, nil
 }

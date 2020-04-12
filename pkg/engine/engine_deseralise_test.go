@@ -11,7 +11,6 @@ import (
 )
 
 // TODO: readme and documentation (cleanup all warnings)
-// TODO: logging!!
 // TODO: code cleanup and doc strings
 
 func TestTemplateIdNotFoundInTemplateStoreErrorReturned(t *testing.T) {
