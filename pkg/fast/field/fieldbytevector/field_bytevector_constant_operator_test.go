@@ -18,7 +18,7 @@ func TestCanDeseraliseRequiredByteVectorConstantOperatorNotEncoded(t *testing.T)
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -41,7 +41,7 @@ func TestCanDeseraliseOptionalByteVectorConstantOperatorNotEncodedReturnsNilValu
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -64,7 +64,7 @@ func TestCanDeseraliseOptionalByteVectorConstantOperatorEncodedReturnsConstantVa
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -84,7 +84,7 @@ func TestCanDeseraliseOptionalByteVectorConstantOperatorEncodedReturnsConstantVa
 //</byteVector>
 func TestRequiresPmapReturnsFalseForRequiredByteVectorConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -100,7 +100,7 @@ func TestRequiresPmapReturnsFalseForRequiredByteVectorConstantOperator(t *testin
 //</byteVector>
 func TestRequiresPmapReturnsTrueForOptionalByteVectorConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewConstantOperation(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

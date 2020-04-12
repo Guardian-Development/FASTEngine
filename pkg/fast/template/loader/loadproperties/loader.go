@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Guardian-Development/fastengine/internal/xml"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
+	"log"
 	"math/rand"
 	"strconv"
 )
@@ -11,14 +12,16 @@ import (
 var letters = []rune("abcdefghijklmnopqrstuvwxyz")
 
 // Load id, name, and required presence of field
-func Load(tagInTemplate *xml.Tag) (properties.Properties, error) {
+func Load(tagInTemplate *xml.Tag, logger *log.Logger) (properties.Properties, error) {
 	ID, err := getFieldID(tagInTemplate)
 	if err != nil {
+		logger.Printf("error loading id for tag from xml: %v", tagInTemplate.Attributes)
 		return properties.Properties{}, err
 	}
 
 	required, err := getRequiredField(tagInTemplate)
 	if err != nil {
+		logger.Printf("error getting required option for tag from xml: %v", tagInTemplate.Attributes)
 		return properties.Properties{}, err
 	}
 
@@ -27,7 +30,7 @@ func Load(tagInTemplate *xml.Tag) (properties.Properties, error) {
 		name = getRandomName(tagInTemplate.Type)
 	}
 
-	fieldDetails := properties.New(ID, name, required)
+	fieldDetails := properties.New(ID, name, required, logger)
 	return fieldDetails, nil
 }
 

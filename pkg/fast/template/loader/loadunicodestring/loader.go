@@ -22,7 +22,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 	switch operationType {
 	case structure.DefaultOperation:
 		if !hasOperationValue && fieldDetails.Required {
-			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s", errors.S5)
+			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S5)
 		}
 
 		if !hasOperationValue {
@@ -33,7 +33,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 		return fieldunicodestring.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s", errors.S4)
+			return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S4)
 		}
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
@@ -60,6 +60,6 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldunic
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldunicodestring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
+		return fieldunicodestring.FieldUnicodeString{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S2, operationTag)
 	}
 }

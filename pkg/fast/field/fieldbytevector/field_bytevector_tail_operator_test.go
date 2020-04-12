@@ -20,7 +20,7 @@ func TestCanDeseraliseByteVectorTailOperatorNotEncodedNoPreviousValueReturnsInit
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestCanDeseraliseByteVectorTailOperatorNotEncodedNoPreviousValueReturnsPrev
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA2, 0xB3, 0xC1}
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA2, 0xB3, 0xC1}))
@@ -68,7 +68,7 @@ func TestCanDeseraliseOptionlByteVectorTailOperatorNotEncodedEmptyPreviousValueR
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NullValue{})
@@ -92,7 +92,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedReturnsInitialValueCombinedWi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0x92, 0xAA}
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -116,7 +116,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedReturnsValueFromStream(t *tes
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -140,7 +140,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueReturnsPreviousV
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0x92, 0xAA}
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
@@ -165,7 +165,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueReturnsValueFrom
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xAA}))
@@ -190,7 +190,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueEmptyReturnsValu
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0x92, 0xAA}
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NullValue{})
@@ -211,7 +211,7 @@ func TestCanDeseraliseByteVectorTailOperatorEncodedPreviousValueEmptyReturnsValu
 //</byteVector>
 func TestRequiresPmapReturnsTrueForRequiredByteVectorTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -227,7 +227,7 @@ func TestRequiresPmapReturnsTrueForRequiredByteVectorTailOperator(t *testing.T) 
 //</byteVector>
 func TestRequiresPmapReturnsTrueForOptionalByteVectorTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewTailOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

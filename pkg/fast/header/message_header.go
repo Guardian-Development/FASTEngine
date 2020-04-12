@@ -8,6 +8,7 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
 	"github.com/Guardian-Development/fastengine/pkg/fix"
+	"log"
 )
 
 type MessageHeader struct {
@@ -15,16 +16,18 @@ type MessageHeader struct {
 	TemplateID uint32
 }
 
-func New(message *bytes.Buffer, dict *dictionary.Dictionary) (MessageHeader, error) {
+func New(message *bytes.Buffer, dict *dictionary.Dictionary, logger *log.Logger) (MessageHeader, error) {
 	pMap, err := presencemap.New(message)
 	if err != nil {
-		return MessageHeader{}, fmt.Errorf("unable to create pMap for message, reason: %v", err)
+		logger.Printf("could not deserialise presence map from byte buffer, reason: %s", err)
+		return MessageHeader{}, fmt.Errorf("unable to create presence map for message")
 	}
 
-	templateIdAttribute := fielduint32.NewCopyOperation(properties.New(0, "TemplateId", true))
+	templateIdAttribute := fielduint32.NewCopyOperation(properties.New(0, "TemplateId", true, logger))
 	templateId, err := templateIdAttribute.Deserialise(message, &pMap, dict)
 	if err != nil {
-		return MessageHeader{}, err
+		logger.Printf("could not deserialise template id from byte buffer, reason: %v", err)
+		return MessageHeader{}, fmt.Errorf("could not deserialise template id from byte buffer")
 	}
 
 	switch t := templateId.(type) {
@@ -32,5 +35,6 @@ func New(message *bytes.Buffer, dict *dictionary.Dictionary) (MessageHeader, err
 		return MessageHeader{PMap: &pMap, TemplateID: t.Get().(uint32)}, nil
 	}
 
-	return MessageHeader{}, fmt.Errorf("message not supported: message must have template ID encoded")
+	logger.Printf("no template id was found in the byte buffer, unable to calculate format of message, reason: %s", err)
+	return MessageHeader{}, fmt.Errorf("message not supported: message must have template id encoded")
 }

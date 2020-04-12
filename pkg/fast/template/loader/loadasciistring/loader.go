@@ -22,7 +22,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 	switch operationType {
 	case structure.DefaultOperation:
 		if !hasOperationValue && fieldDetails.Required {
-			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s", errors.S5)
+			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S5)
 		}
 
 		if !hasOperationValue {
@@ -33,7 +33,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 		return fieldasciistring.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s", errors.S4)
+			return fieldasciistring.FieldAsciiString{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S4)
 		}
 
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
@@ -60,6 +60,6 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fieldasci
 		operationValue := operationTag.Attributes[structure.ValueAttribute]
 		return fieldasciistring.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
+		return fieldasciistring.FieldAsciiString{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S2, operationTag)
 	}
 }

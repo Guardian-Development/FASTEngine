@@ -18,7 +18,7 @@ func TestCanDeseraliseByteVectorDefaultOperatorEncodedReturnsValueFromStream(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -42,7 +42,7 @@ func TestCanDeseraliseByteVectorDefaultOperatorNotEncodedReturnsDefaultValue(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -66,7 +66,7 @@ func TestCanDeseraliseOptionalByteVectorDefaultOperatorEncodedReturnsValueFromSt
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -90,7 +90,7 @@ func TestCanDeseraliseOptionalByteVectorDefaultOperatorNotEncodedReturnsDefaultV
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -113,7 +113,7 @@ func TestCanDeseraliseOptionalByteVectorDefaultOperatorNotEncodedReturnsDefaultN
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDefaultOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewDefaultOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -132,7 +132,7 @@ func TestCanDeseraliseOptionalByteVectorDefaultOperatorNotEncodedReturnsDefaultN
 //</byteVector>
 func TestRequiresPmapReturnsTrueForRequiredByteVectorDefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -148,7 +148,7 @@ func TestRequiresPmapReturnsTrueForRequiredByteVectorDefaultOperator(t *testing.
 //</byteVector>
 func TestRequiresPmapReturnsTrueForOptionalByteVectorDefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

@@ -22,7 +22,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedValueNoPreviousValue(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -45,7 +45,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorWithInitialValueEncodedValueNoP
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(9)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), 7)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -68,7 +68,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedPositiveDeltaValuePrevio
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(11)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), 7)
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(2)))
@@ -92,7 +92,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedNegativeDeltaValuePrevio
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(500)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), 7)
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(529)))
@@ -116,7 +116,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedMaxPositiveUInt64ToZero(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(0)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true), 7)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), 7)
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(math.MaxUint64)))
@@ -140,7 +140,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedZeroToMaxPositiveUInt64(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(math.MaxUint64)
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UIn64Field", true), 7)
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UIn64Field", true, testLog), 7)
 
 	// Act
 	dictionary.SetValue("UIn64Field", fix.NewRawValue(uint64(0)))
@@ -163,7 +163,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedPositiveDeltaValueOverfl
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true, testLog))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(math.MaxUint64)))
@@ -183,7 +183,7 @@ func TestCanDeseraliseRequiredUInt64DeltaOperatorEncodedNegativeDeltaValueOverfl
 	messageAsBytes := bytes.NewBuffer([]byte{255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true, testLog))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(0)))
@@ -204,7 +204,7 @@ func TestCanDeseraliseOptionalUInt64DeltaOperatorEncodedPreviousNullValueReturns
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(1)
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false, testLog))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NullValue{})
@@ -227,7 +227,7 @@ func TestCanDeseraliseOptionalUInt64DeltaOperatorNotEncodedReturnsNull(t *testin
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false, testLog))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(27)))
@@ -247,7 +247,7 @@ func TestCanDeseraliseOptionalUInt64DeltaOperatorNotEncodedReturnsNull(t *testin
 //</uint64>
 func TestRequiresPmapReturnsFalseForRequiredUInt64DeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -263,7 +263,7 @@ func TestRequiresPmapReturnsFalseForRequiredUInt64DeltaOperator(t *testing.T) {
 //</uint64>
 func TestRequiresPmapReturnsFalseForOptionalUInt64DeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UInt64Field", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

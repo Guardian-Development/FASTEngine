@@ -19,7 +19,7 @@ func TestCanDeseraliseAsciiStringTailOperatorNotEncodedNoPreviousValueReturnsIni
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -42,7 +42,7 @@ func TestCanDeseraliseAsciiStringTailOperatorNotEncodedNoPreviousValueReturnsPre
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST2"))
@@ -65,7 +65,7 @@ func TestCanDeseraliseOptionlAsciiStringTailOperatorNotEncodedEmptyPreviousValue
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", false), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", false, testLog), "TEST1")
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NullValue{})
@@ -89,7 +89,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedReturnsInitialValueCombinedW
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST: TEST2"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true), "TEST: TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST: TEST1")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -112,7 +112,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedReturnsValueFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -135,7 +135,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueReturnsPrevious
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST: TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NewRawValue("TEST: TEST1"))
@@ -159,7 +159,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueReturnsValueFro
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NewRawValue("1"))
@@ -183,7 +183,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueEmptyReturnsVal
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("AsciiStringField", fix.NullValue{})
@@ -203,7 +203,7 @@ func TestCanDeseraliseAsciiStringTailOperatorEncodedPreviousValueEmptyReturnsVal
 //</string>
 func TestRequiresPmapReturnsTrueForRequiredAsciiStringTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -219,7 +219,7 @@ func TestRequiresPmapReturnsTrueForRequiredAsciiStringTailOperator(t *testing.T)
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalAsciiStringTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := NewTailOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

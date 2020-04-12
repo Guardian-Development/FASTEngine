@@ -17,7 +17,7 @@ func TestCanDeseraliseUInt64DefaultOperatorEncodedReturnsValueFromStream(t *test
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true), 5)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true, testLog), 5)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -40,7 +40,7 @@ func TestCanDeseraliseUInt64DefaultOperatorNotEncodedReturnsDefaultValue(t *test
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(5)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true), 5)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true, testLog), 5)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -63,7 +63,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorEncodedReturnsValueFromStream
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false), 5)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false, testLog), 5)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -86,7 +86,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultValue
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(5)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false), 5)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false, testLog), 5)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -108,7 +108,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultNilVa
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDefaultOperation(properties.New(1, "UInt64Field", false))
+	unitUnderTest := NewDefaultOperation(properties.New(1, "UInt64Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -127,7 +127,7 @@ func TestCanDeseraliseOptionalUInt64DefaultOperatorNotEncodedReturnsDefaultNilVa
 //</uInt64>
 func TestRequiresPmapReturnsTrueForRequiredUInt64DefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true), 132)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", true, testLog), 132)
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -143,7 +143,7 @@ func TestRequiresPmapReturnsTrueForRequiredUInt64DefaultOperator(t *testing.T) {
 //</uInt64>
 func TestRequiresPmapReturnsTrueForOptionalUInt64DefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false), 132)
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UInt64Field", false, testLog), 132)
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

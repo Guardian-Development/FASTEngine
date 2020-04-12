@@ -31,11 +31,11 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenSequenceLengthReadFromStream(t 
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(uint32(2))}
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true)),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true, testLog)),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -62,11 +62,11 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenNilSequenceLengthReadFromStream(t 
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", false)),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", false, testLog)),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -96,11 +96,11 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthEncoded(t *testing.T) {
 	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true)),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true, testLog)),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -132,11 +132,11 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsPreviousVa
 	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true)),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", true, testLog)),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -169,11 +169,11 @@ func TestCanDeseraliseRequiredSequenceCopyOperatorLengthNotEncodedGetsInitialVal
 	expectedMessage := "2|2=3|3=TEST1|2=2|3=TEST2|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", true), 2),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", true, testLog), 2),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -202,11 +202,11 @@ func TestCanDeseraliseOptionalSequenceCopyOperatorLengthNotEncodedGetsPreviousVa
 	dict := dictionary.New()
 	expectedMessage := fix.NullValue{}
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", false)),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewCopyOperation(properties.New(1, "SequenceField", false, testLog)),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -247,11 +247,11 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 	expectedMessage := "3|2=1|3=TEST1|2=1|3=TEST2|2=3|3=TEST2|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.New(properties.New(1, "SequenceField", true)),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.New(properties.New(1, "SequenceField", true, testLog)),
 		[]store.Unit{
-			fieldint64.NewCopyOperationWithInitialValue(properties.New(2, "Int64Field", true), 1),
-			fieldasciistring.NewCopyOperation(properties.New(3, "AsciiStringField", true)),
+			fieldint64.NewCopyOperationWithInitialValue(properties.New(2, "Int64Field", true, testLog), 1),
+			fieldasciistring.NewCopyOperation(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -276,11 +276,11 @@ func TestShouldUsePreviousValueWhenElementNotEncodedWithinSequenceAndCopyOperato
 func TestRequiresPmapReturnsTrueForRequiredSequenceWithCopyLengthOperator(t *testing.T) {
 	// Arrange
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", true), 1),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", true, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -302,11 +302,11 @@ func TestRequiresPmapReturnsTrueForRequiredSequenceWithCopyLengthOperator(t *tes
 func TestRequiresPmapReturnsTrueForOptionalSequenceWithCopyLengthOperator(t *testing.T) {
 	// Arrange
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", false), 1),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewCopyOperationWithInitialValue(properties.New(1, "SequenceField", false, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act

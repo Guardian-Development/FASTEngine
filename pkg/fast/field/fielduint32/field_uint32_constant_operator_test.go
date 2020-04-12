@@ -17,7 +17,7 @@ func TestCanDeseraliseRequiredUInt32ConstantOperatorNotEncoded(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(132)
-	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", true), 132)
+	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", true, testLog), 132)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -39,7 +39,7 @@ func TestCanDeseraliseOptionalUInt32ConstantOperatorNotEncodedReturnsNilValue(t 
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false), 132)
+	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false, testLog), 132)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -62,7 +62,7 @@ func TestCanDeseraliseOptionalUInt32ConstantOperatorEncodedReturnsConstantValue(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(132)
-	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false), 132)
+	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false, testLog), 132)
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -81,7 +81,7 @@ func TestCanDeseraliseOptionalUInt32ConstantOperatorEncodedReturnsConstantValue(
 //</uInt32>
 func TestRequiresPmapReturnsFalseForRequiredUInt32ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", true), 132)
+	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", true, testLog), 132)
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -97,7 +97,7 @@ func TestRequiresPmapReturnsFalseForRequiredUInt32ConstantOperator(t *testing.T)
 //</uInt32>
 func TestRequiresPmapReturnsTrueForOptionalUInt32ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false), 132)
+	unitUnderTest := NewConstantOperation(properties.New(1, "UInt32Field", false, testLog), 132)
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

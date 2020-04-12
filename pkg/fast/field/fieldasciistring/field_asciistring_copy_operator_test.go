@@ -21,7 +21,7 @@ func TestCanDeseraliseAsciiStringCopyOperatorEncodedReturnsValueFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestCanDeseraliseAsciiStringCopyOperatorNotEncodedReturnsInitialValueIfNoPr
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "AsciiStringField", true), "TEST1")
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -67,7 +67,7 @@ func TestCanDeseraliseAsciiStringCopyOperatorNotEncodedReturnsPreviousValue(t *t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := "PREVIOUS_VALUE"
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "AsciiStringField", true), "TEST1")
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "AsciiStringField", true, testLog), "TEST1")
 
 	// Act
 	dict.SetValue("AsciiStringField", fix.NewRawValue("PREVIOUS_VALUE"))
@@ -90,7 +90,7 @@ func TestCanDeseraliseAsciiStringCopyOperatorNotEncodedReturnsErrorIfNoPreviousV
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -109,7 +109,7 @@ func TestCanDeseraliseOptionalAsciiStringCopyOperatorNotEncodedReturnsNilIfNoPre
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -131,7 +131,7 @@ func TestCanDeseraliseOptionalAsciiStringCopyOperatorNotEncodedReturnsNilIfPrevi
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	dict.SetValue("AsciiStringField", fix.NullValue{})
@@ -151,7 +151,7 @@ func TestCanDeseraliseOptionalAsciiStringCopyOperatorNotEncodedReturnsNilIfPrevi
 //</string>
 func TestRequiresPmapReturnsTrueForRequiredAsciiStringCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -167,7 +167,7 @@ func TestRequiresPmapReturnsTrueForRequiredAsciiStringCopyOperator(t *testing.T)
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalAsciiStringCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

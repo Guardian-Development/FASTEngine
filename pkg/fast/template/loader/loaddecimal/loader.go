@@ -16,12 +16,12 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fielddeci
 	if len(tagInTemplate.NestedTags) < 2 {
 		exponentField, err := loadint32.LoadWithConverter(tagInTemplate, fieldDetails, converter.ToExponent)
 		if err != nil {
-			return fielddecimal.FieldDecimal{}, err
+			return fielddecimal.FieldDecimal{}, fmt.Errorf("[%s][%v] failed to load exponent, reason: %s", tagInTemplate.Type, fieldDetails, err)
 		}
 		exponentField.FieldDetails.Name = fmt.Sprintf("%sExponent", fieldDetails.Name)
 		mantissaField, err := loadint64.LoadWithConverter(tagInTemplate, fieldDetails, converter.ToMantissa)
 		if err != nil {
-			return fielddecimal.FieldDecimal{}, err
+			return fielddecimal.FieldDecimal{}, fmt.Errorf("[%s][%v] failed to load mantissa, reason: %s", tagInTemplate.Type, fieldDetails, err)
 		}
 
 		mantissaField.FieldDetails.Required = true
@@ -33,7 +33,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fielddeci
 		exponentTag := tagInTemplate.NestedTags[0]
 		exponentField, err := loadint32.Load(&exponentTag, fieldDetails)
 		if err != nil {
-			return fielddecimal.FieldDecimal{}, err
+			return fielddecimal.FieldDecimal{}, fmt.Errorf("[%s][%v] failed to load exponent, reason: %s", tagInTemplate.Type, fieldDetails, err)
 		}
 
 		exponentName := exponentTag.Attributes["name"]
@@ -45,7 +45,7 @@ func Load(tagInTemplate *xml.Tag, fieldDetails properties.Properties) (fielddeci
 		mantissaTag := tagInTemplate.NestedTags[1]
 		mantissaField, err := loadint64.Load(&mantissaTag, fieldDetails)
 		if err != nil {
-			return fielddecimal.FieldDecimal{}, err
+			return fielddecimal.FieldDecimal{}, fmt.Errorf("[%s][%v] failed to load mantissa, reason: %s", tagInTemplate.Type, fieldDetails, err)
 		}
 		mantissaField.FieldDetails.Required = true
 		mantissaName := mantissaTag.Attributes["name"]

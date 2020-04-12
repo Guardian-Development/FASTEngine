@@ -24,9 +24,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedValueNoPreviousValue(t 
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -49,9 +49,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorWithInitialValueEncodedValueNo
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(220)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true), -1),
-		fieldint64.NewDeltaOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true), 12))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true, testLog), -1),
+		fieldint64.NewDeltaOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true, testLog), 12))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -74,9 +74,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedPositiveDeltaValueWithP
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(220)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalField", fix.NewRawValue(float64(1.2)))
@@ -102,9 +102,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeDeltaWithPrevio
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(-0.12)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalField", fix.NewRawValue(float64(1.2)))
@@ -129,9 +129,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedPositiveExponentDeltaVa
 	messageAsBytes := bytes.NewBuffer([]byte{129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldExponent", fix.NewRawValue(int32(63)))
@@ -151,9 +151,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeExponentDeltaVa
 	messageAsBytes := bytes.NewBuffer([]byte{255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldExponent", fix.NewRawValue(int32(-63)))
@@ -173,9 +173,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedPositiveMantissaDeltaVa
 	messageAsBytes := bytes.NewBuffer([]byte{129, 129})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldMantissa", fix.NewRawValue(int64(math.MaxInt64)))
@@ -195,9 +195,9 @@ func TestCanDeseraliseRequiredDecimalDeltaOperatorEncodedNegativeMantissaDeltaVa
 	messageAsBytes := bytes.NewBuffer([]byte{129, 255})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldMantissa", fix.NewRawValue(int64(math.MinInt64)))
@@ -218,9 +218,9 @@ func TestCanDeseraliseOptionalDecimalDeltaOperatorEncodedNullExponentPreviouValu
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(-10)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dictionary.SetValue("DecimalFieldExponent", fix.NullValue{})
@@ -243,9 +243,9 @@ func TestCanDeseraliseOptionalDecimalDeltaOperatorNotEncodedReturnsNull(t *testi
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -264,9 +264,9 @@ func TestCanDeseraliseOptionalDecimalDeltaOperatorNotEncodedReturnsNull(t *testi
 //</decimal>
 func TestRequiresPmapReturnsFalseForRequiredDecimalDeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -282,9 +282,9 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalDeltaOperator(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsFalseForOptionalInt32DeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewDeltaOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewDeltaOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

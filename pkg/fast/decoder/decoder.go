@@ -17,7 +17,7 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 	for i := 0; i < 5; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.UInt32Value{}, err
+			return value.UInt32Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -40,7 +40,7 @@ func ReadUInt32(inputSource *bytes.Buffer) (value.UInt32Value, error) {
 func ReadOptionalUInt32(inputSource *bytes.Buffer) (value.Value, error) {
 	readValue, err := ReadUInt64(inputSource) // allow for overflow
 	if err != nil {
-		return value.NullValue{}, err
+		return value.NullValue{}, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	if readValue.Value == uint64(0) {
@@ -57,7 +57,7 @@ func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 
 	b, err := inputSource.ReadByte()
 	if err != nil {
-		return value.Int32Value{}, err
+		return value.Int32Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	// 64 = 01000000, indicating this is negative so we should start with all 1's int32 (-1)
@@ -68,13 +68,13 @@ func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 	// reset byte buffer by the one byte we had to read to determine negative/positive number
 	err = inputSource.UnreadByte()
 	if err != nil {
-		return value.Int32Value{}, err
+		return value.Int32Value{}, fmt.Errorf("unable to rewind byte buffer, reason: %s", err)
 	}
 
 	for i := 0; i < 5; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.Int32Value{}, err
+			return value.Int32Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -97,7 +97,7 @@ func ReadInt32(inputSource *bytes.Buffer) (value.Int32Value, error) {
 func ReadOptionalInt32(inputSource *bytes.Buffer) (value.Value, error) {
 	readValue, err := ReadInt64(inputSource) // allow for overflow
 	if err != nil {
-		return value.Int32Value{}, err
+		return value.Int32Value{}, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	if readValue.Value == int64(0) {
@@ -119,7 +119,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 	for i := 0; i < 10; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.UInt64Value{}, err
+			return value.UInt64Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -142,7 +142,7 @@ func ReadUInt64(inputSource *bytes.Buffer) (value.UInt64Value, error) {
 func ReadOptionalUInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	readValue, err := ReadBigUInt(inputSource)
 	if err != nil {
-		return value.UInt64Value{}, err
+		return value.UInt64Value{}, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	equalToZero := readValue.Value.Cmp(big.NewInt(0))
@@ -166,7 +166,7 @@ func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
 
 	b, err := inputSource.ReadByte()
 	if err != nil {
-		return value.Int64Value{}, err
+		return value.Int64Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	// 64 = 01000000, indicating this is negative so we should start with all 1's int64 (-1)
@@ -177,13 +177,13 @@ func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
 	// reset byte buffer by the one byte we had to read to determine negative/positive number
 	err = inputSource.UnreadByte()
 	if err != nil {
-		return value.Int64Value{}, err
+		return value.Int64Value{}, fmt.Errorf("unable to rewind byte buffer, reason: %s", err)
 	}
 
 	for i := 0; i < 10; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.Int64Value{}, err
+			return value.Int64Value{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -206,7 +206,7 @@ func ReadInt64(inputSource *bytes.Buffer) (value.Int64Value, error) {
 func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	readValue, err := ReadBigInt(inputSource) // allow for overflow
 	if err != nil {
-		return value.Int64Value{}, err
+		return value.Int64Value{}, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	equalToZero := readValue.Value.Cmp(big.NewInt(0))
@@ -225,7 +225,7 @@ func ReadOptionalInt64(inputSource *bytes.Buffer) (value.Value, error) {
 	return value.NullValue{}, fmt.Errorf("%s, int64", errors.R6)
 }
 
-// ReadBigInt reads the next FAST encoded value off the inputSource, treating it as an int64 value. However, this value may overflow an int64 by 1 byte (for delta encoding)
+// ReadBigUInt reads the next FAST encoded value off the inputSource, treating it as an uint64 value. However, this value may overflow an uint64 by 1 byte (for delta encoding)
 // and therefore we can return a value.BigInt if this happens. The least significant byte is in the overflow value. If the next value would till overflow this structure an err is returned.
 func ReadBigUInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 	var readValue uint64 = 0
@@ -234,7 +234,7 @@ func ReadBigUInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 	for ; i < 10; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.BigInt{}, err
+			return value.BigInt{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -252,7 +252,7 @@ func ReadBigUInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 	if i == 10 {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.BigInt{}, err
+			return value.BigInt{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -275,7 +275,7 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 
 	b, err := inputSource.ReadByte()
 	if err != nil {
-		return value.BigInt{}, err
+		return value.BigInt{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	// 64 = 01000000, indicating this is negative so we should start with all 1's int64 (-1)
@@ -286,14 +286,14 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 	// reset byte buffer by the one byte we had to read to determine negative/positive number
 	err = inputSource.UnreadByte()
 	if err != nil {
-		return value.BigInt{}, err
+		return value.BigInt{}, fmt.Errorf("unable to rewind byte buffer, reason: %s", err)
 	}
 
 	i := 1
 	for ; i < 10; i++ {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.BigInt{}, err
+			return value.BigInt{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -311,7 +311,7 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 	if i == 10 {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.BigInt{}, err
+			return value.BigInt{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -332,7 +332,7 @@ func ReadBigInt(inputSource *bytes.Buffer) (value.BigInt, error) {
 func ReadOptionalBigInt(inputSource *bytes.Buffer) (value.Value, error) {
 	readValue, err := ReadBigInt(inputSource)
 	if err != nil {
-		return value.BigInt{}, err
+		return value.BigInt{}, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	equalToZero := readValue.Value.Cmp(big.NewInt(0))
@@ -358,7 +358,7 @@ func ReadString(inputSource *bytes.Buffer) (value.StringValue, error) {
 func ReadOptionalString(inputSource *bytes.Buffer) (value.Value, error) {
 	possibleNullIndiciator, err := inputSource.ReadByte()
 	if err != nil {
-		return value.StringValue{}, err
+		return value.StringValue{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	// 128 = 10000000, this is seen as null in optional string
@@ -378,7 +378,7 @@ func ReadOptionalString(inputSource *bytes.Buffer) (value.Value, error) {
 
 	possibleEmptyStringIndicator, err := inputSource.ReadByte()
 	if err != nil {
-		return value.StringValue{}, err
+		return value.StringValue{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	// if this is the end of the string (its a 2 byte string) return result
@@ -405,7 +405,7 @@ func readString(inputSource *bytes.Buffer, stringBuilder *strings.Builder) (valu
 	for {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return value.StringValue{}, err
+			return value.StringValue{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)
@@ -432,13 +432,13 @@ func appendNotNullChar(char byte, stringBuilder *strings.Builder) {
 func ReadByteVector(inputSource *bytes.Buffer) (value.ByteVector, error) {
 	length, err := ReadUInt32(inputSource)
 	if err != nil {
-		return value.ByteVector{}, err
+		return value.ByteVector{}, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 	}
 
 	byteVector := make([]byte, length.Value)
 	number, err := inputSource.Read(byteVector)
 	if err != nil {
-		return value.ByteVector{}, err
+		return value.ByteVector{}, fmt.Errorf("unable to read multiple bytes [%d] off byte buffer, reason: %s", length.Value, err)
 	}
 	if number != int(length.Value) {
 		return value.ByteVector{}, fmt.Errorf("did not read full length of byte vector, expected to read: %d, but actually read %d", length.Value, number)
@@ -454,7 +454,7 @@ func ReadByteVector(inputSource *bytes.Buffer) (value.ByteVector, error) {
 func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 	length, err := ReadOptionalUInt32(inputSource)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("unable to read value before assesing nullability, reason: %s", err)
 	}
 
 	switch t := length.(type) {
@@ -464,7 +464,7 @@ func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 		byteVector := make([]byte, t.Value)
 		number, err := inputSource.Read(byteVector)
 		if err != nil {
-			return value.ByteVector{}, err
+			return value.ByteVector{}, fmt.Errorf("unable to read multiple bytes [%d] off byte buffer, reason: %s", t.Value, err)
 		}
 		if number != int(t.Value) {
 			return value.ByteVector{}, fmt.Errorf("did not read full length of byte vector, expected to read: %d, but actually read %d", t.Value, number)
@@ -475,13 +475,14 @@ func ReadOptionalByteVector(inputSource *bytes.Buffer) (value.Value, error) {
 	}
 }
 
+// ReadValue reads the values off the byte buffer until a stop but is detected. Stop bits are not removed from the bytes returned.
 func ReadValue(inputSource *bytes.Buffer) ([]byte, error) {
 	value := make([]byte, 0)
 
 	for {
 		b, err := inputSource.ReadByte()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("unable to read byte off byte buffer, reason: %s", err)
 		}
 
 		// 128 = 10000000, this will equal 128 if we have a stop bit present (most significant bit is 1)

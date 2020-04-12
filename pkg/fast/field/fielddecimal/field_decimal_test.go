@@ -7,10 +7,14 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/fieldint64"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<decimal>
 //	<exponent />
@@ -22,9 +26,9 @@ func TestCanDeseraliseRequiredDecimal(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -48,9 +52,9 @@ func TestCanDeseraliseOptionalDecimalExponentPresent(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -73,15 +77,15 @@ func TestCanDeseraliseOptionalDecimalExponentPresentMantissaNotEncodedCausesErro
 	messageAsBytes := bytes.NewBuffer([]byte{131})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
 
 	// Assert
-	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: EOF" {
+	if err == nil || err.Error() != "unable to decode mantissa after successful decoding of exponent: unable to read byte off byte buffer, reason: EOF" {
 		t.Errorf("Expected error message informing user of error when decoding mantissa, but got: %v", err)
 	}
 }
@@ -95,9 +99,9 @@ func TestCanDeseraliseOptionalDecimalExponentNullMantissaNotEncoded(t *testing.T
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -121,9 +125,9 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenDecimalExponentValueReadFromStr
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(int32(2))}
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -145,9 +149,9 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenDecimalExponentValueIsNil(t *testi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -169,9 +173,9 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenDecimalMantissaValueReadFromStr
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(int64(1))}
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -189,9 +193,9 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenDecimalMantissaValueReadFromStr
 //</decimal>
 func TestRequiresPmapReturnsFalseForRequiredDecimalNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -208,9 +212,9 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalNoOperator(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsFalseForOptionalDecimalNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

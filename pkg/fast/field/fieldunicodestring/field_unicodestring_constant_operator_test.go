@@ -17,7 +17,7 @@ func TestCanDeseraliseRequiredUnicodeStringConstantOperatorNotEncoded(t *testing
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -39,7 +39,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorNotEncodedReturnsNilV
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -62,7 +62,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -81,7 +81,7 @@ func TestCanDeseraliseOptionalUnicodeStringConstantOperatorEncodedReturnsConstan
 //</string>
 func TestRequiresPmapReturnsFalseForRequiredUnicodeStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -97,7 +97,7 @@ func TestRequiresPmapReturnsFalseForRequiredUnicodeStringConstantOperator(t *tes
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalUnicodeStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

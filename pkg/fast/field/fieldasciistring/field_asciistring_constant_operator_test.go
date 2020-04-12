@@ -17,7 +17,7 @@ func TestCanDeseraliseRequiredAsciiStringConstantOperatorNotEncoded(t *testing.T
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", true), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", true, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -39,7 +39,7 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorNotEncodedReturnsNilVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -62,7 +62,7 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -81,7 +81,7 @@ func TestCanDeseraliseOptionalAsciiStringConstantOperatorEncodedReturnsConstantV
 //</string>
 func TestRequiresPmapReturnsFalseForRequiredAsciiStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", true), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", true, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -97,7 +97,7 @@ func TestRequiresPmapReturnsFalseForRequiredAsciiStringConstantOperator(t *testi
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalAsciiStringConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false), "TEST2")
+	unitUnderTest := NewConstantOperation(properties.New(1, "AsciiStringField", false, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

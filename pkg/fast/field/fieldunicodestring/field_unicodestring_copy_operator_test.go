@@ -21,7 +21,7 @@ func TestCanDeseraliseUnicodeStringCopyOperatorEncodedReturnsValueFromStream(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestCanDeseraliseUnicodeStringCopyOperatorNotEncodedReturnsInitialValueIfNo
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -67,7 +67,7 @@ func TestCanDeseraliseUnicodeStringCopyOperatorNotEncodedReturnsPreviousValue(t 
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := "PREVIOUS_VALUE"
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	dict.SetValue("UnicodeStringField", fix.NewRawValue("PREVIOUS_VALUE"))
@@ -90,7 +90,7 @@ func TestCanDeseraliseUnicodeStringCopyOperatorNotEncodedReturnsErrorIfNoPreviou
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -109,7 +109,7 @@ func TestCanDeseraliseOptionalUnicodeStringCopyOperatorNotEncodedReturnsNilIfNoP
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -131,7 +131,7 @@ func TestCanDeseraliseOptionalUnicodeStringCopyOperatorNotEncodedReturnsNilIfPre
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	dict.SetValue("UnicodeStringField", fix.NullValue{})
@@ -151,7 +151,7 @@ func TestCanDeseraliseOptionalUnicodeStringCopyOperatorNotEncodedReturnsNilIfPre
 //</string>
 func TestRequiresPmapReturnsTrueForRequiredUnicodeStringCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -167,7 +167,7 @@ func TestRequiresPmapReturnsTrueForRequiredUnicodeStringCopyOperator(t *testing.
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalUnicodeStringCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

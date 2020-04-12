@@ -21,7 +21,7 @@ func TestRequiredUnicodeStringDeltaOperatorAppendToBaseValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestRequiredUnicodeStringDeltaOperatorPrependToBaseValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -67,7 +67,7 @@ func TestRequiredUnicodeStringDeltaOperatorAppendToInitialValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "THE TEST IS: TEST1"
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "THE TEST IS: ")
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "THE TEST IS: ")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -90,7 +90,7 @@ func TestRequiredUnicodeStringDeltaOperatorPrependToInitialValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1: TEST COMPLETE"
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), ": TEST COMPLETE")
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), ": TEST COMPLETE")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -113,7 +113,7 @@ func TestRequiredUnicodeStringDeltaOperatorAppendWithOverwiteToPreviousValue(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "THE TEST IS: TEST1"
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("THE TEST IS: OVER"))
@@ -137,7 +137,7 @@ func TestRequiredUnicodeStringDeltaOperatorPrependWithOverwriteToPreviousValue(t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1: TEST COMPLETE"
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
@@ -160,7 +160,7 @@ func TestRequiredAsciiStringDeltaOperatorAppendWithOverwiteTooLargeReturnsError(
 	messageAsBytes := bytes.NewBuffer([]byte{132, 133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("FAI"))
@@ -180,7 +180,7 @@ func TestRequiredUnicodeStringDeltaOperatorPrependWithOverwiteTooLargeReturnsErr
 	messageAsBytes := bytes.NewBuffer([]byte{251, 133, 84, 69, 83, 84, 49})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("FAI"))
@@ -200,7 +200,7 @@ func TestOptionalUnicodeStringDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST2: TEST COMPLETE"))
@@ -224,7 +224,7 @@ func TestOptionalUnicodeStringDeltaOperatorEncodedPreviousNullValueUsesBaseValue
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NullValue{})
@@ -246,7 +246,7 @@ func TestOptionalUnicodeStringDeltaOperatorEncodedPreviousNullValueUsesBaseValue
 //</string>
 func TestRequiresPmapReturnsFalseForRequiredUnicodeStringDeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -262,7 +262,7 @@ func TestRequiresPmapReturnsFalseForRequiredUnicodeStringDeltaOperator(t *testin
 //</string>
 func TestRequiresPmapReturnsFalseForOptionalUnicodeStringDeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

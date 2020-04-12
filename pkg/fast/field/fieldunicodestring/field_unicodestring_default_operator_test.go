@@ -17,7 +17,7 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorEncodedReturnsValueFromStream(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -40,7 +40,7 @@ func TestCanDeseraliseUnicodeStringDefaultOperatorNotEncodedReturnsDefaultValue(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -63,7 +63,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorEncodedReturnsValueFro
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -86,7 +86,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -108,7 +108,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDefaultOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewDefaultOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -127,7 +127,7 @@ func TestCanDeseraliseOptionalUnicodeStringDefaultOperatorNotEncodedReturnsDefau
 //</string>
 func TestRequiresPmapReturnsTrueForRequiredUnicodeStringDefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -143,7 +143,7 @@ func TestRequiresPmapReturnsTrueForRequiredUnicodeStringDefaultOperator(t *testi
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalUnicodeStringDefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false), "TEST2")
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "UnicodeStringField", false, testLog), "TEST2")
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

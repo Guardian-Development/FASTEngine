@@ -20,7 +20,7 @@ func TestCanDeseraliseUInt64IncrementOperatorEncodedReturnsValueFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(2)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true), uint64(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), uint64(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -43,7 +43,7 @@ func TestCanDeseraliseUInt64IncrementOperatorNotEncodedReturnsInitialValue(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(5)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true), uint64(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), uint64(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -66,7 +66,7 @@ func TestCanDeseraliseUInt64IncrementOperatorNotEncodedPreviousValuePresentRetur
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint64(11)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true), uint64(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), uint64(5))
 
 	// Act
 	dictionary.SetValue("UInt64Field", fix.NewRawValue(uint64(10)))
@@ -89,7 +89,7 @@ func TestCanDeseraliseOptionalUInt64IncrementOperatorNotEncodedNoPreviousValueRe
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", false))
+	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", false, testLog))
 
 	// Act
 	dict.SetValue("UInt64Field", fix.NullValue{})
@@ -112,7 +112,7 @@ func TestCanDeseraliseRequiredUInt64IncrementOperatorNotEncodedNoPreviousValueRe
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", true))
+	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt64Field", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -128,7 +128,7 @@ func TestCanDeseraliseRequiredUInt64IncrementOperatorNotEncodedNoPreviousValueRe
 //</uint64>
 func TestRequiresPmapReturnsTrueForRequiredUInt64IncrementOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true), uint64(132))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", true, testLog), uint64(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -144,7 +144,7 @@ func TestRequiresPmapReturnsTrueForRequiredUInt64IncrementOperator(t *testing.T)
 //</uint64>
 func TestRequiresPmapReturnsTrueForOptionalUInt64IncrementOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", false), uint64(132))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt64Field", false, testLog), uint64(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

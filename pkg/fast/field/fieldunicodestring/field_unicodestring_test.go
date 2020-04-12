@@ -5,10 +5,14 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<string charset="unicode"/>
 func TestCanDeseraliseRequiredUnicodeString(t *testing.T) {
@@ -17,7 +21,7 @@ func TestCanDeseraliseRequiredUnicodeString(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -38,7 +42,7 @@ func TestCanDeseraliseOptionalUnicodeStringPresent(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -58,7 +62,7 @@ func TestCanDeseraliseOptionalUnicodeStringNull(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -79,7 +83,7 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenUnicodeStringValueReadFromStrea
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue("TEST1")}
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -98,7 +102,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenUnicodeStringNilValueReadFromStrea
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -113,7 +117,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenUnicodeStringNilValueReadFromStrea
 //<string charset="unicode"/>
 func TestRequiresPmapReturnsFalseForRequiredUnicodeStringNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -127,7 +131,7 @@ func TestRequiresPmapReturnsFalseForRequiredUnicodeStringNoOperator(t *testing.T
 //<string charset="unicode" presence="optional"/>
 func TestRequiresPmapReturnsFalseForOptionalUnicodeStringNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := New(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

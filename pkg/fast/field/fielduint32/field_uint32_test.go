@@ -5,10 +5,14 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<uInt32 />
 func TestCanDeseraliseRequiredUInt32(t *testing.T) {
@@ -17,7 +21,7 @@ func TestCanDeseraliseRequiredUInt32(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(3)
-	unitUnderTest := New(properties.New(1, "UInt32Field", true))
+	unitUnderTest := New(properties.New(1, "UInt32Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -38,7 +42,7 @@ func TestCanDeseraliseOptionalUInt32Present(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(3)
-	unitUnderTest := New(properties.New(1, "UInt32Field", false))
+	unitUnderTest := New(properties.New(1, "UInt32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -58,7 +62,7 @@ func TestCanDeseraliseOptionalUInt32Null(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "UInt32Field", false))
+	unitUnderTest := New(properties.New(1, "UInt32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -79,7 +83,7 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenUInt32ValueReadFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(uint32(2))}
-	unitUnderTest := New(properties.New(1, "UInt32Field", true))
+	unitUnderTest := New(properties.New(1, "UInt32Field", true, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -98,7 +102,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenUInt32NilValueReadFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
-	unitUnderTest := New(properties.New(1, "UInt32Field", false))
+	unitUnderTest := New(properties.New(1, "UInt32Field", false, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -113,7 +117,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenUInt32NilValueReadFromStream(t *te
 //<uInt32 />
 func TestRequiresPmapReturnsFalseForRequiredUInt32NoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "UInt32Field", true))
+	unitUnderTest := New(properties.New(1, "UInt32Field", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -127,7 +131,7 @@ func TestRequiresPmapReturnsFalseForRequiredUInt32NoOperator(t *testing.T) {
 //<uInt32 presence="optional"/>
 func TestRequiresPmapReturnsFalseForOptionalUInt32NoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "UInt32Field", false))
+	unitUnderTest := New(properties.New(1, "UInt32Field", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

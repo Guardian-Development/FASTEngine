@@ -15,6 +15,9 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
 
+// FastEngine capable of deserialising a fast encoded message from the given byte buffer.
+// This is not thread safe, and should only be called from a single threaded context, due to the fast engine making
+// use of a dictionary of previous values
 type FastEngine interface {
 	Deserialise(message *bytes.Buffer) (*fix.Message, error)
 }
@@ -31,7 +34,7 @@ type fastEngine struct {
 func (engine fastEngine) Deserialise(message *bytes.Buffer) (*fix.Message, error) {
 	engine.globalDictionary.Reset()
 
-	messageHeader, err := header.New(message, &engine.globalDictionary)
+	messageHeader, err := header.New(message, &engine.globalDictionary, engine.logger)
 	if err != nil {
 		engine.logger.Printf("unable to deserialise header of message: %v", err)
 		return nil, fmt.Errorf("unable to parse message, reason: %v", err)
@@ -64,7 +67,7 @@ func NewFromTemplateFile(templateFile string, logger *log.Logger) (FastEngine, e
 		logger.Println("unable to open template file")
 		return nil, fmt.Errorf("unable to open template file: %s", err)
 	}
-	templateStore, err := loader.Load(file)
+	templateStore, err := loader.Load(file, logger)
 	if err != nil {
 		logger.Println("unable to load template store")
 		return nil, fmt.Errorf("unable to load template file: %s", err)

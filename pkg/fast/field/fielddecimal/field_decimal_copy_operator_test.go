@@ -26,9 +26,9 @@ func TestCanDeseraliseRequiredDecimalExponentCopyOperationEncodedReadsFromStream
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -54,9 +54,9 @@ func TestCanDeseraliseRequiredDecimalExponentCopyOperationNotEncodedTakesInitial
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -81,9 +81,9 @@ func TestCanDeseraliseRequiredDecimalExponentCopyOperationNotEncodedNoInitialVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -106,9 +106,9 @@ func TestCanDeseraliseRequiredDecimalExponentCopyOperationNotEncodedReadsPreviou
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", true, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -134,9 +134,9 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationEncodedReadsFromStream
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -162,9 +162,9 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationNotEncodedTakesInitial
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -189,9 +189,9 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationNotEncodedNoInitialVal
 	messageAsBytes := bytes.NewBuffer([]byte{130})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -214,9 +214,9 @@ func TestCanDeseraliseRequiredDecimalMantissaCopyOperationNotEncodedReadsPreviou
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := float64(400)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	dict.SetValue("DecimalFieldMantissa", fix.NewRawValue(int64(4)))
@@ -243,9 +243,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorEncodedReadsExponentAnd
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -271,9 +271,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorNotEncodedReadsInitialV
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", false), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", false, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -298,9 +298,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorNotEncodedNoInitialValu
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -325,9 +325,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorNotEncodedPreviousValue
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dict.SetValue("DecimalFieldExponent", fix.NullValue{})
@@ -354,9 +354,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorNotEncodedPreviousValue
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", false), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperationWithInitialValue(properties.New(1, "DecimalFieldExponent", false, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	dict.SetValue("DecimalFieldExponent", fix.NewRawValue(int32(2)))
@@ -379,9 +379,9 @@ func TestCanDeseraliseOptionalDecimalExponentCopyOperatorNotEncodedPreviousValue
 //</decimal>
 func TestRequiresPmapReturnsTrueForRequiredDecimalExponentCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -400,9 +400,9 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalExponentCopy(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsTrueForRequiredDecimalMantissaCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -423,9 +423,9 @@ func TestRequiresPmapReturnsTrueForRequiredDecimalMantissaCopy(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsTrueForRequirdDecimalExponentAndMantissaCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -444,9 +444,9 @@ func TestRequiresPmapReturnsTrueForRequirdDecimalExponentAndMantissaCopy(t *test
 //</decimal>
 func TestRequiresPmapReturnsTrueForOptionalDecimalExponentCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -465,9 +465,9 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentCopy(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsTrueForOptionalDecimalMantissaCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -488,9 +488,9 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalMantissaCopy(t *testing.T) {
 //</decimal>
 func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaCopy(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewCopyOperation(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewCopyOperation(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

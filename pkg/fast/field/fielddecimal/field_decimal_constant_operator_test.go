@@ -22,9 +22,9 @@ func TestCanDeseraliseRequiredDecimalExponentConstantOperatorNotEncoded(t *testi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(100)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -50,9 +50,9 @@ func TestCanDeseraliseRequiredDecimalMantissaConstantOperatorNotEncoded(t *testi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -80,9 +80,9 @@ func TestCanDeseraliseRequiredDecimalExponentAndMantissaConstantOperatorNotEncod
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true), 2),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true, testLog), 2),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -107,9 +107,9 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorNotEncodedReturnsNi
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -135,9 +135,9 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorEncodedReadsMantiss
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := float64(200)
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false), 2),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false, testLog), 2),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -159,9 +159,9 @@ func TestCanDeseraliseOptionalDecimalExponentConstantOperatorEncodedReadsMantiss
 //</decimal>
 func TestRequiresPmapReturnsFalseForRequiredDecimalExponentConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true), 12),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true, testLog), 12),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -180,9 +180,9 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalExponentConstant(t *testing.T
 //</decimal>
 func TestRequiresPmapReturnsFalseForRequiredDecimalMantissaConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", true)),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 12))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", true, testLog)),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 12))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -203,9 +203,9 @@ func TestRequiresPmapReturnsFalseForRequiredDecimalMantissaConstant(t *testing.T
 //</decimal>
 func TestRequiresPmapReturnsFalseForRequirdDecimalExponentAndMantissaConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", true),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true), 12),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 12))
+	unitUnderTest := New(properties.New(1, "DecimalField", true, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", true, testLog), 12),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 12))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -224,9 +224,9 @@ func TestRequiresPmapReturnsFalseForRequirdDecimalExponentAndMantissaConstant(t 
 //</decimal>
 func TestRequiresPmapReturnsTrueForOptionalDecimalExponentConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false), 7),
-		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true)))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false, testLog), 7),
+		fieldint64.New(properties.New(1, "DecimalFieldMantissa", true, testLog)))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -245,9 +245,9 @@ func TestRequiresPmapReturnsTrueForOptionalDecimalExponentConstant(t *testing.T)
 //</decimal>
 func TestRequiresPmapReturnsFalseForOptionalDecimalMantissaConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.New(properties.New(1, "DecimalFieldExponent", false)),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.New(properties.New(1, "DecimalFieldExponent", false, testLog)),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -268,9 +268,9 @@ func TestRequiresPmapReturnsFalseForOptionalDecimalMantissaConstant(t *testing.T
 //</decimal>
 func TestRequiresPmapReturnsTrueForOptionalDecimalExponentAndRequiredMantissaConstant(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "DecimalField", false),
-		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false), 2),
-		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true), 2))
+	unitUnderTest := New(properties.New(1, "DecimalField", false, testLog),
+		fieldint32.NewConstantOperation(properties.New(1, "DecimalFieldExponent", false, testLog), 2),
+		fieldint64.NewConstantOperation(properties.New(1, "DecimalFieldMantissa", true, testLog), 2))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

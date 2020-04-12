@@ -22,7 +22,7 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorEncodedReturnsValueFromStrea
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{198}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -46,7 +46,7 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorNotEncodedReturnsInitialValu
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -70,7 +70,7 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorNotEncodedReturnsPreviousVal
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := []byte{0xA2, 0xB3}
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	dict.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA2, 0xB3}))
@@ -94,7 +94,7 @@ func TestCanDeseraliseRequiredByteVectorCopyOperatorNotEncodedReturnsErrorIfNoPr
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -113,7 +113,7 @@ func TestCanDeseraliseOptionalByteVectorCopyOperatorNotEncodedReturnsNilIfNoPrev
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -135,7 +135,7 @@ func TestCanDeseraliseOptionalByteVectorCopyOperatorNotEncodedReturnsNilIfPrevio
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	dict.SetValue("ByteVectorField", fix.NullValue{})
@@ -155,7 +155,7 @@ func TestCanDeseraliseOptionalByteVectorCopyOperatorNotEncodedReturnsNilIfPrevio
 //</byteVector>
 func TestRequiresPmapReturnsTrueForRequiredByteVectorCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -171,7 +171,7 @@ func TestRequiresPmapReturnsTrueForRequiredByteVectorCopyOperator(t *testing.T) 
 //</byteVector>
 func TestRequiresPmapReturnsTrueForOptionalByteVectorCopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", false), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "ByteVectorField", false, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

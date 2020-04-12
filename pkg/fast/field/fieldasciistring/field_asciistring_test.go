@@ -5,10 +5,14 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<string />
 func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
@@ -17,7 +21,7 @@ func TestCanDeseraliseRequiredAsciiString(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := New(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -38,7 +42,7 @@ func TestCanDeseraliseOptionalAsciiStringPresent(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := New(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -58,7 +62,7 @@ func TestCanDeseraliseOptionalAsciiStringNull(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -79,7 +83,7 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenAsciiStringValueReadFromStream(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue("TEST1")}
-	unitUnderTest := New(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -98,7 +102,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenAsciiStringNilValueReadFromStream(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	expectedValue := dictionary.EmptyValue{}
 	dict := dictionary.New()
-	unitUnderTest := New(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -113,7 +117,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenAsciiStringNilValueReadFromStream(
 //<string />
 func TestRequiresPmapReturnsFalseForRequiredAsciiStringNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "AsciiStringField", true))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -127,7 +131,7 @@ func TestRequiresPmapReturnsFalseForRequiredAsciiStringNoOperator(t *testing.T) 
 //<string presence="optional"/>
 func TestRequiresPmapReturnsFalseForOptionalAsciiStringNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "AsciiStringField", false))
+	unitUnderTest := New(properties.New(1, "AsciiStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

@@ -19,7 +19,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorNotEncodedNoPreviousValueReturnsI
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST1"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST1")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -42,7 +42,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorNotEncodedNoPreviousValueReturnsP
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST1")
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST2"))
@@ -65,7 +65,7 @@ func TestCanDeseraliseOptionlUnicodeStringTailOperatorNotEncodedEmptyPreviousVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", false), "TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", false, testLog), "TEST1")
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NullValue{})
@@ -89,7 +89,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedReturnsInitialValueCombine
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST: TEST2"
-	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true), "TEST: TEST1")
+	unitUnderTest := NewTailOperationWithInitialValue(properties.New(1, "UnicodeStringField", true, testLog), "TEST: TEST1")
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -112,7 +112,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedReturnsValueFromStream(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -135,7 +135,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueReturnsPrevio
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST: TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("TEST: TEST1"))
@@ -159,7 +159,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueReturnsValueF
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NewRawValue("1"))
@@ -183,7 +183,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueEmptyReturnsV
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := "TEST2"
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	dictionary.SetValue("UnicodeStringField", fix.NullValue{})
@@ -203,7 +203,7 @@ func TestCanDeseraliseUnicodeStringTailOperatorEncodedPreviousValueEmptyReturnsV
 //</string>
 func TestRequiresPmapReturnsTrueForRequiredUnicodeStringTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -219,7 +219,7 @@ func TestRequiresPmapReturnsTrueForRequiredUnicodeStringTailOperator(t *testing.
 //</string>
 func TestRequiresPmapReturnsTrueForOptionalUnicodeStringTailOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", false))
+	unitUnderTest := NewTailOperation(properties.New(1, "UnicodeStringField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

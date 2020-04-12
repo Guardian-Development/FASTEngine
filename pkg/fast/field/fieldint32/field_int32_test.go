@@ -5,10 +5,14 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<int32 />
 func TestCanDeseraliseRequiredPositiveInt32(t *testing.T) {
@@ -17,7 +21,7 @@ func TestCanDeseraliseRequiredPositiveInt32(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(2)
-	unitUnderTest := New(properties.New(1, "Int32Field", true))
+	unitUnderTest := New(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -38,7 +42,7 @@ func TestCanDeseraliseRequiredNegativeInt32(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(-2)
-	unitUnderTest := New(properties.New(1, "Int32Field", true))
+	unitUnderTest := New(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -59,7 +63,7 @@ func TestCanDeseraliseOptionalPositiveInt32Present(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(3)
-	unitUnderTest := New(properties.New(1, "Int32Field", false))
+	unitUnderTest := New(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -80,7 +84,7 @@ func TestCanDeseraliseOptionalNegativeInt32Present(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(-3)
-	unitUnderTest := New(properties.New(1, "Int32Field", false))
+	unitUnderTest := New(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -100,7 +104,7 @@ func TestCanDeseraliseOptionalInt32Null(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "Int32Field", false))
+	unitUnderTest := New(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -121,7 +125,7 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenInt32ValueReadFromStream(t *tes
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue(int32(2))}
-	unitUnderTest := New(properties.New(1, "Int32Field", true))
+	unitUnderTest := New(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -140,7 +144,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenInt32NilValueReadFromStream(t *tes
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
-	unitUnderTest := New(properties.New(1, "Int32Field", false))
+	unitUnderTest := New(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -155,7 +159,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenInt32NilValueReadFromStream(t *tes
 //<int32 />
 func TestRequiresPmapReturnsFalseForRequiredInt32NoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "Int32Field", true))
+	unitUnderTest := New(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -169,7 +173,7 @@ func TestRequiresPmapReturnsFalseForRequiredInt32NoOperator(t *testing.T) {
 //<int32 presence="optional"/>
 func TestRequiresPmapReturnsFalseForOptionalInt32NoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "Int32Field", false))
+	unitUnderTest := New(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

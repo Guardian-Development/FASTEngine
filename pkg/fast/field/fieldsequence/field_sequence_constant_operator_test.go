@@ -29,11 +29,11 @@ func TestCanDeseraliseRequiredSequenceWithConstantLength(t *testing.T) {
 	expectedMessage := "1|2=1|3=TEST1|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", true), 1),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", true, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -64,11 +64,11 @@ func TestCanDeseraliseOptionalSequenceWithEncodedConstantLength(t *testing.T) {
 	expectedMessage := "1|2=1|3=TEST1|"
 
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false), 1),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -96,11 +96,11 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false), 1),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -125,11 +125,11 @@ func TestCanDeseraliseOptionalSequenceWithNotEncodedConstantLength(t *testing.T)
 func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t *testing.T) {
 	// Arrange
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", true),
-		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", true), 1),
+		properties.New(1, "SequenceField", true, testLog),
+		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", true, testLog), 1),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act
@@ -151,11 +151,11 @@ func TestRequiresPmapReturnsFalseForRequiredSequenceWithConstantLengthOperator(t
 func TestRequiresPmapReturnsTrueForOptionalSequenceWithConstantLengthOperator(t *testing.T) {
 	// Arrange
 	unitUnderTest := New(
-		properties.New(1, "SequenceField", false),
-		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false), 3),
+		properties.New(1, "SequenceField", false, testLog),
+		fielduint32.NewConstantOperation(properties.New(1, "SequenceField", false, testLog), 3),
 		[]store.Unit{
-			fieldint64.New(properties.New(2, "Int64Field", true)),
-			fieldasciistring.New(properties.New(3, "AsciiStringField", true)),
+			fieldint64.New(properties.New(2, "Int64Field", true, testLog)),
+			fieldasciistring.New(properties.New(3, "AsciiStringField", true, testLog)),
 		})
 
 	// Act

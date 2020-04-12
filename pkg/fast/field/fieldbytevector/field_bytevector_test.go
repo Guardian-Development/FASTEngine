@@ -5,11 +5,15 @@ import (
 	"github.com/Guardian-Development/fastengine/pkg/fast/dictionary"
 	"github.com/Guardian-Development/fastengine/pkg/fast/field/properties"
 	"github.com/Guardian-Development/fastengine/pkg/fast/presencemap"
+	"log"
+	"os"
 	"reflect"
 	"testing"
 
 	"github.com/Guardian-Development/fastengine/pkg/fix"
 )
+
+var testLog = log.New(os.Stdout, "", log.LstdFlags)
 
 //<byteVector />
 func TestCanDeseraliseRequiredByteVector(t *testing.T) {
@@ -18,7 +22,7 @@ func TestCanDeseraliseRequiredByteVector(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -40,7 +44,7 @@ func TestCanDeseraliseRequiredByteVectorLengthZero(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -62,7 +66,7 @@ func TestCanDeseraliseOptionalByteVectorPresent(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -84,7 +88,7 @@ func TestCanDeseraliseOptionalByteVectorPresentLengthZero(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -105,7 +109,7 @@ func TestCanDeseraliseOptionalByteVectorNull(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := New(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -126,7 +130,7 @@ func TestDictionaryIsUpdatedWithAssignedValueWhenByteVectorValueReadFromStream(t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.AssignedValue{Value: fix.NewRawValue([]byte{146})}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -146,7 +150,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenByteVectorNilValueReadFromStream(t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedValue := dictionary.EmptyValue{}
-	unitUnderTest := New(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -161,7 +165,7 @@ func TestDictionaryIsUpdatedWithEmptyValueWhenByteVectorNilValueReadFromStream(t
 //<byteVector />
 func TestRequiresPmapReturnsFalseForRequiredByteVectorNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -175,7 +179,7 @@ func TestRequiresPmapReturnsFalseForRequiredByteVectorNoOperator(t *testing.T) {
 //<byteVector presence="optional"/>
 func TestRequiresPmapReturnsFalseForOptionalByteVectorNoOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := New(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := New(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

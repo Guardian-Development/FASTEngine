@@ -2,6 +2,7 @@ package presencemap
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/Guardian-Development/fastengine/pkg/fast/decoder"
 )
 
@@ -31,7 +32,7 @@ func New(message *bytes.Buffer) (PresenceMap, error) {
 	value, err := decoder.ReadValue(message)
 
 	if err != nil {
-		return PresenceMap{}, err
+		return PresenceMap{}, fmt.Errorf("unable to read a valid value from byte buffer for presence map, reason: %s", err)
 	}
 
 	return PresenceMap{pMap: value, currentIndex: 0}, nil

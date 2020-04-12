@@ -20,7 +20,7 @@ func TestCanDeseraliseUInt32IncrementOperatorEncodedReturnsValueFromStream(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(2)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true), uint32(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true, testLog), uint32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -43,7 +43,7 @@ func TestCanDeseraliseUInt32IncrementOperatorNotEncodedReturnsInitialValue(t *te
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(5)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true), uint32(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true, testLog), uint32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -66,7 +66,7 @@ func TestCanDeseraliseUInt32IncrementOperatorNotEncodedPreviousValuePresentRetur
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := uint32(11)
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true), uint32(5))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true, testLog), uint32(5))
 
 	// Act
 	dictionary.SetValue("UInt32Field", fix.NewRawValue(uint32(10)))
@@ -89,7 +89,7 @@ func TestCanDeseraliseOptionalUInt32IncrementOperatorNotEncodedNoPreviousValueRe
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt32Field", false))
+	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt32Field", false, testLog))
 
 	// Act
 	dict.SetValue("UInt32Field", fix.NullValue{})
@@ -112,7 +112,7 @@ func TestCanDeseraliseRequiredUInt32IncrementOperatorNotEncodedNoPreviousValueRe
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt32Field", true))
+	unitUnderTest := NewIncrementOperation(properties.New(1, "UInt32Field", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -128,7 +128,7 @@ func TestCanDeseraliseRequiredUInt32IncrementOperatorNotEncodedNoPreviousValueRe
 //</uint32>
 func TestRequiresPmapReturnsTrueForRequiredUInt32IncrementOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true), uint32(132))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", true, testLog), uint32(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -144,7 +144,7 @@ func TestRequiresPmapReturnsTrueForRequiredUInt32IncrementOperator(t *testing.T)
 //</uint32>
 func TestRequiresPmapReturnsTrueForOptionalUInt32IncrementOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", false), uint32(132))
+	unitUnderTest := NewIncrementOperationWithInitialValue(properties.New(1, "UInt32Field", false, testLog), uint32(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

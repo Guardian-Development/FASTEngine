@@ -21,7 +21,7 @@ func TestCanDeseraliseRequiredInt64CopyOperatorEncodedReturnsValueFromStream(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := int64(2)
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestCanDeseraliseRequiredInt64CopyOperatorNotEncodedReturnsInitialValueIfNo
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int64(12)
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true), int64(12))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(12))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -67,7 +67,7 @@ func TestCanDeseraliseRequiredInt64CopyOperatorNotEncodedReturnsPreviousValue(t 
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := int64(7)
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true), int64(15))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(15))
 
 	// Act
 	dict.SetValue("Int64Field", fix.NewRawValue(int64(7)))
@@ -90,7 +90,7 @@ func TestCanDeseraliseRequiredInt64CopyOperatorNotEncodedReturnsErrorIfNoPreviou
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -109,7 +109,7 @@ func TestCanDeseraliseOptionalInt64CopyOperatorNotEncodedReturnsNilIfNoPreviousV
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -131,7 +131,7 @@ func TestCanDeseraliseOptionalInt64CopyOperatorNotEncodedReturnsNilIfPreviousVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int64Field", false, testLog))
 
 	// Act
 	dict.SetValue("Int64Field", fix.NullValue{})
@@ -151,7 +151,7 @@ func TestCanDeseraliseOptionalInt64CopyOperatorNotEncodedReturnsNilIfPreviousVal
 //</int64>
 func TestRequiresPmapReturnsTrueForRequiredInt64CopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true), int64(1))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", true, testLog), int64(1))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -167,7 +167,7 @@ func TestRequiresPmapReturnsTrueForRequiredInt64CopyOperator(t *testing.T) {
 //</int64>
 func TestRequiresPmapReturnsTrueForOptionalInt64CopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", false), int64(1))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int64Field", false, testLog), int64(1))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

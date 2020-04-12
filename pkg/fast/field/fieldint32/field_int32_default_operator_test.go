@@ -17,7 +17,7 @@ func TestCanDeseraliseInt32DefaultOperatorEncodedReturnsValueFromStream(t *testi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(2)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true), int32(5))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true, testLog), int32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -40,7 +40,7 @@ func TestCanDeseraliseInt32DefaultOperatorNotEncodedReturnsDefaultValue(t *testi
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(5)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true), int32(5))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true, testLog), int32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -63,7 +63,7 @@ func TestCanDeseraliseOptionalInt32DefaultOperatorEncodedReturnsValueFromStream(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{197}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(2)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false), int32(5))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false, testLog), int32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -86,7 +86,7 @@ func TestCanDeseraliseOptionalInt32DefaultOperatorNotEncodedReturnsDefaultValue(
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(5)
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false), int32(5))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false, testLog), int32(5))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -108,7 +108,7 @@ func TestCanDeseraliseOptionalInt32DefaultOperatorNotEncodedReturnsDefaultNilVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDefaultOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewDefaultOperation(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -127,7 +127,7 @@ func TestCanDeseraliseOptionalInt32DefaultOperatorNotEncodedReturnsDefaultNilVal
 //</int32>
 func TestRequiresPmapReturnsTrueForRequiredInt32DefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true), int32(132))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", true, testLog), int32(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -143,7 +143,7 @@ func TestRequiresPmapReturnsTrueForRequiredInt32DefaultOperator(t *testing.T) {
 //</int32>
 func TestRequiresPmapReturnsTrueForOptionalInt32DefaultOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false), int32(132))
+	unitUnderTest := NewDefaultOperationWithValue(properties.New(1, "Int32Field", false, testLog), int32(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

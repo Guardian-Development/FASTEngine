@@ -30,7 +30,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 	switch operationType {
 	case structure.DefaultOperation:
 		if !hasOperationValue && fieldDetails.Required {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s", errors.S5)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S5)
 		}
 
 		if !hasOperationValue {
@@ -39,18 +39,18 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S3, err)
 		}
 
 		return fieldint32.NewDefaultOperationWithValue(fieldDetails, operationValue), nil
 	case structure.ConstantOperation:
 		if !hasOperationValue {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s", errors.S4)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s", tagInTemplate.Type, fieldDetails, errors.S4)
 		}
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S3, err)
 		}
 
 		return fieldint32.NewConstantOperation(fieldDetails, operationValue), nil
@@ -61,7 +61,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S3, err)
 		}
 
 		return fieldint32.NewCopyOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -72,7 +72,7 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S3, err)
 		}
 
 		return fieldint32.NewIncrementOperationWithInitialValue(fieldDetails, operationValue), nil
@@ -83,11 +83,11 @@ func LoadWithConverter(tagInTemplate *xml.Tag, fieldDetails properties.Propertie
 
 		operationValue, err := int32Converter(operationTag.Attributes[structure.ValueAttribute])
 		if err != nil {
-			return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S3, err)
+			return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S3, err)
 		}
 
 		return fieldint32.NewDeltaOperationWithInitialValue(fieldDetails, operationValue), nil
 	default:
-		return fieldint32.FieldInt32{}, fmt.Errorf("%s: %s", errors.S2, operationTag)
+		return fieldint32.FieldInt32{}, fmt.Errorf("[%s][%v] %s: %s", tagInTemplate.Type, fieldDetails, errors.S2, operationTag)
 	}
 }

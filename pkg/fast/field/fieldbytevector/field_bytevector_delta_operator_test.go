@@ -22,7 +22,7 @@ func TestRequiredByteVectorDeltaOperatorAppendToBaseValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -46,7 +46,7 @@ func TestRequiredByteVectorDeltaOperatorPrependToBaseValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -70,7 +70,7 @@ func TestRequiredByteVectorDeltaOperatorAppendToInitialValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF, 146, 170}
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -94,7 +94,7 @@ func TestRequiredByteVectorDeltaOperatorPrependToInitialValue(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170, 0xA1, 0xB2, 0xCF}
-	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true), []byte{0xA1, 0xB2, 0xCF})
+	unitUnderTest := NewDeltaOperationWithInitialValue(properties.New(1, "ByteVectorField", true, testLog), []byte{0xA1, 0xB2, 0xCF})
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -118,7 +118,7 @@ func TestRequiredByteVectorDeltaOperatorAppendWithOverwiteToPreviousValue(t *tes
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{0xA1, 0xB2, 0xCF, 146, 170}
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
@@ -143,7 +143,7 @@ func TestRequiredByteVectorDeltaOperatorPrependWithOverwriteToPreviousValue(t *t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170, 223, 224}
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF, 111, 222, 223, 224}))
@@ -167,7 +167,7 @@ func TestRequiredByteVectorDeltaOperatorAppendWithOverwiteTooLargeReturnsError(t
 	messageAsBytes := bytes.NewBuffer([]byte{132, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
@@ -187,7 +187,7 @@ func TestRequiredByteVectorDeltaOperatorPrependWithOverwiteTooLargeReturnsError(
 	messageAsBytes := bytes.NewBuffer([]byte{251, 130, 146, 170})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
@@ -207,7 +207,7 @@ func TestOptionalByteVectorDeltaOperatorNotEncodedReturnsNull(t *testing.T) {
 	messageAsBytes := bytes.NewBuffer([]byte{128})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NewRawValue([]byte{0xA1, 0xB2, 0xCF}))
@@ -231,7 +231,7 @@ func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t 
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := []byte{146, 170}
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	dictionary.SetValue("ByteVectorField", fix.NullValue{})
@@ -249,7 +249,7 @@ func TestOptionalByteVectorDeltaOperatorEncodedPreviousNullValueUsesBaseValue(t 
 //</byteVector>
 func TestRequiresPmapReturnsFalseForRequiredByteVectorDeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", true, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -265,7 +265,7 @@ func TestRequiresPmapReturnsFalseForRequiredByteVectorDeltaOperator(t *testing.T
 //</byteVector>
 func TestRequiresPmapReturnsFalseForOptionalByteVectorDeltaOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false))
+	unitUnderTest := NewDeltaOperation(properties.New(1, "ByteVectorField", false, testLog))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

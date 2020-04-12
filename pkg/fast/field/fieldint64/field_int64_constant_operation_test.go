@@ -17,7 +17,7 @@ func TestCanDeseraliseRequiredInt64ConstantOperatorNotEncoded(t *testing.T) {
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int64(132)
-	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", true), int64(132))
+	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", true, testLog), int64(132))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -39,7 +39,7 @@ func TestCanDeseraliseOptionalInt64ConstantOperatorNotEncodedReturnsNilValue(t *
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
-	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false), int64(132))
+	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false, testLog), int64(132))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -62,7 +62,7 @@ func TestCanDeseraliseOptionalInt64ConstantOperatorEncodedReturnsConstantValue(t
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := int64(132)
-	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false), int64(132))
+	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false, testLog), int64(132))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -81,7 +81,7 @@ func TestCanDeseraliseOptionalInt64ConstantOperatorEncodedReturnsConstantValue(t
 //</int64>
 func TestRequiresPmapReturnsFalseForRequiredInt64ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", true), int64(132))
+	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", true, testLog), int64(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -97,7 +97,7 @@ func TestRequiresPmapReturnsFalseForRequiredInt64ConstantOperator(t *testing.T) 
 //</int64>
 func TestRequiresPmapReturnsTrueForOptionalInt64ConstantOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false), int64(132))
+	unitUnderTest := NewConstantOperation(properties.New(1, "Int64Field", false, testLog), int64(132))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()

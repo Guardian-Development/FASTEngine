@@ -21,7 +21,7 @@ func TestCanDeseraliseRequiredInt32CopyOperatorEncodedReturnsValueFromStream(t *
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{192}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(2)
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -44,7 +44,7 @@ func TestCanDeseraliseRequiredInt32CopyOperatorNotEncodedReturnsInitialValueIfNo
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dictionary := dictionary.New()
 	expectedMessage := int32(12)
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true), int32(12))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true, testLog), int32(12))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dictionary)
@@ -67,7 +67,7 @@ func TestCanDeseraliseRequiredInt32CopyOperatorNotEncodedReturnsPreviousValue(t 
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
 	expectedMessage := int32(7)
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true), int32(15))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true, testLog), int32(15))
 
 	// Act
 	dict.SetValue("Int32Field", fix.NewRawValue(int32(7)))
@@ -90,7 +90,7 @@ func TestCanDeseraliseRequiredInt32CopyOperatorNotEncodedReturnsErrorIfNoPreviou
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", true))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", true, testLog))
 
 	// Act
 	_, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -109,7 +109,7 @@ func TestCanDeseraliseOptionalInt32CopyOperatorNotEncodedReturnsNilIfNoPreviousV
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	result, err := unitUnderTest.Deserialise(messageAsBytes, &pmap, &dict)
@@ -131,7 +131,7 @@ func TestCanDeseraliseOptionalInt32CopyOperatorNotEncodedReturnsNilIfPreviousVal
 	messageAsBytes := bytes.NewBuffer([]byte{})
 	pmap, _ := presencemap.New(bytes.NewBuffer([]byte{128}))
 	dict := dictionary.New()
-	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", false))
+	unitUnderTest := NewCopyOperation(properties.New(1, "Int32Field", false, testLog))
 
 	// Act
 	dict.SetValue("Int32Field", fix.NullValue{})
@@ -151,7 +151,7 @@ func TestCanDeseraliseOptionalInt32CopyOperatorNotEncodedReturnsNilIfPreviousVal
 //</int32>
 func TestRequiresPmapReturnsTrueForRequiredInt32CopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true), int32(1))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", true, testLog), int32(1))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
@@ -167,7 +167,7 @@ func TestRequiresPmapReturnsTrueForRequiredInt32CopyOperator(t *testing.T) {
 //</int32>
 func TestRequiresPmapReturnsTrueForOptionalInt32CopyOperator(t *testing.T) {
 	// Arrange
-	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", false), int32(7))
+	unitUnderTest := NewCopyOperationWithInitialValue(properties.New(1, "Int32Field", false, testLog), int32(7))
 
 	// Act
 	result := unitUnderTest.RequiresPmap()
